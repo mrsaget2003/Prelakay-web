@@ -29,7 +29,7 @@ Les deux déploiements vérifiables de la **Phase 0** (`06-plan.md`).
 
 ### Trois projets en un
 
-`APP_SPACE` = `acheteur` · `vendeur` · `admin` · `all` (défaut) limite les routes servies par un déploiement ; chaque projet a sa branche Git (`acheteur`, `vendeur`, `admin`). `PRELAKAY_ENV` = `development` · `demo` · `production` ; en production, `DATA_SOURCE=supabase` est obligatoire. Détails : `docs/superpowers/plans/2026-11-07-prelakay-prototype-to-launch.md` §1.0.
+`APP_SPACE` = `acheteur` · `vendeur` · `admin` · `all` (défaut) limite les routes servies par un déploiement ; chaque projet a sa branche Git (`acheteur`, `vendeur`, `admin`). `PRELAKAY_ENV` = `development` · `demo` · `production` : obligatoire sur un serveur de production (`npm start`, Vercel, Netlify) ; avec `production`, `DATA_SOURCE=supabase` est obligatoire et les données de démo sont refusées. Exemple local : `PRELAKAY_ENV=demo npm start`. Détails : `docs/superpowers/plans/2026-11-07-prelakay-prototype-to-launch.md` §1.0.
 
 ## Décisions prises pour ce scaffold (30 oct 2026, mises à jour le 8 nov.)
 

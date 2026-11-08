@@ -1,0 +1,15 @@
+.icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  line-height: 0;
+  vertical-align: -0.125em;
+}
+
+/* Duotone simulé (03-design §5.1) : pastille de la même couleur à 20 %. */
+.active {
+  padding: 0.3em;
+  border-radius: var(--radius-sm);
+  background: color-mix(in srgb, currentColor 20%, transparent);
+}

@@ -186,3 +186,11 @@ export function topUp(amount: number, gatewayLabel: string) {
   });
   return `Wallet rechargé de ${formatHTG(amount)}`;
 }
+
+/** Payer le panier d'un proche (PRD §3) : débit du wallet, ligne d'historique. */
+export function payForRelative(user: string, total: number) {
+  demo.update((s) => {
+    s.wallet -= total;
+    s.txs.unshift(["fa-solid fa-gift", `Panier payé pour @${user}`, "6 nov.", -total, ""]);
+  });
+}

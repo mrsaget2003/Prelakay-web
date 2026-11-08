@@ -125,3 +125,29 @@ export function useMounted(): boolean {
 }
 
 export const fr1 = (x: number) => x.toFixed(1).replace(".", ",");
+
+/** needLogin du prototype : page réservée aux membres ; retour à la page après connexion (?next=). */
+export function NeedLogin({ what, next }: { what: string; next: string }) {
+  return (
+    <div className="wrap">
+      <div className="empty" style={{ marginTop: 16 }}>
+        <Fi s="lock" />
+        <b>Connectez-vous pour continuer</b>
+        <p className="muted">{what} est réservé aux membres. C&apos;est gratuit.</p>
+        <Link className="btn btn-p" href={`/login?next=${encodeURIComponent(next)}`}>
+          Se connecter
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+/** Étiquette de statut de commande (stTag du prototype). */
+export const ORDER_STATUS: Record<string, [string, string]> = {
+  received: ["tag-neu", "Reçue"], prep: ["tag-warn", "En préparation"], ready: ["tag-new", "Prête pour retrait"],
+  done: ["tag-ok", "Retirée"], expired: ["tag-err", "Non retirée"], cancelled: ["tag-err", "Annulée"],
+};
+export function StTag({ s }: { s: string }) {
+  const [cls, label] = ORDER_STATUS[s] ?? ["tag-neu", s];
+  return <span className={`tag ${cls}`}>{label}</span>;
+}

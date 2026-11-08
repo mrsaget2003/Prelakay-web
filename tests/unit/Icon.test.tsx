@@ -25,6 +25,12 @@ describe("Icon", () => {
     expect(container.firstChild).toHaveAttribute("data-active", "true");
   });
 
+  it("variant force le style sans pastille (ex. étoile pleine d'une note)", () => {
+    const { container } = render(<Icon name="star" variant="solid" />);
+    expect(container.querySelector("svg")).toHaveAttribute("data-prefix", "fas");
+    expect(container.firstChild).not.toHaveAttribute("data-active");
+  });
+
   it("sans version contour, garde la version pleine", () => {
     const { container } = render(<Icon name="store" />);
     expect(container.querySelector("svg")).toHaveAttribute("data-prefix", "fas");

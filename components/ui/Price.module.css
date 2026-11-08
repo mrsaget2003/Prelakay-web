@@ -1,0 +1,24 @@
+.price {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0 var(--space-2);
+  font-variant-numeric: tabular-nums;
+}
+.price b {
+  font-weight: 700;
+  color: var(--color-black);
+}
+.md b {
+  font-size: 17px;
+  line-height: 22px;
+}
+.lg b {
+  font-size: 24px;
+  line-height: 30px;
+}
+.price s {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-neutral-500);
+}

@@ -12,6 +12,8 @@ export type IconProps = {
   name: IconName;
   /** Actif : icône pleine + pastille de fond à 20 % (duotone simulé, 03-design §5.1). */
   active?: boolean;
+  /** Force un style sans pastille (ex. étoiles d'une note) ; sinon actif = plein, repos = contour. */
+  variant?: "solid" | "regular";
   /** Taille en px ; par défaut 1em (suit la taille du texte). */
   size?: number;
   /** Nom accessible. Sans label, l'icône est décorative. */
@@ -19,9 +21,10 @@ export type IconProps = {
   className?: string;
 };
 
-export function Icon({ name, active = false, size, label, className }: IconProps) {
+export function Icon({ name, active = false, variant, size, label, className }: IconProps) {
   const entry = ICONS[name];
-  const def = active || !("regular" in entry) ? entry.solid : entry.regular;
+  const wantSolid = variant ? variant === "solid" : active;
+  const def = wantSolid || !("regular" in entry) ? entry.solid : entry.regular;
   const [w, h, , , path] = def.icon;
   const d = Array.isArray(path) ? path.join(" ") : path;
   const dim = size ?? "1em";

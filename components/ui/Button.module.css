@@ -1,0 +1,82 @@
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: 48px;
+  padding: 0 var(--space-4);
+  border-radius: var(--radius-sm);
+  border: 1.5px solid transparent;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.sm {
+  height: 44px; /* zone tactile minimale (design-prelakay §7) */
+}
+.block {
+  display: flex;
+  width: 100%;
+}
+
+.primary {
+  background: var(--color-lagon-500);
+  color: var(--color-white);
+}
+.primary:hover,
+.primary:active {
+  background: var(--color-lagon-700);
+}
+.outline {
+  background: var(--color-white);
+  border-color: var(--color-black);
+  color: var(--color-black);
+}
+.outline:hover {
+  background: var(--color-neutral-100);
+}
+.ghost {
+  background: transparent;
+  color: var(--color-black);
+}
+.ghost:hover {
+  background: var(--color-neutral-100);
+}
+.dark {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+
+.btn:disabled,
+.btn[aria-disabled="true"] {
+  background: var(--color-neutral-300);
+  border-color: transparent;
+  color: var(--color-neutral-500);
+  cursor: not-allowed;
+}
+.btn[aria-busy="true"] {
+  cursor: progress;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-right-color: transparent;
+  animation: spin 700ms linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation: none;
+  }
+}

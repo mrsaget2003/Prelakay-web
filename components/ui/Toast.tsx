@@ -2,9 +2,9 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { Icon, type IconName } from "./Icon";
-import styles from "./Toast.module.css";
 
 // Un seul toast à la fois, 3 s (CHANGELOG règle 2) ; le suivant remplace le précédent.
+// Balisage et classes du prototype (.toast.show, .err) : style dans app/proto.css.
 
 export type ToastKind = "info" | "success" | "error";
 type ToastState = { id: number; msg: string; kind: ToastKind } | null;
@@ -42,7 +42,7 @@ export function ToastProvider({ children }: { children: ReactNode }) {
     <ToastContext.Provider value={api}>
       {children}
       {toast && (
-        <div key={toast.id} role="status" aria-live="polite" data-kind={toast.kind} className={`${styles.toast} ${styles[toast.kind]}`}>
+        <div key={toast.id} role="status" aria-live="polite" data-kind={toast.kind} className={`toast show${toast.kind === "error" ? " err" : ""}`}>
           <Icon name={ICON[toast.kind]} />
           <span>{toast.msg}</span>
         </div>

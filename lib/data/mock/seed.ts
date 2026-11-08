@@ -195,6 +195,11 @@ export function defaultChoice(p: Product): Choice {
   return o;
 }
 
+/** Vignettes de la galerie produit du prototype : photo, autres vues, liste, guide des tailles. */
+export function galleryIcons(p: Product): string[] {
+  return [p.icon, "fa-regular fa-images", "fa-solid fa-list", "fa-solid fa-ruler"];
+}
+
 /** Libellé du choix : « Écru · 160 cm · 140 cm » ; « Standard » sans caractéristique. */
 export function selLabel(p: Product, o: Choice): string {
   const A = optsOf(p);

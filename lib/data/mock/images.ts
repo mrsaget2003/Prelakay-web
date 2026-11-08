@@ -26,7 +26,6 @@ const PRODUCT_PHOTOS: Record<string, string> = {
   "maison-4": "1563453392212-326f5e854473",
   "maison-5": "1513694203232-719a280e022f",
   "beaute-0": "1608571423902-eed4a5ad8108",
-  "beaute-1": "1556228578-8c89e6adf883",
   "beaute-2": "1522337360788-8b13dee7a37e",
   "beaute-4": "1631729371254-42c2892f0e6e",
   "beaute-6": "1590159763121-7c9fd312190d",

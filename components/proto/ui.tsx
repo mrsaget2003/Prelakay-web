@@ -22,11 +22,11 @@ export function DataIcon({ cls, className }: { cls: string; className?: string }
 
 /** Tuile du prototype (ph) : dégradé + icône Font Awesome ; une photo hébergée la recouvre
  *  si elle existe et se charge, sinon l'icône reste le placeholder. */
-export function Ph({ icon, tint = "g0", cls = "", img, alt = "" }: { icon: string; tint?: string; cls?: string; img?: string; alt?: string }) {
+export function Ph({ icon, tint = "g0", cls = "", img, alt = "" }: { icon: string | ReactNode; tint?: string; cls?: string; img?: string; alt?: string }) {
   const [failed, setFailed] = useState(false);
   return (
     <div className={`ph ${tint} ${cls}`.trim()}>
-      <DataIcon cls={icon} />
+      {typeof icon === "string" ? <DataIcon cls={icon} /> : icon}
       {img && !failed ? (
         // Photo Unsplash déjà dimensionnée par son CDN (paramètres w/h/q) : pas d'optimisation Next.
         // eslint-disable-next-line @next/next/no-img-element
@@ -47,10 +47,10 @@ export function Stars({ r }: { r: number }) {
   );
 }
 
-export function EmptyBox({ icon, t, p, children }: { icon: string; t: string; p?: string; children?: ReactNode }) {
+export function EmptyBox({ icon, t, p, children }: { icon: ReactNode; t: string; p?: string; children?: ReactNode }) {
   return (
     <div className="empty">
-      <DataIcon cls={icon} />
+      {icon}
       <b>{t}</b>
       {p ? <p className="muted">{p}</p> : null}
       {children}

@@ -9,7 +9,7 @@ export type SpaceDecision =
 
 const SPACES: readonly AppSpace[] = ["all", "acheteur", "vendeur", "admin"];
 
-export function appSpace(env: { APP_SPACE?: string }): AppSpace {
+export function appSpace(env: { readonly [key: string]: string | undefined; APP_SPACE?: string }): AppSpace {
   const v = env.APP_SPACE || "all";
   if (!(SPACES as readonly string[]).includes(v)) {
     throw new Error(`APP_SPACE inconnu : « ${v} » (attendu : ${SPACES.join(", ")}).`);

@@ -7,7 +7,7 @@
 export type PrelakayEnv = "development" | "demo" | "production";
 export type DataSource = "mock" | "supabase";
 
-type EnvLike = { PRELAKAY_ENV?: string; DATA_SOURCE?: string };
+type EnvLike = { readonly [key: string]: string | undefined; PRELAKAY_ENV?: string; DATA_SOURCE?: string };
 
 const ENVS: readonly PrelakayEnv[] = ["development", "demo", "production"];
 const SOURCES: readonly DataSource[] = ["mock", "supabase"];

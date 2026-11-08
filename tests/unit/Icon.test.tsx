@@ -11,6 +11,12 @@ describe("Icon", () => {
     expect(container.querySelector("svg")).toHaveAttribute("aria-hidden", "true");
   });
 
+  it("rend un élément <i> pour hériter des règles CSS du prototype (`.ph i`, `.btn i`…)", () => {
+    const { container } = render(<Icon name="cart-shopping" />);
+    expect((container.firstChild as HTMLElement).tagName).toBe("I");
+    expect(container.firstChild).toHaveClass("fa-ic");
+  });
+
   it("avec label, est une image nommée", () => {
     render(<Icon name="cart-shopping" label="Panier" />);
     expect(screen.getByRole("img", { name: "Panier" })).toBeInTheDocument();

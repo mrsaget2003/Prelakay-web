@@ -23,6 +23,25 @@ export default defineConfig([
       ],
     },
   },
+  // Trois projets en un (plan §1.0) : un espace n'importe jamais les composants d'un autre.
+  ...[
+    ["shop", ["seller", "admin"]],
+    ["seller", ["shop", "admin"]],
+    ["admin", ["shop", "seller"]],
+  ].map(([space, others]) => ({
+    files: [`components/${space}/**/*.{ts,tsx}`],
+    rules: {
+      "no-restricted-imports": [
+        "error",
+        {
+          patterns: others.flatMap((o) => [
+            { group: [`@/components/${o}/*`, `@/components/${o}`], message: `Un espace ne dépend pas de components/${o} : passez par components/ui ou lib/.` },
+            { group: [`../${o}/*`, `../${o}`], message: `Un espace ne dépend pas de components/${o} : passez par components/ui ou lib/.` },
+          ]),
+        },
+      ],
+    },
+  })),
   globalIgnores([
     ".next/**",
     "out/**",

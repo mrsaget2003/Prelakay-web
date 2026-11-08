@@ -1,0 +1,218 @@
+/* ==========================================================================
+   Prélakay — Design tokens
+   Source de vérité : docs/docs/design-prelakay.md §8.5
+   Ne pas modifier ces valeurs sans mettre à jour ce document en premier.
+   ========================================================================== */
+
+@font-face {
+  font-family: "Fraunces";
+  src: url("/fonts/_woff2/Fraunces-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Onest";
+  src: url("/fonts/_woff2/Onest-Variable.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Surgena : wordmark/logo uniquement — jamais en UI courante (design-prelakay.md §3) */
+@font-face {
+  font-family: "Surgena";
+  src: url("/fonts/_woff2/Surgena-SemiBold.woff2") format("woff2");
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  /* Couleurs de base */
+  --color-white: #fffaf7;
+  --color-black: #0b0c10;
+
+  /* Rampe Lagon */
+  --color-lagon-100: #dbf8fb;
+  --color-lagon-300: #80e6f0;
+  --color-lagon-500: #0e6b74; /* accent principal */
+  --color-lagon-700: #0a4c52;
+  --color-lagon-900: #052a2e;
+
+  /* Neutres */
+  --color-neutral-100: #f7f8f8;
+  --color-neutral-300: #d8dada;
+  --color-neutral-500: #898f90;
+  --color-neutral-700: #575b5c;
+  --color-neutral-900: #141515;
+
+  /* Fonctionnelles */
+  --color-success: #1c832c;
+  --color-error: #c62a2a;
+  --color-warning: #825f1c;
+
+  /* Rayons */
+  --radius-sm: 10px;
+  --radius-lg: 20px;
+
+  /* Espacement (grille 8pt) */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Ombre */
+  --shadow-card: 0 4px 12px rgba(11, 12, 16, 0.08);
+
+  /* Focus */
+  --focus-ring-color: var(--color-lagon-500);
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+
+  /* Typographie */
+  --font-wordmark: "Surgena", sans-serif;
+  --font-heading: "Fraunces", serif;
+  --font-body: "Onest", sans-serif;
+}
+
+/* ==========================================================================
+   Reset minimal
+   ========================================================================== */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  background: var(--color-white);
+  color: var(--color-black);
+  font-family: var(--font-body);
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  font-variation-settings: "WONK" 0; /* formes standards, pas de "wonk" (défaut de la variable) */
+  margin: 0;
+}
+
+/* Échelle de taille — design-prelakay.md §3 (⚠️ proposée, base 16px) */
+h1 {
+  font-size: 28px;
+  line-height: 36px;
+  font-weight: 600; /* SemiBold */
+}
+
+h2 {
+  font-size: 22px;
+  line-height: 30px;
+  font-weight: 500; /* Medium */
+}
+
+h3 {
+  font-size: 18px;
+  line-height: 26px;
+  font-weight: 500; /* Medium */
+}
+
+p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 20px;
+}
+
+a {
+  color: var(--color-lagon-500);
+}
+
+/* Focus visible — design-prelakay.md §7 : jamais outline: none sans remplacement */
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* ==========================================================================
+   Composants de référence — design-prelakay.md §8.4
+   ========================================================================== */
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 48px;
+  padding: 0 var(--space-4);
+  border: none;
+  border-radius: var(--radius-sm);
+  background: var(--color-lagon-500);
+  color: var(--color-white);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.btn-primary:hover,
+.btn-primary:active {
+  background: var(--color-lagon-700);
+}
+
+.btn-primary:disabled {
+  background: var(--color-neutral-300);
+  color: var(--color-neutral-500);
+  cursor: not-allowed;
+}
+
+.card-product {
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  box-shadow: var(--shadow-card);
+  background: var(--color-white);
+}
+
+.field {
+  height: 48px;
+  width: 100%;
+  padding: 0 var(--space-3);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-neutral-300);
+  font-family: var(--font-body);
+  font-size: 14px;
+  background: var(--color-white);
+  color: var(--color-black);
+}
+
+.field:focus {
+  outline: none;
+  border: 2px solid var(--color-lagon-500);
+  box-shadow: 0 0 0 4px rgba(14, 107, 116, 0.4); /* halo lagon-100 à 40% */
+}
+
+.message-error {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: rgba(198, 42, 42, 0.08);
+  color: var(--color-error);
+  border-radius: var(--radius-sm);
+  padding: var(--space-3);
+  font-size: 14px;
+}

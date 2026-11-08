@@ -1,0 +1,35 @@
+# dependencies
+/node_modules
+
+# next.js
+/.next/
+/out/
+
+# production
+/build
+
+# env — jamais de clé en dur (04-trd.md)
+.env
+.env.local
+.env.*.local
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+
+# typescript
+*.tsbuildinfo
+
+# Serwist — généré au build, ne pas commiter
+public/sw*
+public/swe-worker*
+
+# Sources de prototypage lourdes / captures tierces — conservées sur le disque, sauvegardées hors dépôt
+/prototype/handwritten-prototypage-with-aliexpress-screenshot-page/
+/prototype/Screenshot AliExpress/
+.superpowers/
+
+# tests
+/test-results/
+/playwright-report/

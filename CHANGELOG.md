@@ -22,7 +22,15 @@ Légende des docs conservée : ✅ Décidé · 🟡 Proposé · ⚠️ Ouvert ·
 ## Non publié
 
 ### En cours : V1 · Pilote Les Cayes
-Ordre de construction : `docs/06-plan.md` (landing v1 « ads » → PWA complet, deadline fin décembre → dashboard admin minimal en parallèle → landing finale).
+Ordre de construction : `docs/06-plan.md` (landing v1 « ads » → PWA complet, deadline fin décembre → dashboard admin minimal en parallèle → landing finale). Plan détaillé : `docs/superpowers/plans/2026-11-07-prelakay-prototype-to-launch.md` (3 projets en 1 : Acheteur → Espace vendeur → Espace admin, une branche Git chacun).
+
+#### Phase A — Fondations (8 nov. 2026, branche `feat/phase-a-fondations`)
+- Next.js 16 (build webpack pour Serwist), tests Vitest + Testing Library + Playwright (360 px et desktop).
+- Logo : `<Logo>` avec les vrais fichiers (complet = icône + wordmark ; icône seule = secondary), tailles minimales 32 / 24 px.
+- Icônes : Font Awesome 6 Free en SVG local (148 icônes du prototype), registre unique et table `docs/icon-mapping.md` pour Iconly Pro.
+- Versions : `lib/config/release.ts` (clés de ce CHANGELOG), toast « À venir » 3 s, `<ComingSoon>`, redirection des pages futures vers l'accueil, API `403 feature_not_released`.
+- Espaces : `APP_SPACE` (acheteur, vendeur, admin, all) ; données de démo refusées au démarrage avec `PRELAKAY_ENV=production`.
+- Composants de base (bouton, champ, carte, étiquette, prix, étoiles, état vide, modale, feuille du bas, onglets, case ronde, quantité) et style guide `/style-guide`.
 
 ---
 

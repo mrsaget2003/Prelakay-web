@@ -1,12 +1,3 @@
-import {
-  Search,
-  MapPin,
-  Wallet,
-  User,
-  ShoppingBasket,
-  AlertTriangle,
-} from "BoxIcons-react";
-
 const colors: { name: string; varName: string }[] = [
   { name: "white", varName: "--color-white" },
   { name: "black", varName: "--color-black" },
@@ -174,45 +165,10 @@ export default function StyleGuide() {
         />
 
         <div className="message-error" style={{ marginTop: "var(--space-5)", maxWidth: 400 }}>
-          <AlertTriangle size={18} strokeWidth={2} />
           <span>Quelque chose a échoué. Réessayez.</span>
         </div>
       </Section>
 
-      <Section title="Iconographie — fallback BoxIcons (en attendant Iconly Pro)">
-        <p style={{ color: "var(--color-neutral-700)", marginBottom: "var(--space-4)" }}>
-          Icône pleine + calque à 20% d&apos;opacité pour simuler le duotone
-          (état actif) · outline simple neutral-500 (état inactif). Table de
-          correspondance à tenir pour un remplacement mécanique par Iconly
-          Pro — design-prelakay.md §4.
-        </p>
-        <div style={{ display: "flex", gap: "var(--space-6)" }}>
-          {[
-            { Icon: Search, label: "Recherche" },
-            { Icon: MapPin, label: "Découverte" },
-            { Icon: Wallet, label: "Wallet" },
-            { Icon: User, label: "Profil" },
-            { Icon: ShoppingBasket, label: "Panier" },
-          ].map(({ Icon, label }) => (
-            <div key={label} style={{ textAlign: "center" }}>
-              <div style={{ position: "relative", width: 32, height: 32 }}>
-                <Icon
-                  size={32}
-                  color="var(--color-lagon-500)"
-                  style={{ position: "absolute", opacity: 0.2 }}
-                />
-                <Icon
-                  size={32}
-                  color="var(--color-lagon-500)"
-                  strokeWidth={1.5}
-                  style={{ position: "absolute" }}
-                />
-              </div>
-              <p style={{ fontSize: 11, marginTop: "var(--space-1)" }}>{label}</p>
-            </div>
-          ))}
-        </div>
-      </Section>
     </main>
   );
 }

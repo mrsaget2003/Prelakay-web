@@ -13,18 +13,34 @@ npm run dev
 ```
 
 - `http://localhost:3000` — page d'accueil ("Hello Prélakay")
-- `http://localhost:3000/style-guide` — tous les tokens de design en un coup d'œil
+- `http://localhost:3000/style-guide` — logos, tokens, icônes et composants en un coup d'œil
 
 Les deux déploiements vérifiables de la **Phase 0** (`06-plan.md`).
 
-## Décisions prises pour ce scaffold (30 oct 2026)
+### Commandes
+
+| Commande | Rôle |
+|---|---|
+| `npm run dev` | serveur de développement (Turbopack) |
+| `npm run build` | build de production (`--webpack`, requis par Serwist) |
+| `npm test` | tests unitaires (Vitest) |
+| `npm run test:e2e` | parcours navigateur à 360 px et en desktop (Playwright ; première fois : `npx playwright install chromium`) |
+| `npm run typecheck` / `npm run lint` | TypeScript strict / ESLint (config « flat », `eslint.config.mjs`) |
+
+### Trois projets en un
+
+`APP_SPACE` = `acheteur` · `vendeur` · `admin` · `all` (défaut) limite les routes servies par un déploiement ; chaque projet a sa branche Git (`acheteur`, `vendeur`, `admin`). `PRELAKAY_ENV` = `development` · `demo` · `production` : obligatoire sur un serveur de production (`npm start`, Vercel, Netlify) ; avec `production`, `DATA_SOURCE=supabase` est obligatoire et les données de démo sont refusées. Exemple local : `PRELAKAY_ENV=demo npm start`. Détails : `docs/superpowers/plans/2026-11-07-prelakay-prototype-to-launch.md` §1.0.
+
+## Décisions prises pour ce scaffold (30 oct 2026, mises à jour le 8 nov.)
 
 - **Gestionnaire de paquets :** npm
-- **Icônes :** BoxIcons — fallback déjà documenté dans
-  `design-prelakay.md` §4 (icône pleine + calque 20% opacité pour simuler le
-  duotone actif, outline simple `neutral-500` en inactif). À remplacer
-  mécaniquement par Iconly Pro une fois l'abonnement/MCP actif — tenir la
-  table de correspondance en le faisant.
+- **Icônes :** ~~BoxIcons~~ → **Font Awesome 6 Free** (7-8 nov. 2026), en SVG
+  local via `<Icon name="…">` et le registre `lib/icons/registry.ts`
+  (actif = plein + pastille 20 %, repos = contour). Passage à Iconly Pro :
+  remplir `docs/icon-mapping.md`. Les classes `fa-…` en dur sont interdites
+  par ESLint.
+- **Logo :** `<Logo variant="full">` (icône + wordmark, fichiers `full-logo-*`)
+  et `<Logo variant="mark">` (icône seule, fichiers `secondary-logo-*`).
 - **Polices :** converties en `.woff2` dès maintenant (conforme au spec).
   Fraunces et Onest sont servies via leur fichier **variable** (1 fichier
   couvre tous les poids 100–900) plutôt qu'un fichier statique par poids —

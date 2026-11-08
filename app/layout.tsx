@@ -1,4 +1,6 @@
 import type { Metadata, Viewport } from "next";
+import { ToastProvider } from "@/components/ui/Toast";
+import { SoonFromQuery } from "@/components/ui/SoonFromQuery";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -24,7 +26,12 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
-      <body>{children}</body>
+      <body>
+        <ToastProvider>
+          {children}
+          <SoonFromQuery />
+        </ToastProvider>
+      </body>
     </html>
   );
 }

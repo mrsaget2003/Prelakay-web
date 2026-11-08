@@ -1,0 +1,49 @@
+Copyright (c) 2026 Prélakay LLC. Tous droits réservés. / All rights reserved.
+
+FRANÇAIS
+
+Ce dépôt et l'ensemble de son contenu (code source, code compilé, documentation,
+spécifications, prototypes, maquettes, logos, wordmark, polices fournies, images,
+textes et données) sont la propriété exclusive de Prélakay LLC.
+
+Ce logiciel n'est PAS un logiciel libre ni open source. Aucune licence n'est
+accordée, expressément ou implicitement. Sans l'autorisation écrite préalable
+de Prélakay LLC, il est interdit de :
+  - copier, reproduire ou distribuer tout ou partie de ce contenu ;
+  - le modifier, l'adapter, le traduire ou en créer des œuvres dérivées ;
+  - le publier, le vendre, le louer, le sous-licencier ou le mettre à disposition
+    d'un tiers, y compris sous forme de service en ligne ;
+  - le désassembler, le décompiler ou en extraire le code source ;
+  - utiliser les marques, noms, logos et éléments d'identité « Prélakay »,
+    notamment pour signer un autre produit ou service.
+
+L'accès à ce dépôt est réservé aux personnes autorisées par Prélakay LLC, pour
+les seuls besoins du développement de Prélakay, et ne leur confère aucun droit
+de propriété ni d'usage au-delà de ces besoins.
+
+Les composants de tiers (bibliothèques npm, Font Awesome Free, polices Fraunces
+et Onest, etc.) restent soumis à leurs propres licences, indiquées dans leurs
+paquets respectifs.
+
+CE CONTENU EST FOURNI « EN L'ÉTAT », SANS GARANTIE D'AUCUNE SORTE. EN AUCUN CAS
+PRÉLAKAY LLC NE POURRA ÊTRE TENUE RESPONSABLE D'UN DOMMAGE RÉSULTANT DE SON
+UTILISATION NON AUTORISÉE.
+
+ENGLISH
+
+This repository and all of its contents (source code, compiled code,
+documentation, specifications, prototypes, mock-ups, logos, wordmark, bundled
+fonts, images, text and data) are the exclusive property of Prélakay LLC.
+
+This software is NOT free or open-source software. No license is granted,
+express or implied. Without the prior written permission of Prélakay LLC, you
+may not copy, reproduce, distribute, modify, adapt, translate, create derivative
+works from, publish, sell, rent, sublicense, make available (including as an
+online service), disassemble, decompile or reverse-engineer any part of it, nor
+use the "Prélakay" names, trademarks, logos or brand elements.
+
+Third-party components remain subject to their own licenses.
+
+THE CONTENT IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND.
+
+Contact : Prélakay LLC — prelakay.com

@@ -1,0 +1,51 @@
+.rc {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: 44px;
+  cursor: pointer;
+  user-select: none;
+}
+.rc input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+.box {
+  width: 20px;
+  height: 20px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-neutral-500);
+  transition: background var(--dur) var(--ease);
+}
+.rc input:checked + .box {
+  background: var(--color-black);
+  border-color: var(--color-black);
+}
+.rc input:checked + .box::after {
+  content: "";
+  width: 9px;
+  height: 5px;
+  border: 2px solid var(--color-white);
+  border-top: 0;
+  border-right: 0;
+  transform: rotate(-45deg) translate(1px, -1px);
+}
+.rc input:focus-visible + .box {
+  outline: var(--focus-ring-width) solid var(--focus-ring-color);
+  outline-offset: var(--focus-ring-offset);
+}
+.sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}

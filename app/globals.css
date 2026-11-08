@@ -79,6 +79,40 @@
   --font-wordmark: "Surgena", sans-serif;
   --font-heading: "Fraunces", serif;
   --font-body: "Onest", sans-serif;
+
+  /* --- Mise en page et mouvement (prototype, 03-design §9.1) --- */
+  --max: 1240px; /* conteneur desktop */
+  --cols: 5; /* grille produits ≥ 1024 px */
+  --margin: 24px;
+  --gut: 16px;
+  --hdr: 72px;
+  --tabbar: 58px;
+  --dur: 180ms;
+  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+  /* 🟡 écarts à valider (plan §1.2 n° 1-2) : présents dans le prototype, absents du design system */
+  --radius-pill: 999px; /* pastilles, onglets, toast */
+  --shadow-pop: 0 12px 32px rgba(11, 12, 16, 0.16); /* menus déroulants, feuilles, toast */
+}
+
+@media (max-width: 1023px) {
+  :root {
+    --cols: 3;
+    --margin: 16px;
+    --gut: 10px;
+  }
+}
+@media (max-width: 767px) {
+  :root {
+    --cols: 2;
+    --margin: 12px;
+    --gut: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --dur: 0ms;
+  }
 }
 
 /* ==========================================================================

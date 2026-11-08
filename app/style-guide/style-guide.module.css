@@ -1,0 +1,195 @@
+.page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: var(--space-6) var(--space-4) var(--space-8);
+}
+.head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-7);
+}
+.section {
+  margin-bottom: var(--space-7);
+}
+.section > h2 {
+  margin-bottom: var(--space-4);
+}
+.muted {
+  color: var(--color-neutral-700);
+  margin-bottom: var(--space-3);
+  max-width: 70ch;
+}
+.cap {
+  font-size: 12px;
+  line-height: 16px;
+  color: var(--color-neutral-700);
+}
+.label {
+  font-size: 13px;
+  line-height: 18px;
+  font-weight: 500;
+}
+.bodyL {
+  font-size: 16px;
+  line-height: 24px;
+}
+.display {
+  font-family: var(--font-heading);
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 600;
+}
+@media (min-width: 1024px) {
+  .display {
+    font-size: 40px;
+    line-height: 48px;
+  }
+}
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+.stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+.grid2 {
+  display: grid;
+  gap: var(--space-5);
+  margin: var(--space-5) 0;
+}
+@media (min-width: 768px) {
+  .grid2 {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Logos sur leurs fonds autorisés */
+.logos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-4);
+}
+.logoBox {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  min-height: 140px;
+  padding: var(--space-5);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--color-neutral-300);
+}
+.logoBox figcaption {
+  font-size: 12px;
+  line-height: 16px;
+}
+.logoBox[data-bg="white"] {
+  background: var(--color-white);
+}
+.logoBox[data-bg="lagon"] {
+  background: var(--color-lagon-500);
+  color: var(--color-white);
+}
+.logoBox[data-bg="black"] {
+  background: var(--color-black);
+  color: var(--color-white);
+}
+.logoBox[data-bg="dark"] {
+  background: var(--color-lagon-900);
+  color: var(--color-white);
+}
+
+.swatches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  gap: var(--space-4);
+}
+.swatch {
+  height: 56px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-neutral-300);
+  margin-bottom: var(--space-1);
+}
+.spaceItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+}
+.spaceBox {
+  background: var(--color-lagon-500);
+  border-radius: 2px;
+}
+.radius {
+  width: 96px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--color-lagon-100);
+  font-size: 12px;
+}
+
+/* Icônes */
+.iconDemo {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-lagon-500);
+  font-size: 13px;
+}
+.iconGrid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(104px, 1fr));
+  gap: var(--space-2);
+}
+.iconGrid li {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: var(--space-3) var(--space-1);
+  border-radius: var(--radius-sm);
+  background: var(--color-neutral-100);
+  color: var(--color-neutral-900);
+  min-width: 0;
+}
+.iconGrid li span {
+  font-size: 10px;
+  line-height: 14px;
+  color: var(--color-neutral-700);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Démos « À venir » */
+.menuRow,
+.option {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: 44px;
+  min-width: 240px;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-neutral-300);
+  border-radius: var(--radius-sm);
+  background: var(--color-white);
+  font: inherit;
+  cursor: pointer;
+}
+.option[aria-disabled="true"] {
+  color: var(--color-neutral-500);
+  background: var(--color-neutral-100);
+}

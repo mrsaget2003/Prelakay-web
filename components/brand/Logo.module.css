@@ -1,0 +1,11 @@
+/* Zone tactile de 44 px minimum autour du logo cliquable (design-prelakay §7). */
+.link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  flex: none;
+  border-radius: var(--radius-sm);
+}
+.link img {
+  display: block;
+}

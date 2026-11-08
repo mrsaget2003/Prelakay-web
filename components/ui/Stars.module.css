@@ -1,0 +1,9 @@
+.stars {
+  display: inline-flex;
+  gap: 2px;
+  color: var(--color-black);
+  font-size: 12px;
+}
+.empty {
+  color: var(--color-neutral-500);
+}

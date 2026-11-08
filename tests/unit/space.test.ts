@@ -49,6 +49,13 @@ describe("spaceRoute", () => {
     expect(spaceRoute("all", "/seller")).toEqual({ action: "next" });
   });
 
+  it("un point dans l'adresse ne contourne pas le cloisonnement (ex. @username)", () => {
+    expect(spaceRoute("acheteur", "/admin/users/jean.pierre")).toEqual({ action: "notFound" });
+    expect(spaceRoute("acheteur", "/seller/products/v1.2")).toEqual({ action: "notFound" });
+    expect(spaceRoute("admin", "/p/robe.lin")).toEqual({ action: "notFound" });
+    expect(spaceRoute("vendeur", "/store/boutik.lakay")).toEqual({ action: "notFound" });
+  });
+
   it("les fichiers statiques, l'API et la page hors ligne passent toujours", () => {
     for (const p of ["/logo/_simple/full-logo-white.svg", "/fonts/_woff2/Onest-Variable.woff2", "/manifest.json", "/sw.js", "/api/release-check/coupons", "/~offline", "/_next/static/x.js"])
       expect(spaceRoute("admin", p), p).toEqual({ action: "next" });

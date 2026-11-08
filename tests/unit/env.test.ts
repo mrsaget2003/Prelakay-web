@@ -11,6 +11,12 @@ describe("assertDataSource", () => {
     expect(() => assertDataSource({ PRELAKAY_ENV: "production" })).toThrow(/DATA_SOURCE/);
   });
 
+  it("un serveur de production doit déclarer PRELAKAY_ENV (pas de démo par oubli)", () => {
+    expect(() => assertDataSource({ NODE_ENV: "production" })).toThrow(/PRELAKAY_ENV/);
+    expect(assertDataSource({ NODE_ENV: "production", PRELAKAY_ENV: "demo" })).toBe("mock");
+    expect(assertDataSource({ NODE_ENV: "production", PRELAKAY_ENV: "production", DATA_SOURCE: "supabase" })).toBe("supabase");
+  });
+
   it("utilise les données de démo par défaut hors production", () => {
     expect(assertDataSource({})).toBe("mock");
     expect(assertDataSource({ PRELAKAY_ENV: "demo" })).toBe("mock");

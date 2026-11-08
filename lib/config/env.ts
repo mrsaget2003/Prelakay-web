@@ -7,12 +7,17 @@
 export type PrelakayEnv = "development" | "demo" | "production";
 export type DataSource = "mock" | "supabase";
 
-type EnvLike = { readonly [key: string]: string | undefined; PRELAKAY_ENV?: string; DATA_SOURCE?: string };
+type EnvLike = { readonly [key: string]: string | undefined; NODE_ENV?: string; PRELAKAY_ENV?: string; DATA_SOURCE?: string };
 
 const ENVS: readonly PrelakayEnv[] = ["development", "demo", "production"];
 const SOURCES: readonly DataSource[] = ["mock", "supabase"];
 
 export function prelakayEnv(env: EnvLike): PrelakayEnv {
+  // Un serveur de production (next start, Vercel, Netlify) ne retombe jamais sur
+  // « development » par oubli : il doit dire s'il est une démo ou la production.
+  if (!env.PRELAKAY_ENV && env.NODE_ENV === "production") {
+    throw new Error("PRELAKAY_ENV doit être défini sur un serveur de production (demo ou production).");
+  }
   const v = env.PRELAKAY_ENV || "development";
   if (!(ENVS as readonly string[]).includes(v)) {
     throw new Error(`PRELAKAY_ENV inconnu : « ${v} » (attendu : ${ENVS.join(", ")}).`);

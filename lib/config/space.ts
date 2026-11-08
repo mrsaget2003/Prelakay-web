@@ -21,12 +21,18 @@ function under(pathname: string, prefix: string): boolean {
   return pathname === prefix || pathname.startsWith(prefix + "/");
 }
 
-/** Toujours servis, quel que soit l'espace : fichiers, API, page hors ligne, outils de démo. */
+/** Dossiers de public/ : servis dans tous les espaces. */
+const PUBLIC_DIRS = ["/logo", "/fonts", "/icons", "/images"];
+
+/** Toujours servis, quel que soit l'espace : fichiers, API, page hors ligne, outils de démo.
+ *  Un point dans l'adresse ne suffit pas (« /admin/users/jean.pierre » n'est pas un fichier) :
+ *  seuls les dossiers de public/ et les fichiers de premier niveau (manifest.json, sw.js…) passent. */
 function isShared(pathname: string): boolean {
   if (pathname.startsWith("/_next/") || pathname.startsWith("/api/")) return true;
   if (["/~offline", "/demo", "/style-guide"].some((p) => under(pathname, p))) return true;
-  const last = pathname.split("/").pop() ?? "";
-  return last.includes("."); // fichier statique (svg, woff2, json, js, ico…)
+  if (PUBLIC_DIRS.some((p) => pathname.startsWith(p + "/"))) return true;
+  const segments = pathname.split("/").filter(Boolean);
+  return segments.length === 1 && segments[0].includes(".");
 }
 
 const NEXT: SpaceDecision = { action: "next" };

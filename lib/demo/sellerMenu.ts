@@ -22,3 +22,10 @@ export const SELLER_TABS: [string, string, string, string][] = [
   ["/seller/messages", "messages", "fa-solid fa-comment-dots", "Messages"],
   ["/seller/menu", "more", "fa-solid fa-bars", "Plus"],
 ];
+
+/** Notifications de démonstration affichées sous celles du store (sNotifs du prototype). */
+export const SELLER_NOTIF_DEMO = [
+  { i: "fa-solid fa-box-open", t: "Nouvelle commande", p: "Une commande attend votre préparation.", to: "/seller/orders" },
+  { i: "fa-regular fa-circle-question", t: "Nouvelle question", p: "Un acheteur a posé une question sur un produit.", to: "/seller/questions" },
+  { i: "fa-solid fa-wallet", t: "Paiement libéré", p: "Les ventes retirées il y a 3 jours sont disponibles.", to: "/seller/finance" },
+];

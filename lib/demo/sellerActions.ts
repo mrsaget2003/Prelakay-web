@@ -428,3 +428,10 @@ export function sellerUnread(s: DemoState): number {
 export function markSellerNotifsRead() {
   demo.update((s) => s.seller.notif.forEach((n) => (n.un = false)));
 }
+/** Ouvre une notification du store : elle passe en lu (sl-nopen du prototype). */
+export function readSellerNotif(i: number) {
+  demo.update((s) => {
+    const n = s.seller.notif[i];
+    if (n) n.un = false;
+  });
+}

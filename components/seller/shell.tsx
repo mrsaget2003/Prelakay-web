@@ -108,7 +108,8 @@ function Tabs({ r }: { r: SRoute }) {
   return (
     <nav className="tabbar sel" aria-label="Navigation vendeur">
       {tabs.map(([h, k, icon, label, n]) => {
-        const on = k === r.group || (k === "more" && !["home", "orders", "products", "messages"].includes(r.group)) || (k === "home" && r.sec === "menu" && false);
+        // « Plus » est actif sur le menu et sur les sections hors onglets (le prototype allumait « Accueil » sur le menu).
+        const on = r.sec === "menu" ? k === "more" : k === r.group || (k === "more" && !["home", "orders", "products", "messages"].includes(r.group));
         return (
           <Link key={k} href={h} className={on ? "on" : ""} aria-current={on ? "page" : undefined}>
             <span className="ti">

@@ -32,6 +32,12 @@ Ordre de construction : `docs/06-plan.md` (landing v1 « ads » → PWA complet,
 - Espaces : `APP_SPACE` (acheteur, vendeur, admin, all) ; données de démo refusées au démarrage avec `PRELAKAY_ENV=production`.
 - Composants de base (bouton, champ, carte, étiquette, prix, étoiles, état vide, modale, feuille du bas, onglets, case ronde, quantité) et style guide `/style-guide`.
 
+#### Phase B — Projet 1 Acheteur, prototype abouti (9 nov. 2026, branche `feat/phase-b-acheteur`)
+- Toutes les pages et sous-pages acheteur du prototype en Next.js (43 adresses testées) : accueil, Discovery et recherche (filtres, tri, quota « Nouveaux sur Prélakay »), carte des stores, catégories, fiche produit (caractéristiques, stock par combinaison, panneau d'achat, ancres, avis, questions), page store (6 onglets + Promos « À venir »), panier, paiement, confirmation, panier partagé, compte, commandes et carte de retrait, wallet, Coins, wishlist, Enregistrer sa Commerce (KYC), messages, paramètres (6 sections), aide et articles, vus récemment, litiges, mes avis, connexion, inscription, intro.
+- Layout identique au prototype : CSS du prototype repris tel quel, même balisage ; vrai logo complet ; photos Unsplash (vérifiées, sans marque visible) posées sur les tuiles Font Awesome.
+- Données de démonstration identiques au prototype (vérifiées par test) ; état de démo dans le navigateur.
+- Paiement idempotent (un double clic ne paie qu'une fois) ; choix épuisé refusé au paiement ; « escrow » jamais affiché à l'acheteur.
+
 ---
 
 ## V1 · Pilote Les Cayes · *à venir*

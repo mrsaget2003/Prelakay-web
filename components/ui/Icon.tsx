@@ -1,6 +1,8 @@
 import { ICONS, type IconName } from "@/lib/icons/registry";
 import styles from "./Icon.module.css";
 
+// Rend un élément <i> (classe fa-ic) : les règles du prototype (`.ph i`, `.btn i`,
+// `i[class*="fa-"]`…) s'appliquent sans changement.
 // Seul point d'entrée des icônes dans l'UI : jamais de classe `fa-…` en dur
 // (passage à Iconly Pro mécanique, design-prelakay §4).
 // Le SVG est dessiné directement depuis la définition Font Awesome :
@@ -29,8 +31,8 @@ export function Icon({ name, active = false, variant, size, label, className }: 
   const d = Array.isArray(path) ? path.join(" ") : path;
   const dim = size ?? "1em";
   return (
-    <span
-      className={[styles.icon, active ? styles.active : "", className ?? ""].filter(Boolean).join(" ")}
+    <i
+      className={["fa-ic", `fa-${name}`, styles.icon, active ? styles.active : "", className ?? ""].filter(Boolean).join(" ")}
       data-active={active ? "true" : undefined}
     >
       <svg
@@ -47,6 +49,6 @@ export function Icon({ name, active = false, variant, size, label, className }: 
       >
         <path d={d} />
       </svg>
-    </span>
+    </i>
   );
 }

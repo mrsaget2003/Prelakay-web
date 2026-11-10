@@ -14,5 +14,5 @@ export function Tag({ tone, children, className }: { tone: TagTone; children: Re
 
 /** Pastille « À venir » posée à côté d'une entrée de menu d'une version future. */
 export function SoonBadge() {
-  return <span className={styles.soon}>À venir</span>;
+  return <span className="soon-t">À venir</span>;
 }

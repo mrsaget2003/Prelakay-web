@@ -2,6 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { ToastProvider } from "@/components/ui/Toast";
 import { SoonFromQuery } from "@/components/ui/SoonFromQuery";
 import "./globals.css";
+import "./proto.css";
+import "./proto-next.css";
 
 export const metadata: Metadata = {
   title: "Prélakay",

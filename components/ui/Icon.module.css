@@ -1,10 +1,15 @@
+/* Même boîte qu'une icône de la police Font Awesome (inline-block, line-height 1) :
+   les mises en page du prototype (alignements en flex, tailles via font-size) restent identiques. */
 .icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   flex: none;
-  line-height: 0;
+  line-height: 1;
+  font-style: normal;
+}
+.icon > svg {
+  display: inline-block;
   vertical-align: -0.125em;
+  overflow: visible;
 }
 
 /* Duotone simulé (03-design §5.1) : pastille de la même couleur à 20 %. */

@@ -30,12 +30,14 @@ export function Reviews({ rating, reviews, product, full = false }: { rating: nu
           <div className="stars">
             <Stars r={rating} />
           </div>
-          <span className="cap">{reviews} avis vérifiés</span>
+          <span className="cap nw">{reviews} avis vérifiés</span>
         </div>
         <div className="rv-dist">
           {dist.map((d, i) => (
             <div key={i}>
-              <span>{5 - i} étoiles</span>
+              <span className="nw">
+                {5 - i} étoile{5 - i > 1 ? "s" : ""}
+              </span>
               <i>
                 <em style={{ width: `${Math.round(d * 100)}%` }} />
               </i>

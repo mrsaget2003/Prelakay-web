@@ -25,29 +25,29 @@ export const ACC: ([string, string, string, string] | ["-"])[] = [
   ["orders", "fa-solid fa-receipt", "Commandes", "/orders"],
   ["wallet", "fa-solid fa-wallet", "Wallet", "/wallet"],
   ["disputes", "fa-solid fa-rotate-left", "Retours et litiges", "/disputes"],
-  ["myreviews", "fa-regular fa-star", "Mes avis", "/myreviews"],
+  ["myreviews", "fa-solid fa-star", "Mes avis", "/myreviews"],
   ["settings", "fa-solid fa-gear", "Paramètres", "/settings"],
-  ["notifications", "fa-regular fa-bell", "Centre de messages", "/notifications"],
+  ["notifications", "fa-solid fa-bell", "Centre de messages", "/notifications"],
   ["-"],
   ["coins", "fa-solid fa-coins", "Coins", "/coins"],
-  ["wishlist", "fa-regular fa-heart", "Wishlist", "/wishlist"],
+  ["wishlist", "fa-solid fa-heart", "Wishlist", "/wishlist"],
   ["viewed", "fa-solid fa-clock-rotate-left", "Vus récemment", "/viewed"],
   ["invite", "fa-solid fa-user-plus", "Inviter des amis", "soon:referral"],
   ["-"],
-  ["help", "fa-regular fa-circle-question", "Centre d'aide", "/help"],
-  ["sell", "fa-solid fa-store", "Enregistrer sa Commerce", "/sell"],
+  ["help", "fa-solid fa-circle-question", "Centre d'aide", "/help"],
+  ["sell", "fa-solid fa-store", "Enregistrer son commerce", "/sell"],
 ];
 
 /** Raccourcis « Services » du compte mobile. */
 export const SERVICES: [string, string, string][] = [
-  ["/notifications", "fa-regular fa-bell", "Messages"],
-  ["/myreviews", "fa-regular fa-star", "Mes avis"],
-  ["/help", "fa-regular fa-circle-question", "Aide"],
+  ["/notifications", "fa-solid fa-bell", "Messages"],
+  ["/myreviews", "fa-solid fa-star", "Mes avis"],
+  ["/help", "fa-solid fa-circle-question", "Aide"],
   ["/sell", "fa-solid fa-store", "Vendre"],
   ["soon:referral", "fa-solid fa-user-plus", "Inviter des amis"],
   ["soon:prelakay_plus", "fa-solid fa-crown", "Prélakay+"],
   ["/settings", "fa-solid fa-gear", "Paramètres"],
-  ["/map", "fa-regular fa-map", "Carte des stores"],
+  ["/map", "fa-solid fa-map", "Carte des stores"],
 ];
 
 /** Statuts de commande de l'aperçu du compte. */
@@ -99,16 +99,16 @@ export const FAQ: Record<string, string> = {
   "Où va mon remboursement ?": "Toujours sur votre wallet Prélakay, jamais en espèces.",
   "Comment gagner des Coins ?": "50 Coins par commande retirée, 25 par avis vérifié. Le bonus de bienvenue et les règles d'utilisation sont à confirmer.",
   "Comment changer mon @username ?": "Mon compte → Paramètres → Informations personnelles.",
-  "Comment devenir vendeur ?": "Mon compte → Enregistrer sa Commerce. Les admins vérifient votre identité (KYC) avant l'ouverture du store.",
+  "Comment devenir vendeur ?": "Mon compte → Enregistrer son commerce. Les admins vérifient votre identité (KYC) avant l'ouverture du store.",
 };
 /** Toutes les questions d'aide, dans l'ordre : l'index sert d'identifiant d'article (#/help/:n). */
 export const HELP_ALL: [string, string][] = HELP.flatMap(([, cat, qs]) => qs.map((q): [string, string] => [cat, q]));
 
 /** Paramètres (SETS) : [section, icône, titre]. */
 export const SETS: [string, string, string][] = [
-  ["profil", "fa-regular fa-user", "Informations personnelles"],
+  ["profil", "fa-solid fa-user", "Informations personnelles"],
   ["secu", "fa-solid fa-lock", "Sécurité et connexion"],
-  ["notifs", "fa-regular fa-bell", "Notifications"],
+  ["notifs", "fa-solid fa-bell", "Notifications"],
   ["lang", "fa-solid fa-globe", "Langue et devise"],
   ["ville", "fa-solid fa-location-dot", "Ville de retrait"],
   ["privacy", "fa-solid fa-shield", "Confidentialité"],

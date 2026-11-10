@@ -7,6 +7,7 @@ import { COINS_EARN, COINS_HISTORY } from "@/lib/data/mock/content";
 import { useDemo } from "@/lib/demo/store";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { AccLayout } from "@/components/proto/account";
+import { StatHero } from "@/components/proto/blocks";
 import { DataIcon, NeedLogin } from "@/components/proto/ui";
 
 export default function CoinsPage() {
@@ -14,15 +15,7 @@ export default function CoinsPage() {
   if (!s.logged) return <NeedLogin what="Vos Coins" next="/coins" />;
   return (
     <AccLayout k="coins" title="Coins">
-      <div className="bal coinbal">
-        <small>Vos Coins</small>
-        <div className="amt tnum">{s.coins}</div>
-        <div className="row">
-          <span>
-            Utilisation des Coins : <b>règles à confirmer</b>
-          </span>
-        </div>
-      </div>
+      <StatHero variant="light" icon="coins" label="Vos Coins" value={s.coins} sub={<>Utilisation des Coins : <b>règles à confirmer</b></>} />
       <div className="panel">
         <h3>Comment gagner des Coins</h3>
         {COINS_EARN.map(([icon, label, v]) => (

@@ -17,12 +17,13 @@ describe("formatHTG", () => {
 });
 
 describe("formatDistance", () => {
+  // C.4 — espace insécable : l'unité ne se retrouve jamais seule à la ligne
   it("en mètres sous 1 km", () => {
-    expect(formatDistance(0.6)).toBe("600 m");
+    expect(formatDistance(0.6)).toBe(`600${NB}m`);
   });
   it("en km avec virgule au-delà", () => {
-    expect(formatDistance(1.2)).toBe("1,2 km");
-    expect(formatDistance(3)).toBe("3,0 km");
+    expect(formatDistance(1.2)).toBe(`1,2${NB}km`);
+    expect(formatDistance(3)).toBe(`3,0${NB}km`);
   });
 });
 

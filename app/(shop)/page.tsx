@@ -37,7 +37,7 @@ function Hero() {
               <div className="tx">
                 <small>{s.k}</small>
                 <h2>{s.h}</h2>
-                <Link className={`btn ${s.c === "s3" ? "btn-dark" : "btn-p"}`} href={s.href}>
+                <Link className="btn btn-p" href={s.href}>
                   {s.b}
                   <Fi s="arrow-right" />
                 </Link>

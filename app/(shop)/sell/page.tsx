@@ -1,6 +1,6 @@
 "use client";
 
-// Enregistrer sa Commerce — pageSell du prototype (02-app-flow §2.2) : formulaire KYC,
+// Enregistrer son commerce — pageSell du prototype (02-app-flow §2.2) : formulaire KYC,
 // puis suivi Reçu → En vérification → Approuvé / Rejeté (motif), checklist « Prêt à vendre ».
 
 import Link from "next/link";
@@ -88,7 +88,7 @@ function KycForm() {
 
 export default function SellPage() {
   const s = useDemo();
-  if (!s.logged) return <NeedLogin what="Enregistrer sa Commerce" next="/sell" />;
+  if (!s.logged) return <NeedLogin what="Enregistrer son commerce" next="/sell" />;
   let inner;
   if (s.kyc === "rej")
     inner = (
@@ -160,7 +160,7 @@ export default function SellPage() {
     );
   } else inner = <KycForm />;
   return (
-    <AccLayout k="sell" title="Enregistrer sa Commerce">
+    <AccLayout k="sell" title="Enregistrer son commerce">
       {inner}
     </AccLayout>
   );

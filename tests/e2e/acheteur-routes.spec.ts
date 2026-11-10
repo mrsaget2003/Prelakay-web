@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 const ROUTES = [
   "/", "/discover", "/discover?cat=mode", "/search?q=caf%C3%A9", "/map", "/categories", "/categories?c=tech",
   "/p/mode-0", "/p/mode-0/reviews", "/store/bel-soley", "/store/bel-soley/products", "/store/bel-soley/top",
-  "/store/bel-soley/new", "/store/bel-soley/reviews", "/store/bel-soley/about", "/cart", "/checkout", "/shared/lili_cayes",
+  "/store/bel-soley/new", "/store/bel-soley/reviews", "/store/bel-soley/about", "/store/bel-soley/promos", "/cart", "/checkout", "/shared/lili_cayes",
   "/orders", "/orders/PK-1042", "/orders/PK-1021", "/wallet", "/wallet?tab=hist", "/coins", "/wishlist", "/account",
   "/sell", "/notifications", "/settings", "/settings/profil", "/settings/secu", "/settings/notifs", "/settings/lang",
   "/settings/ville", "/settings/privacy", "/viewed", "/disputes", "/myreviews", "/help", "/help/0", "/help?q=wallet",

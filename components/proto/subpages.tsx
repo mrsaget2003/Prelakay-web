@@ -83,7 +83,7 @@ export function Settings({ sec }: { sec?: string }) {
           ))}
           <ComingSoon feature="dark_mode">
             <button className="lrow">
-              <Fi r="moon" />
+              <Fi s="moon" />
               Mode sombre
               <SoonBadge />
             </button>

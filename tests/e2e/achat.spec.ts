@@ -7,7 +7,7 @@ test("achat de bout en bout (démo)", async ({ page, isMobile }, info) => {
   await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
   await page.goto("/p/tech-1");
   await expect(page.getByRole("heading", { level: 1, name: "Chargeur rapide 20 W" })).toBeVisible();
-  const add = info.project.name === "mobile-360" ? page.locator("#mbuy").getByRole("button", { name: "Au panier" }) : page.locator(".buy").getByRole("button", { name: "Ajouter au panier" });
+  const add = info.project.name.startsWith("mobile") || info.project.name.startsWith("tablet") ? page.locator("#mbuy").getByRole("button", { name: "Au panier" }) : page.locator(".buy").getByRole("button", { name: "Ajouter au panier" });
   await add.click();
   await expect(page.getByRole("status")).toContainText("Ajouté au panier");
 
@@ -16,9 +16,10 @@ test("achat de bout en bout (démo)", async ({ page, isMobile }, info) => {
   await expect(page.getByText("Panier (1)").locator("visible=true").first()).toBeVisible();
   await page.goto("/checkout");
   await expect(page.getByText("Retrait chez Tech Sud")).toBeVisible();
-  const pay = info.project.name === "mobile-360" ? page.locator("#mbar").getByRole("button", { name: "Payer" }) : page.locator("aside.sum").getByRole("button", { name: /^Payer/ });
+  const pay = info.project.name.startsWith("mobile") || info.project.name.startsWith("tablet") ? page.locator("#mbar").getByRole("button", { name: "Payer" }) : page.locator("aside.sum").getByRole("button", { name: /^Payer/ });
   await pay.click();
-  await expect(page).toHaveURL(/\/done\/PK-1043$/);
+  // première compilation de /done/[ids] en dev : délai plus long sous charge parallèle
+  await expect(page).toHaveURL(/\/done\/PK-1043$/, { timeout: 30_000 });
   await expect(page.getByRole("heading", { name: "Commande reçue" })).toBeVisible();
   void isMobile;
 });

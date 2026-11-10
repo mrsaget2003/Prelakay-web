@@ -12,6 +12,7 @@ import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { useProtoRoute } from "@/components/proto/shell";
 import { AccLayout } from "@/components/proto/account";
+import { PageTabs, StatHero } from "@/components/proto/blocks";
 import { DataIcon, Fi, NeedLogin } from "@/components/proto/ui";
 
 export default function WalletPage() {
@@ -100,22 +101,13 @@ export default function WalletPage() {
 
   return (
     <AccLayout k="wallet" title="Wallet">
-      <div className="bal">
-        <small>Solde disponible</small>
-        <div className="amt tnum">{htg(s.wallet)}</div>
-        <div className="row">
-          <span>
-            Coins : <b>{s.coins}</b>
-          </span>
-        </div>
-      </div>
-      <div className="pills">
-        {[["topup", "Recharger"], ["proche", "Payer pour un proche"], ["hist", "Historique"]].map(([v, l]) => (
-          <button key={v} className={`chip ${tab === v ? "on" : ""}`} onClick={() => setTab(v)}>
-            {l}
-          </button>
-        ))}
-      </div>
+      <StatHero icon="wallet" label="Solde disponible" value={htg(s.wallet)} sub={<>Coins : <b>{s.coins}</b></>} />
+      <PageTabs
+        label="Wallet"
+        value={tab}
+        onChange={setTab}
+        tabs={[{ id: "topup", label: "Recharger" }, { id: "proche", label: "Payer pour un proche" }, { id: "hist", label: "Historique" }]}
+      />
       {body}
     </AccLayout>
   );

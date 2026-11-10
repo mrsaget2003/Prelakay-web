@@ -2,16 +2,17 @@
 
 // Page store — pageStore du prototype (03-design §9.6) : bandeau, recherche dans le
 // store, onglets Accueil · Produits · Meilleures ventes · Nouveautés · Avis · À propos
-// · Promos (« À venir »), tri, mini-carte, politique de retour, signalement.
+// · Promos (« À venir » : invite à suivre le store), tri, mini-carte, politique de retour,
+// signalement ; bouton « Suivre » (D, 02-app-flow §5.1).
 
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { P, STORES, storeBy, catBy, type Product } from "@/lib/data/mock/seed";
+import { P, STORES, storeBy, catBy, followersOf, type Product, type Store } from "@/lib/data/mock/seed";
+import { useFollowStore } from "@/lib/hooks/useFollowStore";
 import { sortList } from "@/lib/proto/sort";
 import { storeImage } from "@/lib/data/mock/images";
 import { formatDistance as km, formatCount as k } from "@/lib/format";
-import { ComingSoon } from "@/components/ui/ComingSoon";
 import { SoonBadge } from "@/components/ui/Tag";
 import { useToast } from "@/components/ui/Toast";
 import { ProductCard } from "@/components/proto/cards";
@@ -50,7 +51,7 @@ function SortBar({ sort, base, count }: { sort: string; base: string; count?: nu
 const grid = (L: Product[]) => (
   <div className="grid">
     {L.map((p) => (
-      <ProductCard key={p.id} p={p} />
+      <ProductCard key={p.id} p={p} showStore={false} />
     ))}
   </div>
 );
@@ -119,7 +120,7 @@ export default function StorePage() {
           <SecHead title="Meilleures ventes" href={`${base}top`} />
           <div className="rail">
             {top.map((p) => (
-              <ProductCard key={p.id} p={p} />
+              <ProductCard key={p.id} p={p} showStore={false} />
             ))}
           </div>
         </section>
@@ -209,6 +210,12 @@ export default function StorePage() {
         </div>
       </div>
     );
+  } else if (tab === "promos") {
+    body = (
+      <EmptyBox icon={<Fi s="tag" />} t="Les promos de ce store arrivent bientôt" p="Suivez ce store pour être averti de ses promos et nouveautés.">
+        <FollowButton s={s} />
+      </EmptyBox>
+    );
   } else return <Page404 />;
 
   return (
@@ -244,6 +251,7 @@ export default function StorePage() {
                 <span>
                   <b>{km(s.km)}</b>
                 </span>
+                <Followers s={s} />
               </div>
             </div>
             <div className="sh-a">
@@ -254,7 +262,8 @@ export default function StorePage() {
                 </button>
               </form>
               <div className="sh-btn">
-                <button className="btn btn-light btn-sm" onClick={route}>
+                <FollowButton s={s} />
+                <button className="btn btn-s btn-sm" onClick={route}>
                   <Fi s="diamond-turn-right" />
                   Itinéraire
                 </button>
@@ -270,18 +279,55 @@ export default function StorePage() {
       <nav className="snav">
         <div className="wrap">
           {STABS.map(([v, l]) => (
-            <Link key={v} className={tab === v && !q ? "on" : ""} href={base + v}>
+            <Link key={v} className={tab === v && !q ? "on" : ""} href={base + v} aria-current={tab === v && !q ? "page" : undefined}>
               {l}
             </Link>
           ))}
-          <ComingSoon feature="coupons">
-            <button>
-              Promos <SoonBadge />
-            </button>
-          </ComingSoon>
+          <Link className={tab === "promos" && !q ? "on" : ""} href={`${base}promos`} aria-current={tab === "promos" && !q ? "page" : undefined}>
+            Promos <SoonBadge />
+          </Link>
         </div>
       </nav>
       <div className="wrap sbody">{body}</div>
     </>
+  );
+}
+
+/** D.1 — « Suivre » : primaire avec icône ; suivi = variante claire « Abonné ✓ », « Ne plus suivre » au survol. */
+function FollowButton({ s }: { s: Store }) {
+  const { following, toggle } = useFollowStore(s.id);
+  const toast = useToast();
+  return (
+    <button
+      className={`btn btn-sm btn-follow ${following ? "btn-s on" : "btn-p"}`}
+      aria-pressed={following}
+      onClick={() => {
+        const on = toggle();
+        toast.show(on ? `Vous suivez ${s.n} : vous serez informé des nouveautés et promos.` : `Vous ne suivez plus ${s.n}.`, "success");
+      }}
+    >
+      {following ? (
+        <>
+          <span className="lbl-on">Abonné ✓</span>
+          <span className="lbl-hover">Ne plus suivre</span>
+        </>
+      ) : (
+        <>
+          <Fi s="user-plus" />
+          Suivre
+        </>
+      )}
+    </button>
+  );
+}
+
+/** D.2 — « X abonnés » dans les statistiques du hero (démo : base fixe + vous). */
+function Followers({ s }: { s: Store }) {
+  const { following } = useFollowStore(s.id);
+  const n = followersOf(s) + (following ? 1 : 0);
+  return (
+    <span>
+      <b>{k(n)}</b> abonné{n > 1 ? "s" : ""}
+    </span>
   );
 }

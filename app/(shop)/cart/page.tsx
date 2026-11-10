@@ -47,6 +47,11 @@ export default function CartPage() {
   if (!T.L.length)
     return (
       <div className="wrap">
+        <nav className="crumb">
+          <Link href="/">Accueil</Link>
+          <Fi s="chevron-right" />
+          <span>Panier</span>
+        </nav>
         <div className="panel cart-empty">
           <Fi s="cart-shopping" />
           <h2>Votre panier est vide</h2>
@@ -66,6 +71,11 @@ export default function CartPage() {
 
   return (
     <div className="wrap">
+      <nav className="crumb">
+        <Link href="/">Accueil</Link>
+        <Fi s="chevron-right" />
+        <span>Panier</span>
+      </nav>
       <div className="cartw">
         <div className="cart-l">
           <div className="panel cart-h">

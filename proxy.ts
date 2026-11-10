@@ -4,7 +4,8 @@ import { futureFeatureFor } from "@/lib/config/release";
 
 // 1. Espace du déploiement (plan §1.0) : chaque projet ne sert que ses routes.
 // 2. Versions (CHANGELOG règle 3) : une page d'une version future redirige vers
-//    l'Accueil avec ?soon=<fonctionnalité>, qui déclenche le toast « À venir ».
+//    l'Accueil avec ?soon=<fonctionnalité>, qui déclenche le toast « À venir » ;
+//    dans la console admin, vers son tableau de bord (on reste dans la console).
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -18,7 +19,7 @@ export function proxy(request: NextRequest) {
 
   const feature = futureFeatureFor(pathname);
   if (feature) {
-    const home = new URL("/", request.url);
+    const home = new URL(pathname.startsWith("/admin/") ? "/admin" : "/", request.url);
     home.searchParams.set("soon", feature);
     return NextResponse.redirect(home);
   }

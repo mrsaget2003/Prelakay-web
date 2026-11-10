@@ -6,7 +6,7 @@ import Link from "next/link";
 import { useDemo } from "@/lib/demo/store";
 import { sellerDisputes } from "@/lib/demo/sellerActions";
 import { SHead } from "@/components/seller/shell";
-import { DTag } from "@/components/seller/ui";
+import { DTag } from "@/components/proto/tags";
 import { EmptyBox, Fi } from "@/components/proto/ui";
 
 export default function Disputes() {

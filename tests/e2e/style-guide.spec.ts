@@ -27,8 +27,8 @@ test("style guide : logos, icônes, composants, « À venir », pas de débordem
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
-test("une page d'une version future revient à l'accueil avec « À venir »", async ({ page }) => {
+test("une page admin d'une version future revient au tableau de bord avec « À venir »", async ({ page }) => {
   await page.goto("/admin/events");
-  await expect(page).toHaveURL(/\/$/);
+  await expect(page).toHaveURL(/\/admin(\/login\?next=.*)?$/);
   await expect(page.getByRole("status")).toHaveText(/À venir/);
 });

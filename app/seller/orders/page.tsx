@@ -14,7 +14,7 @@ import type { SellerOrder } from "@/lib/demo/seller";
 import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { SHead } from "@/components/seller/shell";
-import { OTag } from "@/components/seller/ui";
+import { OTag } from "@/components/proto/tags";
 import { EmptyBox, Fi, Ph } from "@/components/proto/ui";
 
 const TABS: [string, string][] = [["all", "Toutes"], ["received", "À préparer"], ["prep", "En préparation"], ["ready", "Prêtes pour retrait"], ["done", "Retirées"], ["expired", "Non retirées"], ["cancelled", "Annulées"]];

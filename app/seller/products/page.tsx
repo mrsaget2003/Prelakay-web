@@ -15,7 +15,7 @@ import { walk, VZC } from "@/lib/charts/vz";
 import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { SHead, BUYER_URL } from "@/components/seller/shell";
-import { PTag } from "@/components/seller/ui";
+import { PTag } from "@/components/proto/tags";
 import { VzSpark } from "@/components/charts/vz";
 import { EmptyBox, Fi, Ph } from "@/components/proto/ui";
 

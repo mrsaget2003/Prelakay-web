@@ -12,7 +12,7 @@ import { openChat, orderById, resolveDispute, sellerDisputes } from "@/lib/demo/
 import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { SHead } from "@/components/seller/shell";
-import { DTag } from "@/components/seller/ui";
+import { DTag } from "@/components/proto/tags";
 import { Fi, Page404, Ph } from "@/components/proto/ui";
 
 export default function Dispute() {

@@ -6,7 +6,8 @@
 // Jamais utilisé en production (lib/config/env.ts).
 
 import { useSyncExternalStore } from "react";
-import { prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
+import { prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, setStoreOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
+import type { Banner } from "@/lib/data/mock/content";
 
 export type CartLine = { p: string; v: string; q: number; on: boolean };
 export type OrderStatus = "received" | "prep" | "ready" | "done" | "expired" | "cancelled";
@@ -47,6 +48,29 @@ export type SellerState = {
   form: ProductForm | null;
 };
 
+/** Console admin (objet AD du prototype) : décisions qui se répercutent chez l'acheteur et le vendeur. */
+export type AdminSettings = { escrow: string; escrowTrust: string; hold: string; commission: string; restock: string; coinsOrder: string; coinsReview: string; coinsWelcome: string; quota: string; disputeDays: string; storeReply: string };
+export type AdminMember = { e: string; n: string; role: "super" | "support" | "finance" | "marketing"; last: string; pending?: boolean };
+export type AdminState = {
+  /** Dossiers KYC de démonstration : statut et motif modifiés par l'admin. */
+  kyc: Record<string, { st: "recu" | "verif" | "ok" | "rej"; why?: string }>;
+  users: Record<string, { st: "active" | "banned"; why: string }>;
+  stores: Record<string, { trust?: boolean; suspended?: boolean; why?: string }>;
+  /** Litiges : décision de l'admin (par identifiant). */
+  dsp: Record<string, { st: "open" | "escalated" | "done"; decision?: string }>;
+  /** Signalements : décision de l'admin (par identifiant). */
+  reports: Record<string, { st: "open" | "done"; decision?: string }>;
+  /** Produits de démonstration envoyés en modération par d'autres stores (déjà ajoutés au catalogue). */
+  modSeeded: boolean;
+  banners: Banner[] | null;
+  sent: { t: string; to: string; ch: string; at: string }[];
+  cats: { id: string; n: string; i: string; sub: string[] }[] | null;
+  attrs: Record<string, string[]>;
+  team: AdminMember[] | null;
+  settings: AdminSettings;
+  audit: { who: string; role: string; a: string; t: string; at: string }[];
+};
+
 export type DemoState = {
   logged: boolean; user: string; name: string; city: string;
   wallet: number; coins: number;
@@ -63,6 +87,7 @@ export type DemoState = {
   /** Paiements déjà traités, par clé d'idempotence (Review Focus n° 5). */
   paid: Record<string, string[]>;
   seller: SellerState;
+  admin: AdminState;
 };
 
 const DEMO_ORDERS: Omit<Order, "total">[] = [
@@ -96,6 +121,14 @@ export function initialState(): DemoState {
       store: "boutik-lakay", policy: null, payMethod: null, payouts: [], stockO: {}, replies: {}, answers: {}, convs: {},
       sorders: {}, dsp: {}, products: [], pstatus: {}, extra: {}, notif: [], seq: 1, form: null,
     },
+    admin: {
+      kyc: {}, users: {}, stores: {}, dsp: {}, reports: {}, modSeeded: false, banners: null, sent: [], cats: null,
+      attrs: { mode: ["Couleur", "Taille"], tech: ["Couleur", "Stockage"], maison: ["Couleur", "Longueur", "Largeur"], beaute: ["Format"], alim: ["Poids"], enfants: ["Couleur"], sport: ["Couleur", "Taille"], auto: ["Couleur"] },
+      team: null,
+      // valeurs du prototype ; vides = [À CONFIRMER] (commission, restockage, Coins de bienvenue)
+      settings: { escrow: "3", escrowTrust: "24", hold: "3", commission: "", restock: "", coinsOrder: "50", coinsReview: "25", coinsWelcome: "", quota: "4", disputeDays: "3", storeReply: "48" },
+      audit: [],
+    },
   };
 }
 
@@ -107,6 +140,7 @@ function syncCatalog(s: DemoState) {
   const statuses: Record<string, string> = { ...sl.pstatus };
   for (const p of sl.products) statuses[p.id] = p.status;
   setCatalogOverlay(sl.products, statuses);
+  setStoreOverlay(s.admin.stores);
 }
 
 const KEY = "pk-demo-v1";
@@ -130,7 +164,8 @@ function ensureHydrated(): boolean {
     const raw = localStorage.getItem(KEY);
     if (raw) {
       const saved = JSON.parse(raw);
-      state = { ...initialState(), ...saved, seller: { ...initialState().seller, ...(saved.seller ?? {}) } };
+      const init = initialState();
+      state = { ...init, ...saved, seller: { ...init.seller, ...(saved.seller ?? {}) }, admin: { ...init.admin, ...(saved.admin ?? {}) } };
       syncCatalog(state);
       return true;
     }

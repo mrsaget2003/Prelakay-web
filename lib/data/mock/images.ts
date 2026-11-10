@@ -76,3 +76,13 @@ export function bannerImage(id: string, w = 600): string | undefined {
   const k = BANNER_PHOTOS[id];
   return k ? U(k, w) : undefined;
 }
+
+/** Toutes les photos hébergées utilisées (page Crédits — seul endroit où elles sont citées). */
+export function photoCredits(): { usage: string; key: string; url: string }[] {
+  const page = (id: string) => `https://images.unsplash.com/photo-${id}`;
+  return [
+    ...Object.entries(PRODUCT_PHOTOS).map(([key, id]) => ({ usage: "Produit", key, url: page(id) })),
+    ...Object.entries(STORE_PHOTOS).map(([key, id]) => ({ usage: "Store", key, url: page(id) })),
+    ...Object.entries(BANNER_PHOTOS).map(([key, id]) => ({ usage: "Bannière", key, url: page(id) })),
+  ];
+}

@@ -157,3 +157,9 @@ body.scrolled .frail { display: flex; }
 .btn-follow .lbl-hover { display: none; }
 .btn-follow.on:hover .lbl-on, .btn-follow.on:focus-visible .lbl-on { display: none; }
 .btn-follow.on:hover .lbl-hover, .btn-follow.on:focus-visible .lbl-hover { display: inline; }
+
+/* Pages Légal et Crédits */
+.legal .panel { max-width: 860px; }
+.cr-sec { margin-top: var(--space-5); }
+.cr-sec h2 { font-size: 18px; line-height: 26px; margin-bottom: var(--space-2); }
+.cr-photos { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 6px var(--space-4); }

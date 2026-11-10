@@ -81,6 +81,11 @@ export function Settings({ sec }: { sec?: string }) {
               <Fi s="chevron-right" />
             </Link>
           ))}
+          <Link className="lrow" href="/legal">
+            <Fi s="scale-balanced" />
+            Légal et crédits
+            <Fi s="chevron-right" />
+          </Link>
           <ComingSoon feature="dark_mode">
             <button className="lrow">
               <Fi s="moon" />

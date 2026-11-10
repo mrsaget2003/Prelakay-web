@@ -23,6 +23,7 @@ import { SearchBox } from "./search";
 import { DataIcon, Fi, Ph, Qr, useMounted } from "./ui";
 import { ShareModal } from "./share";
 import { Intro } from "./auth";
+import { LEGAL_DOCS } from "@/lib/data/credits";
 import { MenuProvider, Popover, useMenu } from "./popover";
 
 /* ---------- route courante ---------- */
@@ -52,6 +53,7 @@ const TITLES: Record<string, string> = {
   wishlist: "Wishlist", sell: "Enregistrer son commerce", help: "Centre d'aide", shared: "Panier partagé", login: "Connexion", signup: "Créer un compte",
   account: "Compte", categories: "Catégories", notifications: "Centre de messages", settings: "Paramètres", viewed: "Vus récemment",
   disputes: "Retours et litiges", myreviews: "Mes avis", map: "Carte des stores", discover: "Produits",
+  legal: "Légal", credits: "Crédits", partenaires: "Partenaire de paiement",
 };
 const SETTINGS_TITLES: Record<string, string> = {
   profile: "Informations personnelles", secu: "Sécurité du compte", notifs: "Notifications", lang: "Langue et devise", ville: "Ville de retrait", privacy: "Confidentialité",
@@ -560,6 +562,7 @@ function Footer() {
             <h4>Vendre</h4>
             <Link href="/sell">Enregistrer son commerce</Link>
             <Link href="/help">Devenir store de confiance</Link>
+            <Link href="/partenaires/paiement">Devenir un partenaire de paiement</Link>
             <ComingSoon feature="ambassadors">
               <button>Ambassadeurs étudiants</button>
             </ComingSoon>
@@ -575,14 +578,22 @@ function Footer() {
               <button>Télécharger l&apos;app</button>
             </ComingSoon>
           </div>
+          <div>
+            <h4>Légal</h4>
+            {LEGAL_DOCS.map((d) => (
+              <Link key={d.slug} href={`/legal/${d.slug}`}>
+                {d.title}
+              </Link>
+            ))}
+            <Link href="/credits">Crédits</Link>
+          </div>
         </div>
         <div className="bot">
           <span>© 2026 Prélakay LLC · Les Cayes, Haïti</span>
           <span>
             <a href={process.env.NEXT_PUBLIC_URL_ADMIN ? `${process.env.NEXT_PUBLIC_URL_ADMIN}/admin/login` : "/admin/login"} style={{ display: "inline", padding: 0 }}>
               Espace admin
-            </a>{" "}
-            · Icônes : Font Awesome (prototype)
+            </a>
           </span>
         </div>
       </div>

@@ -8,7 +8,7 @@ const ROUTES = [
   "/orders", "/orders/PK-1042", "/orders/PK-1021", "/wallet", "/wallet?tab=hist", "/coins", "/wishlist", "/account",
   "/sell", "/notifications", "/settings", "/settings/profil", "/settings/secu", "/settings/notifs", "/settings/lang",
   "/settings/ville", "/settings/privacy", "/viewed", "/disputes", "/myreviews", "/help", "/help/0", "/help?q=wallet",
-  "/login", "/signup",
+  "/login", "/signup", "/legal", "/legal/conditions", "/legal/confidentialite", "/legal/mentions", "/credits", "/partenaires/paiement",
 ];
 
 test("chaque route de l'Acheteur s'affiche, sans débordement, sans erreur, sans « escrow »", async ({ page }) => {

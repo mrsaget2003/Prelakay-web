@@ -996,7 +996,7 @@ button.vchip:hover{background:var(--color-neutral-300);color:var(--color-black)}
 
 /* ---------- 8. PIED DE PAGE ---------- */
 .ftr{background:var(--color-white);margin-top:var(--space-6);padding:var(--space-6) 0 var(--space-4);border-top:var(--line)}
-.ftr .cols{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:var(--space-5)}
+.ftr .cols{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:var(--space-5)}
 .ftr h4{font-family:var(--font-body);font-size:14px;font-weight:700;margin-bottom:10px}
 .ftr a,.ftr button{display:block;font-size:13px;color:var(--color-neutral-700);padding:4px 0;text-align:left}
 .ftr a:hover,.ftr button:hover{color:var(--color-black)}

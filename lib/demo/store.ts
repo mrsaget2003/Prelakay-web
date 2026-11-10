@@ -6,7 +6,7 @@
 // Jamais utilisé en production (lib/config/env.ts).
 
 import { useSyncExternalStore } from "react";
-import { prodBy, type Choice } from "@/lib/data/mock/seed";
+import { prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
 
 export type CartLine = { p: string; v: string; q: number; on: boolean };
 export type OrderStatus = "received" | "prep" | "ready" | "done" | "expired" | "cancelled";
@@ -18,6 +18,34 @@ export type Order = {
 export type Notif = { i: string; t: string; p: string; to: string; un: boolean };
 export type Selection = { o: Choice; q: number };
 export type KycStatus = null | "recu" | "verif" | "ok" | "rej";
+
+/** Produit créé ou modifié dans l'espace vendeur (démo). */
+export type SellerProduct = Product & { status: string; why?: string | null; opts: OptAxis[]; desc?: string };
+export type Conv = { id: string; who: string; order: string; un: boolean; msgs: { me: boolean; t: string; at: string }[] };
+export type SDispute = { id: string; order: string; buyer: string; why: string; txt: string; photo: boolean; st: "open" | "escalated" | "done"; due: string };
+export type ProductForm = {
+  id: string | null; n: string; cat: string; sub: string; price: string; was: string; desc: string; photos: number;
+  weight: string; dims: string; axes: { k: string; v: string }[]; stock: Record<string, string>;
+};
+/** État de l'espace vendeur (objet SL du prototype). */
+export type SellerState = {
+  store: string;
+  policy: null | { days: number; other: boolean; txt: string };
+  payMethod: null | { t: string; n: string };
+  payouts: { store: string; amt: number; to: string; date: string; st: string }[];
+  stockO: Record<string, number>;
+  replies: Record<string, string>;
+  answers: Record<string, string>;
+  convs: Record<string, Conv[]>;
+  sorders: Record<string, (Order & { buyer: string; time?: string; rel?: boolean; picked?: string })[]>;
+  dsp: Record<string, SDispute[]>;
+  products: SellerProduct[];
+  pstatus: Record<string, string>;
+  extra: Record<string, boolean>;
+  notif: (Notif & { store: string })[];
+  seq: number;
+  form: ProductForm | null;
+};
 
 export type DemoState = {
   logged: boolean; user: string; name: string; city: string;
@@ -34,6 +62,7 @@ export type DemoState = {
   txs: [string, string, string, number, string][];
   /** Paiements déjà traités, par clé d'idempotence (Review Focus n° 5). */
   paid: Record<string, string[]>;
+  seller: SellerState;
 };
 
 const DEMO_ORDERS: Omit<Order, "total">[] = [
@@ -63,7 +92,21 @@ export function initialState(): DemoState {
       ["fa-solid fa-rotate-left", "Remboursement PK-0981", "28 oct.", 35000, ""],
     ],
     paid: {},
+    seller: {
+      store: "boutik-lakay", policy: null, payMethod: null, payouts: [], stockO: {}, replies: {}, answers: {}, convs: {},
+      sorders: {}, dsp: {}, products: [], pstatus: {}, extra: {}, notif: [], seq: 1, form: null,
+    },
   };
+}
+
+/** Répercute l'état vendeur sur le catalogue (stock, caractéristiques, produits créés, statuts). */
+function syncCatalog(s: DemoState) {
+  const sl = s.seller;
+  setStockOverlay(sl.stockO);
+  setOptsOverlay(Object.fromEntries(sl.products.map((p) => [p.id, p.opts])));
+  const statuses: Record<string, string> = { ...sl.pstatus };
+  for (const p of sl.products) statuses[p.id] = p.status;
+  setCatalogOverlay(sl.products, statuses);
 }
 
 const KEY = "pk-demo-v1";
@@ -86,7 +129,9 @@ function ensureHydrated(): boolean {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {
-      state = { ...initialState(), ...JSON.parse(raw) };
+      const saved = JSON.parse(raw);
+      state = { ...initialState(), ...saved, seller: { ...initialState().seller, ...(saved.seller ?? {}) } };
+      syncCatalog(state);
       return true;
     }
   } catch {
@@ -107,6 +152,7 @@ export const demo = {
     const draft = structuredClone(state);
     fn(draft);
     state = draft;
+    syncCatalog(state);
     try {
       if (typeof localStorage !== "undefined") localStorage.setItem(KEY, JSON.stringify(state));
     } catch {
@@ -129,6 +175,7 @@ export function __resetForTest() {
 
 export function resetDemo() {
   state = initialState();
+  syncCatalog(state);
   hydrated = true;
   try {
     if (typeof localStorage !== "undefined") localStorage.removeItem(KEY);

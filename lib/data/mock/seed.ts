@@ -108,18 +108,28 @@ function buildProducts(): Product[] {
 
 export const P: Product[] = buildProducts();
 
-/** Produits ajoutés par les vendeurs en démo (Espace vendeur) : consultés après le seed. */
-const extraProducts: Product[] = [];
-export function registerProduct(p: Product) {
-  const i = extraProducts.findIndex((x) => x.id === p.id);
-  if (i >= 0) extraProducts[i] = p;
-  else extraProducts.push(p);
+/** Produits ajoutés par les vendeurs en démo (Espace vendeur) et statut de chaque produit
+ *  (actif par défaut). Synchronisés depuis l'état de démo (lib/demo/store.ts). */
+let extraProducts: Product[] = [];
+let statusOf: Record<string, string> = {};
+export function setCatalogOverlay(extras: Product[], statuses: Record<string, string>) {
+  extraProducts = extras;
+  statusOf = statuses;
 }
+export function productStatus(id: string): string {
+  return statusOf[id] ?? (P.some((p) => p.id === id) ? "active" : "draft");
+}
+/** Catalogue visible par les acheteurs : produits actifs seulement. */
 export function allProducts(): Product[] {
+  const base = Object.keys(statusOf).length ? P.filter((p) => productStatus(p.id) === "active") : P;
+  return [...base, ...extraProducts.filter((p) => productStatus(p.id) === "active")];
+}
+/** Tous les produits, quel que soit leur statut (espace vendeur, fiches). */
+export function everyProduct(): Product[] {
   return extraProducts.length ? [...P, ...extraProducts] : P;
 }
 export function prodBy(id: string): Product | null {
-  return allProducts().find((p) => p.id === id) ?? null;
+  return everyProduct().find((p) => p.id === id) ?? null;
 }
 
 /** Pastilles de couleur des caractéristiques. */
@@ -127,14 +137,14 @@ export const COLORS: Record<string, string> = {
   Noir: "#0b0c10", Blanc: "#fffaf7", Lagon: "#0e6b74", "Écru": "#f3ede4", Gris: "#898f90", "Lagon clair": "#80e6f0", Sable: "#d9c7a7", Bordeaux: "#6b1f2a",
 };
 
-const customOpts = new Map<string, OptAxis[]>();
-export function setProductOpts(id: string, axes: OptAxis[]) {
-  customOpts.set(id, axes);
+let customOpts: Record<string, OptAxis[]> = {};
+export function setOptsOverlay(map: Record<string, OptAxis[]>) {
+  customOpts = map;
 }
 
 /** Caractéristiques (SKU) : 0 à 3 axes par produit (03-design §9.4 bis). */
 export function optsOf(p: Product): OptAxis[] {
-  const custom = customOpts.get(p.id);
+  const custom = customOpts[p.id];
   if (custom) return custom;
   const n = p.n;
   const C = (l: string[]): OptAxis => ({ k: "Couleur", t: "color", v: l });
@@ -160,16 +170,17 @@ export function hasOpts(p: Product): boolean {
 }
 
 /** Stock modifié par le vendeur en démo : clé « id#v1|v2 ». */
-const stockOverrides = new Map<string, number>();
-export function setStockOverride(key: string, qty: number) {
-  stockOverrides.set(key, qty);
+let stockOverrides: Record<string, number> = {};
+export function setStockOverlay(map: Record<string, number>) {
+  stockOverrides = map;
 }
 
 /** Stock d'une combinaison (règle du prototype ; `partial` : axes incomplets). */
 export function stockFor(p: Product, o: Choice, partial = false): number {
   const A = optsOf(p);
-  if (A.length && A.every((a) => o[a.k])) {
-    const ov = stockOverrides.get(p.id + "#" + A.map((a) => o[a.k]).join("|"));
+  // stock modifié par le vendeur (y compris « modèle unique » : clé « id# », oubliée par le prototype)
+  if (A.every((a) => o[a.k])) {
+    const ov = stockOverrides[p.id + "#" + A.map((a) => o[a.k]).join("|")];
     if (ov != null) return ov;
   }
   if (!A.length) return p.stockLow ? 3 : 12;

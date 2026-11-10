@@ -2,17 +2,25 @@ import { defineConfig, devices } from "@playwright/test";
 
 // Parcours navigateur. Deux largeurs de référence : 360 px (CLAUDE.md « Mobile
 // partout ») et desktop (conteneur 1240 px, 03-design §9.1).
+// Par défaut, les parcours tournent sur un build de production servi en mode démo (port 3100) :
+// le serveur de dev compile chaque page à la demande et sature quand 4 largeurs tournent en
+// parallèle (dépassements de délai sans rapport avec le code). PW_DEV=1 : serveur de dev (3000).
+const DEV = !!process.env.PW_DEV;
+const PORT = DEV ? 3000 : 3100;
+
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: true,
+  workers: 4,
   retries: 0,
   reporter: [["list"]],
-  use: { baseURL: "http://localhost:3000", trace: "retain-on-failure" },
+  use: { baseURL: `http://localhost:${PORT}`, trace: "retain-on-failure" },
   webServer: {
-    command: "npm run dev",
-    url: "http://localhost:3000",
+    command: DEV ? "npm run dev" : `npm run build && npm run start -- -p ${PORT}`,
+    url: `http://localhost:${PORT}`,
     reuseExistingServer: true,
-    timeout: 180_000,
+    timeout: 400_000,
+    env: DEV ? {} : { PRELAKAY_ENV: "demo" },
   },
   projects: [
     {

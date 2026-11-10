@@ -17,6 +17,7 @@ import { useToast } from "@/components/ui/Toast";
 import { ModalProvider, useModal } from "@/components/proto/modal";
 import { SupportForm } from "@/components/proto/shell";
 import { DataIcon, Fi, NeedLogin, Ph } from "@/components/proto/ui";
+import { VzTooltip } from "@/components/charts/vz";
 
 /** Adresse du site acheteur (autre déploiement quand APP_SPACE=vendeur). */
 export const BUYER_URL = process.env.NEXT_PUBLIC_URL_ACHETEUR ?? "";
@@ -274,6 +275,7 @@ export function SellerShell({ children }: { children: ReactNode }) {
   return (
     <ModalProvider>
       <Center>{children}</Center>
+      <VzTooltip />
     </ModalProvider>
   );
 }

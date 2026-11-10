@@ -38,7 +38,7 @@ function ensureStore(s: DemoState) {
 
 export function statusOf(s: DemoState, p: Product): string {
   const sp = s.seller.products.find((x) => x.id === p.id);
-  return sp ? sp.status : s.seller.pstatus[p.id] ?? "active";
+  return sp ? sp.status : s.seller.pstatus[p.id] ?? (p as SellerProduct).status ?? "active";
 }
 /** Statut affiché : « Rupture » quand un produit actif n'a plus de stock. */
 export function pStatus(s: DemoState, p: Product): string {
@@ -51,7 +51,8 @@ export function myProducts(s: DemoState): Product[] {
   return [...everyProduct().filter((p) => p.store === id), ...extras];
 }
 export function whyOf(s: DemoState, id: string): string | null {
-  return s.seller.products.find((x) => x.id === id)?.why ?? null;
+  const sp = s.seller.products.find((x) => x.id === id) ?? (s.seller.extra[s.seller.store] ? undefined : extraFor(s.seller.store).find((x) => x.id === id));
+  return sp?.why ?? null;
 }
 
 /* ---------- commandes ---------- */

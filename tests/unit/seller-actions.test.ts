@@ -3,7 +3,7 @@ import { demo, resetDemo } from "@/lib/demo/store";
 import { addToCart, payCart } from "@/lib/demo/actions";
 import {
   sellerOrders, readyOrder, prepOrder, validatePickup, cancelOrder, noShow, resolveDispute, sellerDisputes,
-  saveProduct, formFrom, formError, setProductStatus, myProducts, statusOf, setManagedStore, requestPayout, sellerFin,
+  saveProduct, formFrom, formError, setProductStatus, myProducts, statusOf, setManagedStore, requestPayout, sellerFin, whyOf,
 } from "@/lib/demo/sellerActions";
 import { allProducts, prodBy, stockFor, optsOf } from "@/lib/data/mock/seed";
 
@@ -112,5 +112,16 @@ describe("retraits", () => {
     demo.update((s) => { s.seller.payMethod = { t: "MonCash", n: "•••• 3456" }; });
     expect(requestPayout(sellerFin(demo.get()).avail + 1, () => {})).toBe("Montant supérieur au solde disponible.");
     expect(requestPayout(0, () => {})).toBe("Indiquez un montant.");
+  });
+});
+
+describe("produits de démonstration du store", () => {
+  it("brouillon et refusé gardent leur statut et leur motif avant toute action", () => {
+    const L = myProducts(demo.get());
+    const draft = L.find((p) => p.id === "sp-boutik-lakay-0")!;
+    const rej = L.find((p) => p.id === "sp-boutik-lakay-1")!;
+    expect(statusOf(demo.get(), draft)).toBe("draft");
+    expect(statusOf(demo.get(), rej)).toBe("rejected");
+    expect(whyOf(demo.get(), rej.id)).toMatch(/^Photos floues/);
   });
 });

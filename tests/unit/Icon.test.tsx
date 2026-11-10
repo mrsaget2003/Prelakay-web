@@ -15,6 +15,8 @@ describe("Icon", () => {
     const { container } = render(<Icon name="cart-shopping" />);
     expect((container.firstChild as HTMLElement).tagName).toBe("I");
     expect(container.firstChild).toHaveClass("fa-ic");
+    // sélecteurs du prototype qui visent l'icône par son nom (.lrow>.fa-chevron-right, .fa-star)
+    expect(container.firstChild).toHaveClass("fa-cart-shopping");
   });
 
   it("avec label, est une image nommée", () => {

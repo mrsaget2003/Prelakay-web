@@ -32,7 +32,7 @@ export function Icon({ name, active = false, variant, size, label, className }: 
   const dim = size ?? "1em";
   return (
     <i
-      className={["fa-ic", styles.icon, active ? styles.active : "", className ?? ""].filter(Boolean).join(" ")}
+      className={["fa-ic", `fa-${name}`, styles.icon, active ? styles.active : "", className ?? ""].filter(Boolean).join(" ")}
       data-active={active ? "true" : undefined}
     >
       <svg

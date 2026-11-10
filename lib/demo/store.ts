@@ -75,6 +75,26 @@ function emit() {
   for (const l of listeners) l();
 }
 
+let hydrated = false;
+
+/** Relit l'état sauvegardé une seule fois, avant toute écriture : sans cela, une écriture
+ *  faite avant hydrateDemo() (ex. « vus récemment » d'une fiche ouverte directement)
+ *  écraserait le panier et la wishlist enregistrés. */
+function ensureHydrated(): boolean {
+  if (hydrated || typeof window === "undefined") return false;
+  hydrated = true;
+  try {
+    const raw = localStorage.getItem(KEY);
+    if (raw) {
+      state = { ...initialState(), ...JSON.parse(raw) };
+      return true;
+    }
+  } catch {
+    /* état corrompu ou inaccessible : on garde l'état initial */
+  }
+  return false;
+}
+
 export const demo = {
   get: () => state,
   subscribe(l: () => void) {
@@ -83,6 +103,7 @@ export const demo = {
   },
   /** Applique une modification sur une copie, puis publie le nouvel état. */
   update(fn: (draft: DemoState) => void) {
+    ensureHydrated();
     const draft = structuredClone(state);
     fn(draft);
     state = draft;
@@ -95,21 +116,20 @@ export const demo = {
   },
 };
 
-/** Recharge l'état sauvegardé (appelé une fois, après l'hydratation). */
+/** Recharge l'état sauvegardé (appelé une fois, après l'hydratation de la page). */
 export function hydrateDemo() {
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (raw) {
-      state = { ...initialState(), ...JSON.parse(raw) };
-      emit();
-    }
-  } catch {
-    /* état corrompu ou inaccessible : on garde l'état initial */
-  }
+  if (ensureHydrated()) emit();
+}
+
+/** Tests : revient à l'état initial sans effacer le stockage (simule un nouveau chargement de page). */
+export function __resetForTest() {
+  state = SERVER;
+  hydrated = false;
 }
 
 export function resetDemo() {
   state = initialState();
+  hydrated = true;
   try {
     if (typeof localStorage !== "undefined") localStorage.removeItem(KEY);
   } catch {

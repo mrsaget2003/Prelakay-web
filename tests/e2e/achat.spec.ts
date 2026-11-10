@@ -2,6 +2,9 @@ import { test, expect } from "@playwright/test";
 
 // Parcours Click & Collect de démonstration : fiche produit → panier → paiement → confirmation.
 test("achat de bout en bout (démo)", async ({ page, isMobile }, info) => {
+  // intro de première visite déjà vue
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
   await page.goto("/p/tech-1");
   await expect(page.getByRole("heading", { level: 1, name: "Chargeur rapide 20 W" })).toBeVisible();
   const add = info.project.name === "mobile-360" ? page.locator("#mbuy").getByRole("button", { name: "Au panier" }) : page.locator(".buy").getByRole("button", { name: "Ajouter au panier" });

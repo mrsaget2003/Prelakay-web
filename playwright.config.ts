@@ -20,6 +20,14 @@ export default defineConfig({
       use: { ...devices["Desktop Chrome"], viewport: { width: 360, height: 740 }, isMobile: false, hasTouch: true },
     },
     {
+      name: "mobile-390",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 390, height: 844 }, isMobile: false, hasTouch: true },
+    },
+    {
+      name: "tablet-768",
+      use: { ...devices["Desktop Chrome"], viewport: { width: 768, height: 1024 } },
+    },
+    {
       name: "desktop-1240",
       use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 800 } },
     },

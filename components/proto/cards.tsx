@@ -47,7 +47,8 @@ export function useQuickAdd() {
   };
 }
 
-export function ProductCard({ p }: { p: Product }) {
+/** Carte produit (card du prototype). `showStore={false}` dans une page store : le nom du store n'y est pas répété. */
+export function ProductCard({ p, showStore = true }: { p: Product; showStore?: boolean }) {
   const s = useDemo();
   const st = storeBy(p.store)!;
   const wish = useWish();
@@ -81,10 +82,14 @@ export function ProductCard({ p }: { p: Product }) {
           ) : null}
           {p.sold ? `${k(p.sold)} vendus` : "Nouveau sur Prélakay"}
         </div>
-        <div className="st">
-          {st.type === "physique" ? <Fi s="store" /> : <Fi s="globe" />}
-          {st.n} · {km(st.km)}
-        </div>
+        {showStore ? (
+          <div className="st">
+            {st.type === "physique" ? <Fi s="store" /> : <Fi s="globe" />}
+            <span>
+              {st.n} · {km(st.km)}
+            </span>
+          </div>
+        ) : null}
       </div>
     </Link>
   );

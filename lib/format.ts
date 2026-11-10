@@ -15,10 +15,10 @@ export function formatHTG(amount: number): string {
   return `${groupThousands(Math.round(amount))} HTG`;
 }
 
-/** Distance : 0.6 → « 600 m », 1.2 → « 1,2 km ». */
+/** Distance : 0.6 → « 600 m », 1.2 → « 1,2 km » (espace insécable : jamais d'unité seule à la ligne). */
 export function formatDistance(km: number): string {
-  if (km < 1) return `${Math.round(km * 1000)} m`;
-  return `${km.toFixed(1).replace(".", ",")} km`;
+  if (km < 1) return `${Math.round(km * 1000)}${NBSP}m`;
+  return `${km.toFixed(1).replace(".", ",")}${NBSP}km`;
 }
 
 /** Compteur abrégé : 1240 → « 1,2 k », 1000 → « 1 k », 860 → « 860 ». */

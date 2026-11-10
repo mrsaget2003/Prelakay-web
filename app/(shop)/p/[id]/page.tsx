@@ -155,7 +155,7 @@ export default function ProductPage() {
                       <Stars r={p.rating} />
                     </span>
                     <b>{fr1(p.rating)}</b>
-                    <a href="#s-rev" onClick={(e) => { e.preventDefault(); scrollToSec("rev"); }}>
+                    <a className="nw" href="#s-rev" onClick={(e) => { e.preventDefault(); scrollToSec("rev"); }}>
                       {p.reviews} avis vérifiés
                     </a>
                     <span>·</span>

@@ -23,6 +23,7 @@ import { SearchBox } from "./search";
 import { DataIcon, Fi, Ph, Qr, useMounted } from "./ui";
 import { ShareModal } from "./share";
 import { Intro } from "./auth";
+import { MenuProvider, Popover, useMenu } from "./popover";
 
 /* ---------- route courante ---------- */
 const RouteCtx = createContext<ProtoRoute>(parseRoute("/", ""));
@@ -48,7 +49,7 @@ export function MBar({ children, kind = "mbar" }: { children: ReactNode; kind?: 
 const ROOT = ["home", "categories", "cart", "account"];
 const TITLES: Record<string, string> = {
   p: "Produit", store: "Store", cart: "Panier", checkout: "Paiement", done: "Confirmation", orders: "Commandes", wallet: "Wallet", coins: "Coins",
-  wishlist: "Wishlist", sell: "Enregistrer sa Commerce", help: "Centre d'aide", shared: "Panier partagé", login: "Connexion", signup: "Créer un compte",
+  wishlist: "Wishlist", sell: "Enregistrer son commerce", help: "Centre d'aide", shared: "Panier partagé", login: "Connexion", signup: "Créer un compte",
   account: "Compte", categories: "Catégories", notifications: "Centre de messages", settings: "Paramètres", viewed: "Vus récemment",
   disputes: "Retours et litiges", myreviews: "Mes avis", map: "Carte des stores", discover: "Produits",
 };
@@ -67,69 +68,46 @@ export function titleFor(r: ProtoRoute, cartLines: number): string {
 
 /* ---------- header desktop ---------- */
 function Header({ r }: { r: ProtoRoute }) {
+  return (
+    <MenuProvider>
+      <HeaderInner r={r} />
+    </MenuProvider>
+  );
+}
+
+function HeaderInner({ r }: { r: ProtoRoute }) {
   const s = useDemo();
   const router = useRouter();
   const toast = useToast();
+  const menu = useMenu();
   const home = r.name === "home";
   const n = unread(s);
   const cc = cartCount(s);
   const hdr = useRef<HTMLElement>(null);
-  // le méga-menu se referme à chaque changement de page (clé de route)
-  const routeKey = `${r.name}/${r.id}/${r.params.cat ?? ""}`;
-  const [megaState, setMegaState] = useState({ open: false, at: routeKey });
-  const mega = megaState.open && megaState.at === routeKey;
-  const setMega = (v: boolean | ((o: boolean) => boolean)) =>
-    setMegaState((st) => {
-      const cur = st.open && st.at === routeKey;
-      return { open: typeof v === "function" ? v(cur) : v, at: routeKey };
-    });
+  const mega = menu.openId === "mega";
   const [megaCat, setMegaCat] = useState(CATS[0].id);
-  const [locOpen, setLocOpen] = useState(false);
   const [city, setCity] = useState("Les Cayes");
   const [lang, setLang] = useState("Français");
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isDesk = () => window.innerWidth >= 1024;
 
-  // --hh : hauteur du header (méga-menu, ancres de la fiche produit)
+  // --hh : hauteur du header (ancres de la fiche produit, éléments collants)
   useEffect(() => {
-    const set = () => hdr.current && document.documentElement.style.setProperty("--hh", hdr.current.offsetHeight + "px");
+    const el = hdr.current;
+    if (!el) return;
+    const set = () => document.documentElement.style.setProperty("--hh", el.offsetHeight + "px");
     set();
-    window.addEventListener("resize", set);
-    return () => window.removeEventListener("resize", set);
-  }, [home]);
-  useEffect(() => {
-    document.body.classList.toggle("mega-on", mega && !isDesk());
-  }, [mega]);
-  useEffect(() => {
-    const out = (e: Event) => {
-      const t = e.target as HTMLElement;
-      if (!t.closest(".dd")) setLocOpen(false);
-      if (isDesk() && !t.closest("#megaP .in") && !t.closest("[data-act=mega]")) setMegaState((st) => ({ ...st, open: false }));
-    };
-    const esc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        setMegaState((st) => ({ ...st, open: false }));
-        setLocOpen(false);
-      }
-    };
-    document.addEventListener("click", out);
-    document.addEventListener("keydown", esc);
-    return () => {
-      document.removeEventListener("click", out);
-      document.removeEventListener("keydown", esc);
-    };
+    const ro = new ResizeObserver(set);
+    ro.observe(el);
+    return () => ro.disconnect();
   }, []);
 
-  // survol « Toutes les catégories » (desktop) : ouverture 120 ms, fermeture 180 ms
-  const hoverIn = () => {
-    if (!isDesk()) return;
-    if (timer.current) clearTimeout(timer.current);
-    if (!mega) timer.current = setTimeout(() => setMega(true), 120);
-  };
-  const hoverOut = () => {
-    if (!isDesk()) return;
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(() => setMega(false), 180);
+  // déclencheurs du méga-menu : survol (150 ms), clic qui bascule, clavier
+  const megaTrigger = {
+    "data-menu": "mega",
+    "aria-expanded": mega,
+    "aria-controls": "megaP",
+    onClick: () => menu.toggle("mega"),
+    onMouseEnter: () => menu.hover("mega", true),
+    onMouseLeave: () => menu.hover("mega", false),
   };
 
   const L = (h: string, icon: ReactNode, t: string, x?: ReactNode) => (
@@ -142,36 +120,47 @@ function Header({ r }: { r: ProtoRoute }) {
   const c = catBy(megaCat)!;
   const megaStores = STORES.filter((st) => P.some((p) => p.store === st.id && p.cat === c.id));
   const megaPop = P.filter((p) => p.cat === c.id).slice(0, 6);
+  // C.3 — l'espace vendeur n'est pas encore construit ici : le lien mène au parcours vendeur (/sell),
+  // ou au déploiement vendeur quand son adresse est configurée.
+  const sellerHref = process.env.NEXT_PUBLIC_URL_VENDEUR ? `${process.env.NEXT_PUBLIC_URL_VENDEUR}/seller` : "/sell";
 
   return (
-    <header className="hdr" id="hdr" ref={hdr}>
-      <div className="wrap">
-        <div className="h1">
-          <button className="hb hb-m" data-act="drawer" onClick={() => setMega((m) => !m)} aria-label="Toutes les catégories">
-            <Fi s="bars" />
-          </button>
-          <Link className="logo" href="/" aria-label="Prélakay, accueil">
-            <Logo variant="full" tone="lagon" height={34} priority />
-          </Link>
-          {home ? null : (
-            <button className="hb hb-d" data-act="mega" onClick={() => setMega((m) => !m)} onMouseEnter={hoverIn} onMouseLeave={hoverOut} aria-label="Toutes les catégories">
+    <>
+      <header className="hdr" id="hdr" ref={hdr}>
+        <div className="wrap">
+          <div className="h1">
+            <button className="hb hb-m" {...megaTrigger} aria-label="Toutes les catégories">
               <Fi s="bars" />
             </button>
-          )}
-          <SearchBox key={`d-${r.q}`} variant="desk" initial={r.q || ""} onFocusOpen={() => setMega(false)} />
-          <div className="hdr-r">
-            <div className="dd hov app">
-              <ComingSoon feature="native_app">
-                <button className="hi">
-                  <Fi s="qrcode" />
-                  <span className="lb">
-                    Télécharger
-                    <br />
-                    <b>l&apos;app Prélakay</b>
-                  </span>
-                </button>
-              </ComingSoon>
-              <div className="ddp app">
+            <Link className="logo" href="/" aria-label="Prélakay, accueil">
+              <Logo variant="full" tone="lagon" height={34} priority />
+            </Link>
+            {home ? (
+              <span className="hb-sp d-only" aria-hidden="true" />
+            ) : (
+              <button className="hb hb-d" {...megaTrigger} aria-label="Toutes les catégories">
+                <Fi s="bars" />
+              </button>
+            )}
+            <SearchBox key={`d-${r.q}`} variant="desk" initial={r.q || ""} onFocusOpen={() => menu.close()} />
+            <div className="hdr-r">
+              <Popover
+                id="app"
+                cls="app"
+                label="L'app Prélakay"
+                trigger={
+                  <ComingSoon feature="native_app">
+                    <button className="hi">
+                      <Fi s="qrcode" />
+                      <span className="lb">
+                        Télécharger
+                        <br />
+                        <b>l&apos;app Prélakay</b>
+                      </span>
+                    </button>
+                  </ComingSoon>
+                }
+              >
                 <div className="qr">
                   <Qr seed="prelakay-app" />
                 </div>
@@ -194,18 +183,22 @@ function Header({ r }: { r: ProtoRoute }) {
                   </div>
                   <span className="soon-t" style={{ display: "inline-block", margin: "8px 0 0" }}>À venir</span>
                 </div>
-              </div>
-            </div>
-            <div className={`dd loc${locOpen ? " open" : ""}`}>
-              <button className="hi" aria-haspopup="true" onClick={(e) => { e.stopPropagation(); setLocOpen((o) => !o); }}>
-                <span className="flag" aria-hidden="true" />
-                <span className="lb">
-                  {s.city}/FR/
-                  <br />
-                  <b>HTG</b> <Fi s="chevron-down" className="chev" />
-                </span>
-              </button>
-              <div className="ddp loc">
+              </Popover>
+              <Popover
+                id="loc"
+                cls="loc"
+                label="Ville, langue et devise"
+                trigger={
+                  <button className="hi">
+                    <span className="flag" aria-hidden="true" />
+                    <span className="lb">
+                      {s.city}/FR/
+                      <br />
+                      <b>HTG</b> <Fi s="chevron-down" className="chev" />
+                    </span>
+                  </button>
+                }
+              >
                 <h4>Retrait à</h4>
                 <select aria-label="Pays">
                   <option>Haïti</option>
@@ -226,39 +219,43 @@ function Header({ r }: { r: ProtoRoute }) {
                   <option>HTG (gourde)</option>
                 </select>
                 <button
-                  className="btn btn-dark"
+                  className="btn btn-p"
                   onClick={() => {
                     if (lang === "creole") return toast.soon();
                     if (city !== "Les Cayes") return toast.show("Prélakay n'est pas encore disponible dans cette ville.");
-                    setLocOpen(false);
+                    menu.close("loc");
                     toast.show("Préférences enregistrées", "success");
                   }}
                 >
                   Enregistrer
                 </button>
-              </div>
-            </div>
-            <div className="dd hov accm">
-              <Link className="hi" href={s.logged ? "/account" : "/login"} aria-label="Mon compte">
-                <Fi r="user" />
-                {n && s.logged ? <span className="dot" /> : null}
-                <span className="lb">
-                  {s.logged ? (
-                    <>
-                      Bonjour,
-                      <br />
-                      <b>@{s.user}</b>
-                    </>
-                  ) : (
-                    <>
-                      Bienvenue
-                      <br />
-                      <b>Se connecter / S&apos;inscrire</b>
-                    </>
-                  )}
-                </span>
-              </Link>
-              <div className="ddp accm">
+              </Popover>
+              <Popover
+                id="accm"
+                cls="accm"
+                label="Mon compte"
+                trigger={
+                  <Link className="hi" href={s.logged ? "/account" : "/login"} aria-label="Mon compte">
+                    <Fi s="user" />
+                    {n && s.logged ? <span className="dot" /> : null}
+                    <span className="lb">
+                      {s.logged ? (
+                        <>
+                          Bonjour,
+                          <br />
+                          <b>@{s.user}</b>
+                        </>
+                      ) : (
+                        <>
+                          Bienvenue
+                          <br />
+                          <b>Se connecter / S&apos;inscrire</b>
+                        </>
+                      )}
+                    </span>
+                  </Link>
+                }
+              >
                 {s.logged ? (
                   <div className="who">
                     <span className="avt">{s.name[0]}</span>
@@ -279,12 +276,12 @@ function Header({ r }: { r: ProtoRoute }) {
                 {L("/orders", <Fi s="receipt" />, "Mes commandes")}
                 {L("/coins", <Fi s="coins" />, "Mes Coins", <span className="r">{s.logged ? s.coins : ""}</span>)}
                 <Link className="mi" href={s.logged ? "/notifications" : "/login"}>
-                  <Fi r="bell" />
+                  <Fi s="bell" />
                   Centre de messages
                   {n && s.logged ? <span className="n">{n}</span> : null}
                 </Link>
                 {L("/wallet", <Fi s="wallet" />, "Wallet")}
-                {L("/wishlist", <Fi r="heart" />, "Wishlist")}
+                {L("/wishlist", <Fi s="heart" />, "Wishlist")}
                 <ComingSoon feature="coupons">
                   <button className="mi">
                     <Fi s="tag" />
@@ -294,8 +291,8 @@ function Header({ r }: { r: ProtoRoute }) {
                 </ComingSoon>
                 <hr />
                 <Link className="sm" href={s.logged ? "/settings" : "/login"}>Paramètres</Link>
-                <Link className="sm" href="/sell">Enregistrer sa Commerce</Link>
-                <a className="sm" href={process.env.NEXT_PUBLIC_URL_VENDEUR ? `${process.env.NEXT_PUBLIC_URL_VENDEUR}/seller` : "/seller"}>Espace vendeur</a>
+                <Link className="sm" href="/sell">Enregistrer son commerce</Link>
+                <a className="sm" href={sellerHref}>Espace vendeur</a>
                 <Link className="sm" href="/help">Centre d&apos;aide</Link>
                 <Link className="sm" href={s.logged ? "/disputes" : "/login"}>Retours et litiges</Link>
                 {s.logged ? (
@@ -303,6 +300,7 @@ function Header({ r }: { r: ProtoRoute }) {
                     className="sm"
                     onClick={() => {
                       demo.update((d) => { d.logged = false; });
+                      menu.close();
                       toast.show("Vous êtes déconnecté", "success");
                       router.push("/");
                     }}
@@ -310,38 +308,44 @@ function Header({ r }: { r: ProtoRoute }) {
                     Se déconnecter
                   </button>
                 ) : null}
-              </div>
-            </div>
-            <Link className="hi" href="/cart" aria-label={`Panier, ${cc} article${cc > 1 ? "s" : ""}`}>
-              <Fi s="cart-shopping" />
-              <span className="cnt">{cc}</span>
-              <span className="lb">
-                <br />
-                <b>Panier</b>
-              </span>
-            </Link>
-          </div>
-        </div>
-        {home ? (
-          <nav className="h2" aria-label="Raccourcis">
-            <button className="allcats" data-act="mega" onClick={() => setMega((m) => !m)} onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
-              <Fi s="bars" />
-              Toutes les catégories
-            </button>
-            <Link className="hl" href="/discover?sort=new">Nouveaux sur Prélakay</Link>
-            <Link href="/discover?sort=near">Près de vous</Link>
-            <Link href="/discover?ready=1">Prêts à retirer</Link>
-            <Link href="/map">Carte des stores</Link>
-            {CATS.slice(0, 3).map((x) => (
-              <Link key={x.id} className="d-only" href={`/discover?cat=${x.id}`}>
-                {x.n}
+              </Popover>
+              <Link className="hi" href="/cart" aria-label={`Panier, ${cc} article${cc > 1 ? "s" : ""}`}>
+                <Fi s="cart-shopping" />
+                <span className="cnt">{cc}</span>
+                <span className="lb">
+                  <br />
+                  <b>Panier</b>
+                </span>
               </Link>
-            ))}
-            <div className="dd hov more">
-              <button>
-                Plus <Fi s="chevron-down" />
+            </div>
+          </div>
+          {home ? (
+            <nav className="h2" aria-label="Raccourcis">
+              <button className="allcats" {...megaTrigger}>
+                <Fi s="bars" />
+                Toutes les catégories
               </button>
-              <div className="ddp more">
+              <div className="h2-links">
+                <Link className="hl" href="/discover?sort=new">Nouveaux sur Prélakay</Link>
+                <Link href="/discover?sort=near">Près de vous</Link>
+                <Link href="/discover?ready=1">Prêts à retirer</Link>
+                <Link href="/map">Carte des stores</Link>
+                {CATS.slice(0, 3).map((x) => (
+                  <Link key={x.id} className="d-only" href={`/discover?cat=${x.id}`}>
+                    {x.n}
+                  </Link>
+                ))}
+              </div>
+              <Popover
+                id="more"
+                cls="more"
+                label="Plus de catégories"
+                trigger={
+                  <button>
+                    Plus <Fi s="chevron-down" />
+                  </button>
+                }
+              >
                 {CATS.slice(3).map((x) => (
                   <Link key={x.id} href={`/discover?cat=${x.id}`}>
                     <DataIcon cls={x.i} />
@@ -355,78 +359,79 @@ function Header({ r }: { r: ProtoRoute }) {
                     <SoonBadge />
                   </button>
                 </ComingSoon>
+              </Popover>
+            </nav>
+          ) : null}
+        </div>
+        <div className={`megaP${mega ? " open" : ""}`} id="megaP" aria-hidden={!mega} data-menu="mega">
+          <div className="mega-sheet">
+            <div className="wrap">
+              <div className="mega-h">
+                <button className="hb" onClick={() => menu.close("mega")} aria-label="Fermer">
+                  <Fi s="xmark" />
+                </button>
+                <b>Catégories</b>
               </div>
-            </div>
-          </nav>
-        ) : null}
-      </div>
-      <div className={`megaP${mega ? " open" : ""}`} id="megaP" aria-hidden={!mega}>
-        <div className="mega-ovl" />
-        <div className="mega-sheet">
-          <div className="wrap">
-            <div className="mega-h">
-              <button className="hb" onClick={() => setMega(false)} aria-label="Fermer">
-                <Fi s="xmark" />
-              </button>
-              <b>Catégories</b>
-            </div>
-            <div className="mega-q">
-              {[["/discover?sort=new", "Nouveaux"], ["/discover?sort=near", "Près de vous"], ["/discover?ready=1", "Prêts à retirer"], ["/map", "Carte des stores"], ["/discover", "Tout voir"]].map((x) => (
-                <Link key={x[0]} className="chip" href={x[0]}>
-                  {x[1]}
-                </Link>
-              ))}
-            </div>
-            <div className="in" onMouseEnter={hoverIn} onMouseLeave={hoverOut}>
-              <div className="mega-l">
-                {CATS.map((x) => (
-                  <button key={x.id} className={x.id === megaCat ? "on" : ""} onClick={() => setMegaCat(x.id)} onMouseOver={() => mega && setMegaCat(x.id)}>
-                    <DataIcon cls={x.i} />
-                    {x.n}
-                    <Fi s="chevron-right" className="go-i" />
-                  </button>
+              <div className="mega-q">
+                {[["/discover?sort=new", "Nouveaux"], ["/discover?sort=near", "Près de vous"], ["/discover?ready=1", "Prêts à retirer"], ["/map", "Carte des stores"], ["/discover", "Tout voir"]].map((x) => (
+                  <Link key={x[0]} className="chip" href={x[0]}>
+                    {x[1]}
+                  </Link>
                 ))}
               </div>
-              <div className="mega-r" id="megaR">
-                <h5>
-                  Recommandé <Link href={`/discover?cat=${c.id}`}>Tout {c.n.toLowerCase()} ›</Link>
-                </h5>
-                <div className="row">
-                  {c.sub.map((sub, i) => (
-                    <Link key={sub} href={`/discover?cat=${c.id}&sub=${encodeURIComponent(sub)}`}>
-                      <Ph icon={PICONS[c.id][i] || c.i} tint={TINTS[i % 5]} />
-                      {sub}
-                    </Link>
+              <div className="in" onMouseEnter={() => menu.hover("mega", true)} onMouseLeave={() => menu.hover("mega", false)}>
+                <div className="mega-l">
+                  {CATS.map((x) => (
+                    <button key={x.id} className={x.id === megaCat ? "on" : ""} onClick={() => setMegaCat(x.id)} onMouseOver={() => setMegaCat(x.id)} onFocus={() => setMegaCat(x.id)}>
+                      <DataIcon cls={x.i} />
+                      {x.n}
+                      <Fi s="chevron-right" className="go-i" />
+                    </button>
                   ))}
                 </div>
-                {megaStores.length ? (
-                  <>
-                    <h5>Stores de la catégorie</h5>
-                    <div className="row st">
-                      {megaStores.map((st) => (
-                        <Link key={st.id} href={`/store/${st.id}`}>
-                          <Ph icon={st.i} tint="g4" img={storeImage(st.id, 160)} alt={st.n} />
-                          {st.n}
-                        </Link>
-                      ))}
-                    </div>
-                  </>
-                ) : null}
-                <h5>Populaires</h5>
-                <div className="row">
-                  {megaPop.map((p) => (
-                    <Link key={p.id} href={`/p/${p.id}`}>
-                      <Ph icon={p.icon} tint={p.tint} img={productImage(p.id, 160)} alt={p.n} />
-                      {p.n.length > 28 ? p.n.slice(0, 26) + "…" : p.n}
-                    </Link>
-                  ))}
+                <div className="mega-r" id="megaR">
+                  <h5>
+                    Recommandé <Link href={`/discover?cat=${c.id}`}>Tout {c.n.toLowerCase()} ›</Link>
+                  </h5>
+                  <div className="row">
+                    {c.sub.map((sub, i) => (
+                      <Link key={sub} href={`/discover?cat=${c.id}&sub=${encodeURIComponent(sub)}`}>
+                        <Ph icon={PICONS[c.id][i] || c.i} tint={TINTS[i % 5]} />
+                        {sub}
+                      </Link>
+                    ))}
+                  </div>
+                  {megaStores.length ? (
+                    <>
+                      <h5>Stores de la catégorie</h5>
+                      <div className="row st">
+                        {megaStores.map((st) => (
+                          <Link key={st.id} href={`/store/${st.id}`}>
+                            <Ph icon={st.i} tint="g4" img={storeImage(st.id, 160)} alt={st.n} />
+                            {st.n}
+                          </Link>
+                        ))}
+                      </div>
+                    </>
+                  ) : null}
+                  <h5>Populaires</h5>
+                  <div className="row">
+                    {megaPop.map((p) => (
+                      <Link key={p.id} href={`/p/${p.id}`}>
+                        <Ph icon={p.icon} tint={p.tint} img={productImage(p.id, 160)} alt={p.n} />
+                        {p.n.length > 28 ? p.n.slice(0, 26) + "…" : p.n}
+                      </Link>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </header>
+      </header>
+      {/* A.1 — voile sous le header (z 49), sur toute la fenêtre ; un clic dessus ferme le menu */}
+      {mega ? <div className="mega-veil" aria-hidden="true" /> : null}
+    </>
   );
 }
 
@@ -553,7 +558,7 @@ function Footer() {
           </div>
           <div>
             <h4>Vendre</h4>
-            <Link href="/sell">Enregistrer sa Commerce</Link>
+            <Link href="/sell">Enregistrer son commerce</Link>
             <Link href="/help">Devenir store de confiance</Link>
             <ComingSoon feature="ambassadors">
               <button>Ambassadeurs étudiants</button>

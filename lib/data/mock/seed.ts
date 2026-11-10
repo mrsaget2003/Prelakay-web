@@ -205,3 +205,8 @@ export function selLabel(p: Product, o: Choice): string {
   const A = optsOf(p);
   return A.length ? A.map((a) => o[a.k]).join(" · ") : "Standard";
 }
+
+/** Abonnés de démonstration d'un store (D.2) — remplacé par store_follows en production. */
+export function followersOf(s: Store): number {
+  return Math.round(s.sold / 4) + 12;
+}

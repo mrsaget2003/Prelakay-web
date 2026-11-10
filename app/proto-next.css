@@ -12,3 +12,148 @@
 
 /* Icônes du registre : <i class="fa-ic"><svg 1em> — même boîte que la police Font Awesome */
 i.fa-ic { font-style: normal; }
+
+/* =====================================================================
+   Corrections visuelles et interactions (lot « polish acheteur », 9 nov. 2026).
+   Tokens de design-prelakay §8.5 uniquement. Repère : A.1, B.3… = point du ticket.
+   ===================================================================== */
+
+/* A.1 — voile du menu catégories : toute la fenêtre, juste sous le header (z 50) ;
+   le panneau .megaP reste en top:100% du header. Plus de top codé en dur. */
+.mega-ovl { display: none; }
+.mega-veil { position: fixed; inset: 0; z-index: 49; background: rgba(11, 12, 16, 0.35); }
+
+/* A.2 — popovers du header : ancrés sous la ligne du header (le déclencheur occupe toute la
+   hauteur de la ligne), mêmes rayon, ombre, padding et z-index. */
+.hdr-r { align-self: stretch; align-items: stretch; }
+.hdr-r > .dd, .h2 > .dd { display: flex; align-items: center; }
+.hdr-r > .hi { align-self: center; }
+.ddp, .ddp.accm, .ddp.more { padding: var(--space-3); border-radius: var(--radius-sm); box-shadow: var(--shadow-pop); z-index: 70; top: calc(100% + 8px); }
+/* A.3 — ouverture pilotée par JS (survol 150 ms, clic, focus) : plus d'ouverture CSS au survol */
+.dd.hov:hover > .ddp { opacity: 0; visibility: hidden; transform: translateY(4px); }
+.dd.open > .ddp, .dd.hov.open:hover > .ddp { opacity: 1; visibility: visible; transform: none; }
+
+/* A.4 — boutons App Store / Google Play sur une ligne */
+.ddp.app { width: 380px; }
+.ddp.app .stores button { white-space: nowrap; flex: 1; justify-content: center; }
+
+/* A.5 — <select> stylés comme les champs : 44 px, radius-sm, chevron maison */
+.ddp.loc select, .osearch select, select.field {
+  appearance: none; -webkit-appearance: none; height: 44px; border: var(--line); border-radius: var(--radius-sm);
+  padding: 0 40px 0 14px; background-color: var(--color-white); font: inherit; font-size: 14px; color: var(--color-black); cursor: pointer;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 12 8%22%3E%3Cpath d=%22M1 1.5 6 6.5 11 1.5%22 fill=%22none%22 stroke=%22%23575b5c%22 stroke-width=%221.6%22 stroke-linecap=%22round%22 stroke-linejoin=%22round%22/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center; background-size: 12px 8px;
+}
+.ddp.loc select:focus, .osearch select:focus, select.field:focus { border-color: var(--color-lagon-500); }
+.osearch select { height: 36px; border-radius: var(--radius-pill); }
+
+/* A.6 — une seule position de toast : en bas au centre, au-dessus des barres mobiles */
+.toast, .toast.show { top: auto; bottom: calc(24px + env(safe-area-inset-bottom)); transform: translateX(-50%); animation: pk-toast-in 240ms var(--ease) both; }
+@keyframes pk-toast-in { from { opacity: 0; transform: translate(-50%, 12px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@media (max-width: 1023px) {
+  body.root .toast, body.has-mbar .toast { bottom: calc(var(--tabbar) + 16px + env(safe-area-inset-bottom)); }
+  body.has-bar:not(.root):not(.has-mbar) .toast { bottom: calc(76px + env(safe-area-inset-bottom)); }
+  body.root.has-mbar .toast { bottom: calc(var(--tabbar) + 76px + env(safe-area-inset-bottom)); }
+}
+@media (prefers-reduced-motion: reduce) { .toast, .toast.show { animation: none; } }
+
+/* A.7 — même x de départ pour la recherche sur l'accueil (cale à la place du hamburger) ;
+   ligne de catégories défilante avec dégradé en bord, « Plus » hors du défilement */
+.hb-sp { width: 36px; height: 36px; flex: none; }
+.h2-links { display: flex; align-items: center; gap: 4px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: none;
+  -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 32px), transparent); }
+.h2-links::-webkit-scrollbar { display: none; }
+.h2 > .dd.more { flex: none; margin-left: 0; }
+.h2-links > a { height: 40px; display: flex; align-items: center; padding: 0 14px; border-radius: var(--radius-pill); flex: none; }
+.h2-links > a:hover { background: var(--color-neutral-100); }
+.h2-links > a.hl { color: var(--color-lagon-700); font-weight: 700; }
+
+/* A.9 — barres de défilement fines et cohérentes */
+.mega-l, .mega-r, .filters, .slist { scrollbar-width: thin; scrollbar-color: var(--color-neutral-300) transparent; }
+.mega-l::-webkit-scrollbar, .mega-r::-webkit-scrollbar, .filters::-webkit-scrollbar, .slist::-webkit-scrollbar { width: 6px; height: 6px; }
+.mega-l::-webkit-scrollbar-thumb, .mega-r::-webkit-scrollbar-thumb, .filters::-webkit-scrollbar-thumb, .slist::-webkit-scrollbar-thumb { background: var(--color-neutral-300); border-radius: var(--radius-pill); }
+.mega-l::-webkit-scrollbar-button, .mega-r::-webkit-scrollbar-button, .filters::-webkit-scrollbar-button, .slist::-webkit-scrollbar-button { display: none; }
+
+/* B.1 — trois styles de bouton : primaire (.btn-p, Lagon), secondaire (.btn-o, contour), ghost (.btn-s).
+   Le bouton de recherche du header devient primaire, comme sur /help et /orders. */
+.sbox .go { background: var(--color-lagon-500); }
+.sbox .go:hover { background: var(--color-lagon-700); }
+
+/* B.2 — onglets soulignés partagés (sections de page) ; « Promos (À venir) » aligné sur les autres */
+.snav button { display: inline-flex; align-items: center; font: inherit; font-weight: 500; }
+.ptabs { display: flex; gap: 28px; overflow-x: auto; scrollbar-width: none; border-bottom: var(--line); margin-bottom: var(--space-3); }
+.ptabs::-webkit-scrollbar { display: none; }
+.ptabs a, .ptabs button { height: 52px; display: inline-flex; align-items: center; white-space: nowrap; font-weight: 500; color: var(--color-neutral-700); position: relative; }
+.ptabs .on { color: var(--color-black); font-weight: 700; }
+.ptabs .on::after { content: ""; position: absolute; left: 0; right: 0; bottom: -1px; height: 3px; border-radius: var(--radius-pill); background: var(--color-black); }
+@media (max-width: 1023px) { .ptabs { gap: 18px; } .ptabs a, .ptabs button { height: 44px; font-size: 13px; } }
+
+/* B.4 — StatHero : une carte de résumé, deux variantes (dark = argent, light = Coins) */
+.stathero { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-5); border-radius: var(--radius-sm); margin-bottom: var(--space-3); background: var(--color-black); color: var(--color-white); }
+.stathero .sh-ic { width: 48px; height: 48px; flex: none; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; background: rgba(128, 230, 240, 0.16); color: var(--color-lagon-300); }
+.stathero .sh-tx { flex: 1; min-width: 0; }
+.stathero small { display: block; font-size: 13px; color: var(--color-neutral-300); }
+.stathero .amt { display: block; font-size: 32px; line-height: 40px; font-weight: 700; margin: 2px 0; font-variant-numeric: tabular-nums; }
+.stathero .sub { font-size: 13px; color: var(--color-neutral-300); }
+.stathero .sub b { color: var(--color-white); }
+.stathero .btn { flex: none; }
+.stathero.light { background: var(--color-lagon-100); color: var(--color-lagon-900); }
+.stathero.light .sh-ic { background: var(--color-white); color: var(--color-lagon-700); }
+.stathero.light small, .stathero.light .sub { color: var(--color-lagon-700); }
+.stathero.light .sub b { color: var(--color-lagon-900); }
+a.stathero:hover { box-shadow: var(--shadow-card); }
+@media (max-width: 767px) { .stathero { padding: var(--space-4); } .stathero .amt { font-size: 26px; line-height: 32px; } }
+
+/* B.5 — carte produit : prix barré toujours sur la même ligne, lignes de hauteur fixe,
+   store/distance tronqués proprement, icône centrée, cœur visible au tactile (zone ≥ 40 px) */
+.pc .price { flex-wrap: nowrap; min-width: 0; min-height: 22px; }
+.pc .price b { white-space: nowrap; }
+.pc .price s { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.pc .meta { min-height: 16px; }
+.pc .st > span { overflow: hidden; text-overflow: ellipsis; min-width: 0; }
+.ph > .fa-ic { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); }
+.ph > .fa-ic > svg { display: block; }
+@media (hover: none) {
+  .pc .wish { opacity: 1; width: 40px; height: 40px; top: 4px; right: 4px; }
+}
+
+/* B.6 — rail flottant : en bas à droite, visible seulement après ~600 px de défilement,
+   dans la marge quand elle est assez large ; la fin de page n'est jamais recouverte */
+.frail { bottom: 24px; right: max(16px, calc((100vw - var(--max)) / 2 - 64px)); display: none; }
+body.scrolled .frail { display: flex; }
+@media (min-width: 1024px) { main { padding-bottom: 112px; } }
+
+/* B.7 — un seul style de lien d'action : Lagon, sans soulignement (souligné au survol) */
+.lk, .all, .sec-h .all, .ph-h a { color: var(--color-lagon-700); font-weight: 600; font-size: 13px; text-decoration: none; }
+.lk:hover, .all:hover, .sec-h .all:hover, .ph-h a:hover { color: var(--color-lagon-700); text-decoration: underline; text-underline-offset: 3px; }
+
+/* B.8 — centre de messages : même pastille d'icône pour tous ; lu = opacité, non lu = point */
+.nrow .ni { background: var(--color-lagon-100); color: var(--color-lagon-700); }
+.nrow:not(.un) { opacity: 0.72; }
+.nrow:not(.un):hover { opacity: 1; }
+
+/* B.6 — le rail ne recouvre pas non plus la dernière ligne du pied de page */
+@media (min-width: 1024px) { .ftr .bot { padding-right: 72px; } }
+
+/* C.1 — barre latérale du compte collée sous le header ; sur un écran bas, la carte
+   « L'app Prélakay » s'efface pour que le menu tienne entièrement à l'écran */
+.side-w { position: sticky; top: calc(var(--hh, var(--hdr)) + 16px); align-self: start; }
+@media (max-height: 900px) { .side-w .app-card { display: none; } }
+
+/* C.2 — fil d'Ariane du panier : pas de double espacement */
+.crumb + .cartw { margin-top: 0; }
+
+/* C.3 — page 404 aux couleurs de Prélakay */
+.nf { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-5); padding: var(--space-5) var(--space-4); background: var(--color-neutral-100); }
+.nf .empty { background: var(--color-white); border-radius: var(--radius-lg); box-shadow: var(--shadow-card); max-width: 440px; width: 100%; }
+
+/* C.4 / C.5 — pas de coupure dans les distances et les compteurs d'avis */
+.nw { white-space: nowrap; }
+
+/* D.1 — bouton « Suivre » du hero du store : même gabarit que Itinéraire / Partager (32 px, pilule, 13/600) */
+.sh-btn { display: flex; gap: 8px; flex-wrap: wrap; }
+.sh-btn .btn { height: 32px; padding: 0 14px; font-size: 13px; font-weight: 600; border-radius: var(--radius-pill); }
+.btn-follow.on { background: var(--color-lagon-100); color: var(--color-lagon-900); border-color: transparent; }
+.btn-follow .lbl-hover { display: none; }
+.btn-follow.on:hover .lbl-on, .btn-follow.on:focus-visible .lbl-on { display: none; }
+.btn-follow.on:hover .lbl-hover, .btn-follow.on:focus-visible .lbl-hover { display: inline; }

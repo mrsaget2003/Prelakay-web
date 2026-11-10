@@ -14,6 +14,7 @@ import { formatHTG as htg } from "@/lib/format";
 import type { FeatureKey } from "@/lib/config/release";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { AccLayout } from "@/components/proto/account";
+import { StatHero } from "@/components/proto/blocks";
 import { ProductCard } from "@/components/proto/cards";
 import { DataIcon, Fi, NeedLogin, ORDER_STATUS, Ph, SecHead } from "@/components/proto/ui";
 
@@ -42,7 +43,7 @@ export default function AccountPage() {
         <div className="ashort">
           <Link href="/wishlist">
             <b>{Object.keys(s.wish).length}</b>
-            <Fi r="heart" />
+            <Fi s="heart" />
             Wishlist
           </Link>
           <Link href="/viewed">
@@ -64,14 +65,7 @@ export default function AccountPage() {
           </ComingSoon>
         </div>
       </div>
-      <Link className="panel wcard" href="/wallet">
-        <Fi s="wallet" />
-        <span>
-          <small>Wallet Prélakay</small>
-          <b className="tnum">{htg(s.wallet)}</b>
-        </span>
-        <span className="btn btn-p btn-sm">Recharger</span>
-      </Link>
+      <StatHero icon="wallet" label="Wallet Prélakay" value={htg(s.wallet)} href="/wallet" action={<span className="btn btn-p btn-sm">Recharger</span>} />
       <div className="panel">
         <div className="ph-h">
           <h2>Mes commandes</h2>
@@ -106,7 +100,7 @@ export default function AccountPage() {
                       {storeBy(o.store)!.n} · {o.id}
                     </span>
                   </span>
-                  {o.status === "ready" ? <span className="btn btn-p btn-sm">Code de retrait</span> : <span className="btn btn-o btn-sm">Suivre</span>}
+                  {o.status === "ready" ? <span className="btn btn-p btn-sm">Code de retrait</span> : <span className="btn btn-o btn-sm">Détails</span>}
                 </Link>
               );
             })}

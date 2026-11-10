@@ -9,6 +9,7 @@ import { prodBy, storeBy } from "@/lib/data/mock/seed";
 import { useDemo, type Order } from "@/lib/demo/store";
 import { useProtoRoute } from "@/components/proto/shell";
 import { AccLayout, OrderCard } from "@/components/proto/account";
+import { PageTabs } from "@/components/proto/blocks";
 import { EmptyBox, Fi, NeedLogin } from "@/components/proto/ui";
 
 const TABS: [string, string][] = [["all", "Toutes"], ["received", "Reçues"], ["prep", "En préparation"], ["ready", "Prêtes pour retrait"], ["done", "Retirées"], ["review", "À évaluer"]];
@@ -32,17 +33,15 @@ export default function OrdersPage() {
   return (
     <AccLayout k="orders" title="Commandes">
       <div className="panel otop">
-        <div className="otabs">
-          {TABS.map(([v, l]) => {
+        <PageTabs
+          label="Statut des commandes"
+          value={tab}
+          onChange={setTab}
+          tabs={TABS.map(([v, l]) => {
             const c = s.orders.filter((o) => inTab(o, v)).length;
-            return (
-              <button key={v} className={tab === v ? "on" : ""} onClick={() => setTab(v)}>
-                {l}
-                {v !== "all" && v !== "done" && c ? ` (${c})` : ""}
-              </button>
-            );
+            return { id: v, label: `${l}${v !== "all" && v !== "done" && c ? ` (${c})` : ""}` };
           })}
-        </div>
+        />
         <form className="osearch" onSubmit={submit}>
           <input name="q" value={qIn} onChange={(e) => setQIn(e.target.value)} placeholder="N° de commande, produit ou store" aria-label="Rechercher une commande" />
           <button className="btn btn-p btn-sm" aria-label="Rechercher">

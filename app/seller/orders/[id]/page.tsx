@@ -12,7 +12,7 @@ import { myStore, noShow, openChat, orderById, prepOrder, readyOrder } from "@/l
 import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { SHead } from "@/components/seller/shell";
-import { OTag } from "@/components/seller/ui";
+import { OTag } from "@/components/proto/tags";
 import { useCancelOrder } from "@/components/seller/orders";
 import { EmptyBox, Fi, Ph } from "@/components/proto/ui";
 

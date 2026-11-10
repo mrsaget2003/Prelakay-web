@@ -1,6 +1,6 @@
 "use client";
 
-// Étiquettes de l'espace vendeur (oTag et statuts produit du prototype).
+// Étiquettes de statut partagées par l'espace vendeur et la console admin (oTag, PST, litiges).
 
 export const OST: Record<string, [string, string]> = {
   received: ["tag-warn", "À préparer"], prep: ["tag-neu", "En préparation"], ready: ["tag-new", "Prête pour retrait"],

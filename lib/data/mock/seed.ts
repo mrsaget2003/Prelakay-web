@@ -119,10 +119,22 @@ export function setCatalogOverlay(extras: Product[], statuses: Record<string, st
 export function productStatus(id: string): string {
   return statusOf[id] ?? (P.some((p) => p.id === id) ? "active" : "draft");
 }
-/** Catalogue visible par les acheteurs : produits actifs seulement. */
+/** Décisions admin sur les stores (badge « Store de confiance », suspension) : appliquées
+ *  par-dessus les valeurs du seed ; un store suspendu disparaît du catalogue acheteur. */
+const STORE_TRUST = Object.fromEntries(STORES.map((x) => [x.id, x.trust]));
+let suspended = new Set<string>();
+export function setStoreOverlay(o: Record<string, { trust?: boolean; suspended?: boolean }>) {
+  for (const x of STORES) x.trust = o[x.id]?.trust ?? STORE_TRUST[x.id];
+  suspended = new Set(Object.keys(o).filter((k) => o[k].suspended));
+}
+export function isSuspended(storeId: string): boolean {
+  return suspended.has(storeId);
+}
+/** Catalogue visible par les acheteurs : produits actifs des stores non suspendus. */
 export function allProducts(): Product[] {
   const base = Object.keys(statusOf).length ? P.filter((p) => productStatus(p.id) === "active") : P;
-  return [...base, ...extraProducts.filter((p) => productStatus(p.id) === "active")];
+  const out = [...base, ...extraProducts.filter((p) => productStatus(p.id) === "active")];
+  return suspended.size ? out.filter((p) => !suspended.has(p.store)) : out;
 }
 /** Tous les produits, quel que soit leur statut (espace vendeur, fiches). */
 export function everyProduct(): Product[] {

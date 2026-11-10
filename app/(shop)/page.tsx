@@ -8,14 +8,16 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CATS, STORES, P, TINTS } from "@/lib/data/mock/seed";
 import { bannerImage } from "@/lib/data/mock/images";
-import { BANNERS } from "@/lib/data/mock/content";
+import { bannersOf } from "@/lib/demo/admin";
 import { useDemo } from "@/lib/demo/store";
 import { useIsDesk } from "@/lib/proto/useIsDesk";
 import { ProductCard, StoreCard } from "@/components/proto/cards";
 import { DataIcon, Fi, Ph, SecHead } from "@/components/proto/ui";
 
 function Hero() {
-  const slides = BANNERS.filter((x) => x.on).length ? BANNERS.filter((x) => x.on) : [BANNERS[0]];
+  // bannières gérées dans la console admin (ordre, en ligne / masquée)
+  const B = bannersOf(useDemo());
+  const slides = B.filter((x) => x.on).length ? B.filter((x) => x.on) : [B[0]];
   const [i, setI] = useState(0);
   const [auto, setAuto] = useState(true);
   useEffect(() => {
@@ -29,7 +31,7 @@ function Hero() {
   };
   return (
     <section className="hero" aria-label="À la une">
-      <div className="hero-track" id="track" style={{ transform: `translateX(${-100 * i}%)` }}>
+      <div className="hero-track" id="track" style={{ transform: `translateX(${-100 * (i % slides.length)}%)` }}>
         {slides.map((s) => {
           const img = bannerImage(s.id);
           return (
@@ -59,7 +61,7 @@ function Hero() {
       </button>
       <div className="dots">
         {slides.map((_, j) => (
-          <button key={j} onClick={() => go(j)} className={j === i ? "on" : ""} aria-label={`Bannière ${j + 1}`} />
+          <button key={j} onClick={() => go(j)} className={j === i % slides.length ? "on" : ""} aria-label={`Bannière ${j + 1}`} />
         ))}
       </div>
     </section>

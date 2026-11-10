@@ -10,7 +10,7 @@ import { useDemo } from "@/lib/demo/store";
 import { myProducts, myStore, sellerFin, sellerOrders, todo } from "@/lib/demo/sellerActions";
 import { formatHTG as htg } from "@/lib/format";
 import { SHead, BUYER_URL } from "@/components/seller/shell";
-import { OTag } from "@/components/seller/ui";
+import { OTag } from "@/components/proto/tags";
 import { SellerHomeCharts } from "@/components/seller/charts";
 import { Fi, Ph } from "@/components/proto/ui";
 

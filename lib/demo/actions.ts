@@ -194,3 +194,22 @@ export function payForRelative(user: string, total: number) {
     s.txs.unshift(["fa-solid fa-gift", `Panier payé pour @${user}`, "6 nov.", -total, ""]);
   });
 }
+
+/** Démo : simule le retrait en magasin (statut « Retirée », +50 Coins, message). */
+export function simulatePickup(id: string) {
+  demo.update((d) => {
+    const o = d.orders.find((y) => y.id === id);
+    if (!o) return;
+    o.status = "done";
+    o.date = "6 nov. 2026";
+    d.coins += 50;
+    d.notif.unshift({ i: "fa-solid fa-circle-check", t: `Commande ${id} retirée`, p: "+50 Coins. Laissez un avis pour en gagner 25 de plus.", to: `/orders/${id}`, un: true });
+  });
+}
+
+export function logout() {
+  demo.update((d) => { d.logged = false; });
+}
+export function login() {
+  demo.update((d) => { d.logged = true; });
+}

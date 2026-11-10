@@ -18,3 +18,107 @@ export const REVS: [string, number, string, string, boolean][] = [
   ["@ricardo_sud", 3, "Correct, mais il a fallu attendre un peu au comptoir.", "Désolé pour l'attente, nous avons ajouté une caisse.", false],
   ["@mimi_ht", 5, "Exactement comme sur les photos.", "", true],
 ];
+
+/** Menu latéral du compte (ACC du prototype) : [clé, icône, libellé, lien | "soon:fonctionnalité"] ; "-" = séparateur. */
+export const ACC: ([string, string, string, string] | ["-"])[] = [
+  ["account", "fa-solid fa-table-cells-large", "Aperçu", "/account"],
+  ["orders", "fa-solid fa-receipt", "Commandes", "/orders"],
+  ["wallet", "fa-solid fa-wallet", "Wallet", "/wallet"],
+  ["disputes", "fa-solid fa-rotate-left", "Retours et litiges", "/disputes"],
+  ["myreviews", "fa-regular fa-star", "Mes avis", "/myreviews"],
+  ["settings", "fa-solid fa-gear", "Paramètres", "/settings"],
+  ["notifications", "fa-regular fa-bell", "Centre de messages", "/notifications"],
+  ["-"],
+  ["coins", "fa-solid fa-coins", "Coins", "/coins"],
+  ["wishlist", "fa-regular fa-heart", "Wishlist", "/wishlist"],
+  ["viewed", "fa-solid fa-clock-rotate-left", "Vus récemment", "/viewed"],
+  ["invite", "fa-solid fa-user-plus", "Inviter des amis", "soon:referral"],
+  ["-"],
+  ["help", "fa-regular fa-circle-question", "Centre d'aide", "/help"],
+  ["sell", "fa-solid fa-store", "Enregistrer sa Commerce", "/sell"],
+];
+
+/** Raccourcis « Services » du compte mobile. */
+export const SERVICES: [string, string, string][] = [
+  ["/notifications", "fa-regular fa-bell", "Messages"],
+  ["/myreviews", "fa-regular fa-star", "Mes avis"],
+  ["/help", "fa-regular fa-circle-question", "Aide"],
+  ["/sell", "fa-solid fa-store", "Vendre"],
+  ["soon:referral", "fa-solid fa-user-plus", "Inviter des amis"],
+  ["soon:prelakay_plus", "fa-solid fa-crown", "Prélakay+"],
+  ["/settings", "fa-solid fa-gear", "Paramètres"],
+  ["/map", "fa-regular fa-map", "Carte des stores"],
+];
+
+/** Statuts de commande de l'aperçu du compte. */
+export const ORDER_SHORTCUTS: [string, string, string][] = [
+  ["received", "fa-solid fa-receipt", "Reçues"],
+  ["prep", "fa-solid fa-box", "En préparation"],
+  ["ready", "fa-solid fa-store", "Prêtes pour retrait"],
+  ["review", "fa-regular fa-star", "À évaluer"],
+];
+
+/** Frise de suivi d'une commande. */
+export const ORDER_TIMELINE: [string, string][] = [["fa-solid fa-receipt", "Reçue"], ["fa-solid fa-box", "En préparation"], ["fa-solid fa-store", "Prête"], ["fa-solid fa-check", "Retirée"]];
+export const KYC_TIMELINE: [string, string][] = [["fa-solid fa-receipt", "Reçu"], ["fa-solid fa-magnifying-glass", "En vérification"], ["fa-solid fa-circle-check", "Approuvé"]];
+export const READY_TO_SELL: [string, string][] = [["fa-solid fa-box", "Ajouter votre premier produit"], ["fa-solid fa-rotate-left", "Définir votre politique de retour"], ["fa-regular fa-credit-card", "Ajouter un moyen de paiement pour vos retraits"]];
+
+/** Passerelles de recharge (GW) : [clé, libellé, origine]. Actives au lancement : [À CONFIRMER]. */
+export const GATEWAYS: [string, string, string][] = [["moncash", "MonCash", "Haïti"], ["natcash", "NatCash", "Haïti"], ["sogebank", "Sogebank", "Haïti"], ["wise", "Wise", "Diaspora"], ["stripe", "Carte (Stripe)", "Diaspora"], ["meru", "Meru", "Diaspora"]];
+
+/** Gains de Coins (50 / commande, 25 / avis ; bienvenue et bonus retrait : à confirmer). */
+export const COINS_EARN: [string, string, string][] = [
+  ["fa-solid fa-cart-shopping", "Chaque commande retirée", "+50"],
+  ["fa-regular fa-star", "Chaque avis vérifié", "+25"],
+  ["fa-solid fa-gift", "Bienvenue", "montant à confirmer"],
+  ["fa-solid fa-store", "Bonus retrait en magasin", "à confirmer"],
+  ["fa-solid fa-user-plus", "Inviter un ami", "À venir"],
+];
+export const COINS_HISTORY: [string, string, string, string][] = [
+  ["fa-regular fa-star", "Avis · Huile de ricin noire", "4 nov.", "+25"],
+  ["fa-solid fa-cart-shopping", "Commande PK-0997 retirée", "15 oct.", "+50"],
+  ["fa-solid fa-gift", "Bienvenue sur Prélakay", "10 oct.", "+45"],
+];
+
+/** Centre d'aide (HELP) et réponses (FAQ). */
+export const HELP: [string, string, string[]][] = [
+  ["fa-solid fa-store", "Retrait en magasin", ["Comment récupérer ma commande ?", "Que se passe-t-il si je ne viens pas dans les 3 jours ?", "Quelqu'un d'autre peut-il retirer pour moi ?"]],
+  ["fa-solid fa-wallet", "Wallet et paiement", ["Comment recharger mon wallet ?", "Comment mon argent est-il protégé ?", "Comment payer le panier d'un proche ?"]],
+  ["fa-solid fa-rotate-left", "Retours et litiges", ["Comment signaler un problème ?", "Où va mon remboursement ?"]],
+  ["fa-solid fa-coins", "Coins", ["Comment gagner des Coins ?"]],
+  ["fa-regular fa-user", "Compte", ["Comment changer mon @username ?", "Comment devenir vendeur ?"]],
+];
+export const FAQ: Record<string, string> = {
+  "Comment récupérer ma commande ?": "Quand le store a préparé votre commande, vous recevez un code de retrait (4 à 6 chiffres) et un QR code. Présentez-les au store : il scanne, et la commande passe à « Retirée ».",
+  "Que se passe-t-il si je ne viens pas dans les 3 jours ?": "Vous recevez un rappel à J+1 et à J+2. Après 3 jours, la commande est annulée et remboursée sur votre wallet, moins des frais de restockage (montant à confirmer).",
+  "Quelqu'un d'autre peut-il retirer pour moi ?": "Oui : partagez-lui le code de retrait. C'est aussi comme ça que fonctionne le paiement du panier d'un proche.",
+  "Comment recharger mon wallet ?": "Depuis Wallet → Recharger : MonCash, NatCash ou Sogebank en Haïti ; Wise, carte (Stripe) ou Meru depuis l'étranger.",
+  "Comment mon argent est-il protégé ?": "Prélakay garde votre paiement jusqu'au retrait en magasin. Si le store annule, si la commande n'est pas prête ou si l'article pose problème, vous êtes remboursé sur votre wallet.",
+  "Comment payer le panier d'un proche ?": "Votre proche vous partage son panier par lien ou WhatsApp. Ouvrez-le, puis payez avec votre wallet. Il retire avec le code.",
+  "Comment signaler un problème ?": "Dans la commande retirée : « Signaler un problème ». Pour un article non conforme ou endommagé, une photo est obligatoire. Vous avez 3 jours.",
+  "Où va mon remboursement ?": "Toujours sur votre wallet Prélakay, jamais en espèces.",
+  "Comment gagner des Coins ?": "50 Coins par commande retirée, 25 par avis vérifié. Le bonus de bienvenue et les règles d'utilisation sont à confirmer.",
+  "Comment changer mon @username ?": "Mon compte → Paramètres → Informations personnelles.",
+  "Comment devenir vendeur ?": "Mon compte → Enregistrer sa Commerce. Les admins vérifient votre identité (KYC) avant l'ouverture du store.",
+};
+/** Toutes les questions d'aide, dans l'ordre : l'index sert d'identifiant d'article (#/help/:n). */
+export const HELP_ALL: [string, string][] = HELP.flatMap(([, cat, qs]) => qs.map((q): [string, string] => [cat, q]));
+
+/** Paramètres (SETS) : [section, icône, titre]. */
+export const SETS: [string, string, string][] = [
+  ["profil", "fa-regular fa-user", "Informations personnelles"],
+  ["secu", "fa-solid fa-lock", "Sécurité et connexion"],
+  ["notifs", "fa-regular fa-bell", "Notifications"],
+  ["lang", "fa-solid fa-globe", "Langue et devise"],
+  ["ville", "fa-solid fa-location-dot", "Ville de retrait"],
+  ["privacy", "fa-solid fa-shield", "Confidentialité"],
+];
+export const NOTIF_PREFS = ["Commande prête pour retrait", "Rappels de retrait (J+1, J+2)", "Wallet et remboursements", "Réponses à vos questions", "Nouveautés des stores près de vous"];
+export const CITIES = ["Les Cayes", "Port-au-Prince", "Cap-Haïtien", "Jacmel", "Jérémie"];
+
+/** Intro (3 écrans max, « Passer » dès le premier — 02-app-flow §2.1). */
+export const INTRO: [string, string, string, string][] = [
+  ["fa-solid fa-location-dot", "g1", "Les stores de votre ville, sur une carte", "Trouvez un produit, voyez à quelle distance il est, et allez le chercher."],
+  ["fa-solid fa-wallet", "g5", "Payez avec votre wallet", "MonCash, NatCash, Sogebank, ou depuis l'étranger. Votre argent reste protégé jusqu'au retrait."],
+  ["fa-solid fa-coins", "g0", "Gagnez des Coins", "À chaque commande retirée et à chaque avis."],
+];

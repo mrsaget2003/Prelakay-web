@@ -22,6 +22,7 @@ import { ModalProvider, useModal } from "./modal";
 import { SearchBox } from "./search";
 import { DataIcon, Fi, Ph, Qr, useMounted } from "./ui";
 import { ShareModal } from "./share";
+import { Intro } from "./auth";
 
 /* ---------- route courante ---------- */
 const RouteCtx = createContext<ProtoRoute>(parseRoute("/", ""));
@@ -670,6 +671,7 @@ function Chrome({ children }: { children: ReactNode }) {
           <div className="mbar" id="mbar" />
           <TabBar r={r} />
           <Frail />
+          <Intro />
         </ModalProvider>
       </BarsCtx.Provider>
     </RouteCtx.Provider>

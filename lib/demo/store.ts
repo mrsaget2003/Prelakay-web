@@ -6,6 +6,7 @@
 // Jamais utilisé en production (lib/config/env.ts).
 
 import { useSyncExternalStore } from "react";
+import type { AmbassadorInput } from "@/lib/domain/ambassador";
 import { basePrice, setPriceOverlay, prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, setStoreOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
 import type { Banner } from "@/lib/data/mock/content";
 import type { PartnerApp, PartnerStatus } from "@/lib/domain/partners";
@@ -117,7 +118,7 @@ export type DemoState = {
   /** Offres flash, events (créés et participations), boosts. */
   marketing: { flash: Flash[]; events: PEvent[]; joined: Record<string, string[]>; boosts: Boost[] };
   /** Parrainage, ambassadeurs, Prelakay+ (lot 10). */
-  growth: { referrals: { u: string; st: "pending" | "done"; date: string }[]; amb: null | { st: "recu" | "ok" | "rej"; school: string }; plus: null | { since: string; next: string } };
+  growth: { referrals: { u: string; st: "pending" | "done"; date: string }[]; amb: null | { st: "recu" | "ok" | "rej"; school: string; profile?: AmbassadorInput }; plus: null | { since: string; next: string } };
 };
 
 const DEMO_ORDERS: Omit<Order, "total">[] = [

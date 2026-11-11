@@ -3,11 +3,13 @@
 // Pages « Devenir partenaire de paiement / de livraison » (CLAUDE.md 10 nov. 2026, spec §7) :
 // bandeau, chiffres du pilote, avantages, étapes, profils, exigences, questions, candidature, contact.
 
+import Image from "next/image";
 import { useState } from "react";
 import { ZONES } from "@/lib/charts/adminData";
 import { PARTNER_PAGES, VEHICLES } from "@/lib/demo/partnerContent";
 import { ORG_TYPES, submitPartner } from "@/lib/demo/partners";
 import type { PartnerInput, PartnerKind } from "@/lib/domain/partners";
+import { photoUrl } from "@/lib/data/mock/partnerImages";
 import { Crumb } from "./legal";
 import { DataIcon, FieldErr, Fi, IdPhoto } from "./ui";
 
@@ -165,26 +167,39 @@ export function PartnerPage({ kind }: { kind: PartnerKind }) {
   return (
     <div className="wrap pt">
       <Crumb items={[[c.crumb]]} />
-      <section className="pt-hero">
+      <section className="pt-hero pt-hero-img">
         <div>
           <h1>{c.title}</h1>
           <p>{c.promise}</p>
           <a className="btn btn-p" href="#candidature">
             Déposer une candidature
           </a>
+          <ul className="pt-hero-pts">
+            {c.heroPoints.map((x) => (
+              <li key={x}>
+                <Fi s="check" />
+                {x}
+              </li>
+            ))}
+          </ul>
         </div>
-        <span className="pt-hi" aria-hidden="true">
-          <DataIcon cls={c.heroIcon} />
-        </span>
+        <Image
+          className="pt-photo"
+          src={photoUrl(c.heroPhoto, 760, 560)}
+          alt={c.heroPhoto.alt}
+          width={380}
+          height={280}
+          unoptimized
+          priority
+        />
       </section>
-      <ul className="pt-stats" aria-label="Chiffres du pilote">
+      <ul className="pt-stats" aria-label="Chiffres de la plateforme">
         {c.stats.map(([v, l]) => (
           <li key={l}>
             <b>{v}</b>
             <span>{l}</span>
           </li>
         ))}
-        <li className="pt-note">Chiffres de la plateforme</li>
       </ul>
       <section className="pt-sec">
         <h2>Pourquoi Prélakay</h2>
@@ -200,14 +215,42 @@ export function PartnerPage({ kind }: { kind: PartnerKind }) {
           ))}
         </div>
       </section>
+      <section className="pt-sec pt-split">
+        <div>
+          <h2>Ce que vous y gagnez</h2>
+          <ul className="pt-gains">
+            {c.gains.map((g) => (
+              <li key={g.t} className={g.open ? "is-open" : undefined}>
+                <Fi s={g.open ? "circle-info" : "check"} />
+                <div>
+                  <b>{g.t}</b>
+                  <p>{g.p}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <Image
+          className="pt-photo pt-photo-side"
+          src={photoUrl(c.sidePhoto, 720, 900)}
+          alt={c.sidePhoto.alt}
+          width={360}
+          height={450}
+          unoptimized
+        />
+      </section>
       <section className="pt-sec">
         <h2>Comment ça marche</h2>
         <ol className="pt-steps">
-          {c.steps.map(([t, p], i) => (
+          {c.steps.map(([t, p, d], i) => (
             <li key={t}>
               <span className="pt-n">{i + 1}</span>
               <b>{t}</b>
               <p>{p}</p>
+              <span className="pt-dur">
+                <Fi r="clock" />
+                {d}
+              </span>
             </li>
           ))}
         </ol>
@@ -241,6 +284,29 @@ export function PartnerPage({ kind }: { kind: PartnerKind }) {
               </li>
             ))}
           </ul>
+          <h3 className="pt-sub">Ce que nous ne demandons pas</h3>
+          <ul className="pt-needs pt-no">
+            {c.noNeed.map((n) => (
+              <li key={n}>
+                <Fi s="xmark" />
+                {n}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+      <section className="pt-sec">
+        <h2>Nos engagements</h2>
+        <div className="pt-cards pt-cards-3">
+          {c.promises.map(([t, p]) => (
+            <div className="panel pt-card" key={t}>
+              <span className="pt-ic">
+                <Fi s="shield-halved" />
+              </span>
+              <h3>{t}</h3>
+              <p>{p}</p>
+            </div>
+          ))}
         </div>
       </section>
       <section className="pt-sec">
@@ -256,7 +322,8 @@ export function PartnerPage({ kind }: { kind: PartnerKind }) {
       </section>
       <section className="pt-sec" id="candidature">
         <div className="panel">
-          <h2>Candidature</h2>
+          <h2>{c.ctaTitle}</h2>
+          <p className="pt-cta-t">{c.ctaText}</p>
           <ApplyForm kind={kind} />
         </div>
       </section>

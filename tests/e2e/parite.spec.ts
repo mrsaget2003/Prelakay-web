@@ -75,3 +75,29 @@ test("offre flash : même prix avant et après hydratation (pas d'erreur de rend
   await page.waitForLoadState("networkidle");
   expect(errors.filter((e) => /Hydration/i.test(e)), errors.join("\n")).toEqual([]);
 });
+
+// Ambassadeurs étudiants (11 nov. 2026) : questionnaire de profil, auto-complétion des
+// universités et des facultés depuis lib/data/facultes.json.
+test("ambassadeurs : le questionnaire refuse un profil incomplet puis accepte la candidature", async ({ page }) => {
+  await demo(page, {});
+  await page.goto("/ambassadeurs");
+  await page.waitForLoadState("networkidle"); // le clic doit tomber après l'hydratation
+  const form = page.locator("form.pt-form");
+  await form.getByRole("button", { name: "Envoyer ma candidature" }).click();
+  await expect(page.getByText("Indiquez votre université.")).toBeVisible();
+
+  await form.getByLabel("Université").fill("Université d'État d'Haïti");
+  // la liste des facultés suit l'université saisie
+  await expect(page.locator("#amb-facs option").first()).toHaveAttribute("value", /Faculté/);
+  await form.getByLabel("Faculté ou filière").fill("Faculté des Sciences");
+  await form.getByLabel("Année d'étude").selectOption("3e année");
+  await form.getByLabel("Ville", { exact: true }).fill("Les Cayes");
+  await form.getByLabel("Téléphone").fill("3712 3456");
+  await form.getByLabel("Réseau où vous êtes le plus actif").selectOption("Aucun");
+  await form.getByRole("button", { name: "4 à 8 h" }).click();
+  await form.getByLabel("Pourquoi vous ?").fill("Je parle à beaucoup d'étudiants de ma promotion et je peux les aider à commander.");
+  await form.getByRole("button", { name: "Envoyer ma candidature" }).click();
+
+  await expect(page.getByText("Candidature reçue")).toBeVisible();
+  await expect(page.getByText("Faculté des Sciences · Université d'État d'Haïti · 3e année · Les Cayes")).toBeVisible();
+});

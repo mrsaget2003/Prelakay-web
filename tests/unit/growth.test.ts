@@ -45,9 +45,15 @@ describe("parrainage", () => {
 });
 
 describe("ambassadeurs étudiants", () => {
-  it("candidature avec établissement obligatoire ; validation admin journalisée", () => {
-    expect(applyAmbassador("  ")).toBe("Indiquez votre établissement.");
-    expect(applyAmbassador("Université Notre-Dame, Les Cayes")).toBeNull();
+  it("candidature avec profil étudiant obligatoire ; validation admin journalisée", () => {
+    const profil = {
+      university: "Université Notre-Dame d'Haïti", faculty: "Sciences infirmières", year: "2e année",
+      city: "Les Cayes", phone: "3712 3456", network: "WhatsApp", handle: "+509 3712 3456",
+      followers: "100-500", hours: "4-8",
+      why: "Je parle à beaucoup d'étudiants de ma promotion et je peux les aider à commander.",
+    };
+    expect(applyAmbassador({ ...profil, university: "  " })).toBe("Indiquez votre université.");
+    expect(applyAmbassador(profil)).toBeNull();
     expect(demo.get().growth.amb).toMatchObject({ st: "recu" });
     expect(ambDecide(ME, true)).toBeNull();
     expect(demo.get().growth.amb?.st).toBe("ok");

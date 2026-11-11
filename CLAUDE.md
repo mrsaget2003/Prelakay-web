@@ -42,6 +42,18 @@ Si une information ne se trouve dans **aucun** de ces fichiers, elle n'existe pa
   Clé gratuite en variable d'environnement, jamais en dur ; style sans hôtels ni sites
   touristiques. La géolocalisation réelle des boutiques est prévue en **V3**.
 
+- ✅ **Pages partenaires et ambassadeurs réécrites** : plus détaillées, tournées vers la
+  candidature, avec des photos Unsplash (licence libre). **Aucun chiffre inventé** — ce
+  qui n'est pas tranché (montant par course, conditions commerciales, délais) est annoncé
+  comme ouvert, ce qui est aussi ce qui rend la page crédible.
+- ✅ **Questionnaire ambassadeur** : profil étudiant (université, faculté, année, ville,
+  téléphone, réseau et audience, disponibilités, motivation). Auto-complétion depuis
+  `lib/data/facultes.json`, **que Marc-Karlin complète** — Claude n'y a mis que des
+  établissements publics et vérifiables.
+- ⚠️ **Photos des pages partenaires** : choisies sur le seul texte alternatif d'Unsplash,
+  Claude ne peut pas les regarder. À valider d'un coup d'œil ; un seul fichier à changer,
+  `lib/data/mock/partnerImages.ts`. Les photos « Unsplash+ » (payantes) sont exclues.
+
 ## Décisions récentes (11 nov 2026 — livrables et domaines)
 
 - ✅ **4 livrables, 4 branches, 4 domaines** (confirme les domaines *[À CONFIRMER]* du plan §1.0) :

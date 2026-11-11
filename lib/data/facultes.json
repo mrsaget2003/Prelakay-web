@@ -1,0 +1,55 @@
+{
+  "_lisezmoi": [
+    "Universités et facultés proposées en auto-complétion sur la page Ambassadeurs.",
+    "Marc-Karlin complète cette liste : ajoutez un objet par établissement, et ses facultés.",
+    "Claude n'a mis que des établissements dont l'existence est publique et vérifiable ;",
+    "les listes de facultés sont volontairement incomplètes, à vous de les finir.",
+    "Aucune autre partie du code n'est à toucher : la page lit ce fichier tel quel."
+  ],
+  "universites": [
+    {
+      "sigle": "UEH",
+      "nom": "Université d'État d'Haïti",
+      "ville": "Port-au-Prince",
+      "facultes": [
+        "Faculté de Droit et des Sciences Économiques",
+        "Faculté de Médecine et de Pharmacie",
+        "Faculté des Sciences",
+        "Faculté d'Ethnologie",
+        "Faculté des Sciences Humaines",
+        "Faculté d'Agronomie et de Médecine Vétérinaire",
+        "Faculté des Sciences Odontologiques",
+        "Institut National de Gestion et des Hautes Études Internationales"
+      ]
+    },
+    {
+      "sigle": "UniQ",
+      "nom": "Université Quisqueya",
+      "ville": "Port-au-Prince",
+      "facultes": [
+        "Faculté des Sciences de l'Administration",
+        "Faculté des Sciences, Génie et Architecture",
+        "Faculté des Sciences de la Santé",
+        "Faculté des Sciences de l'Éducation"
+      ]
+    },
+    {
+      "sigle": "UNDH",
+      "nom": "Université Notre-Dame d'Haïti",
+      "ville": "Port-au-Prince",
+      "facultes": []
+    },
+    {
+      "sigle": "UPSAC",
+      "nom": "Université Épiscopale d'Haïti",
+      "ville": "Port-au-Prince",
+      "facultes": []
+    },
+    {
+      "sigle": "",
+      "nom": "Université Caraïbe",
+      "ville": "Port-au-Prince",
+      "facultes": []
+    }
+  ]
+}

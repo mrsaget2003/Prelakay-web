@@ -334,3 +334,37 @@ body.scrolled .frail { display: flex; }
 /* Plan de repérage (repli sans clé MapTiler) : l'icône déborde de sa pastille et
    volait les clics des repères voisins. Seul le bouton reçoit le clic. */
 .map .pin > *{pointer-events:none}
+
+/* ---------- Pages partenaires et ambassadeurs, version détaillée (11 nov. 2026) ---------- */
+.pt-hero-img{padding:0;overflow:hidden;align-items:stretch}
+.pt-hero-img > div{padding:32px;display:flex;flex-direction:column;justify-content:center;min-width:0}
+.pt-photo{display:block;object-fit:cover;width:380px;height:auto;align-self:stretch;flex:none}
+.pt-hero-pts{list-style:none;padding:0;margin:16px 0 0;display:grid;gap:6px}
+.pt-hero-pts li{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--color-lagon-100)}
+.pt-hero-pts svg{flex:none}
+.pt-split{display:grid;grid-template-columns:3fr 2fr;gap:24px;align-items:start}
+.pt-photo-side{width:100%;height:auto;border-radius:var(--radius-sm)}
+.pt-gains{list-style:none;padding:0;margin:0;display:grid;gap:14px}
+.pt-gains li{display:flex;gap:10px;align-items:flex-start}
+.pt-gains svg{color:var(--color-success);margin-top:4px;flex:none}
+.pt-gains li.is-open svg{color:var(--color-warning, #b76e00)}
+.pt-gains b{display:block;font-size:15px}
+.pt-gains p{margin:2px 0 0;font-size:13px;line-height:19px;color:var(--color-neutral-700, #3a3d40)}
+.pt-dur{display:inline-flex;align-items:center;gap:6px;margin-top:8px;font-size:12px;color:var(--color-neutral-500, #6b6e70)}
+.pt-cards-3{grid-template-columns:repeat(3,1fr)}
+.pt-sub{font-size:15px;margin:20px 0 10px}
+.pt-no li svg{color:var(--color-neutral-500, #6b6e70)}
+.pt-cta-t{margin:-4px 0 16px;font-size:14px;color:var(--color-neutral-700, #3a3d40)}
+@media (max-width:1023px){
+  .pt-cards{grid-template-columns:repeat(2,1fr)}
+  .pt-steps{grid-template-columns:repeat(2,1fr)}
+  .pt-split,.pt-two{grid-template-columns:1fr}
+  .pt-photo{width:300px}
+}
+@media (max-width:767px){
+  .pt-hero-img{flex-direction:column-reverse}
+  .pt-hero-img > div{padding:24px}
+  .pt-photo{width:100%;height:200px}
+  .pt-cards,.pt-cards-3,.pt-steps,.pt-prof,.pt-stats{grid-template-columns:1fr}
+  .pt-photo-side{max-height:260px;object-fit:cover}
+}

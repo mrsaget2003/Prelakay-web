@@ -4,6 +4,7 @@
 
 import { audit, type Me } from "./admin";
 import { demo, type DemoState } from "./store";
+import { ambassadorSummary, validateAmbassador, type AmbassadorInput } from "@/lib/domain/ambassador";
 
 /** CHANGELOG / PRD : 500 Coins par parrainage. */
 export const REFERRAL_COINS = 500;
@@ -53,10 +54,14 @@ export function completeReferral(u: string): string | null {
   return null;
 }
 
-export function applyAmbassador(school: string): string | null {
-  if (!school.trim()) return "Indiquez votre établissement.";
+/** Candidature ambassadeur : profil étudiant complet (11 nov. 2026). Renvoie la première
+ *  erreur, ou null si la candidature est reçue. */
+export function applyAmbassador(a: AmbassadorInput): string | null {
+  const errs = validateAmbassador(a);
+  const first = Object.values(errs)[0];
+  if (first) return first;
   demo.update((s) => {
-    s.growth.amb = { st: "recu", school: school.trim() };
+    s.growth.amb = { st: "recu", school: ambassadorSummary(a), profile: a };
   });
   return null;
 }

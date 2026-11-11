@@ -151,3 +151,14 @@ export function StTag({ s }: { s: string }) {
   const [cls, label] = ORDER_STATUS[s] ?? ["tag-neu", s];
   return <span className={`tag ${cls}`}>{label}</span>;
 }
+
+/** Erreur de champ affichée sous le champ (tri des toasts, spec §9) — remplace le toast d'erreur. */
+export function FieldErr({ msg }: { msg: string | null | undefined }) {
+  if (!msg) return null;
+  return (
+    <p className="ferr" role="alert">
+      <Fi s="circle-exclamation" />
+      <span>{msg}</span>
+    </p>
+  );
+}

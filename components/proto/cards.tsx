@@ -42,8 +42,7 @@ export function useQuickAdd() {
     const p = prodBy(id)!;
     setQty(id, 1);
     if (hasOpts(p)) return modal.openRaw("qv", <QuickView id={id} mode="add" />);
-    addToCart(id, 1);
-    toast.show("Ajouté au panier", "success");
+    addToCart(id, 1); // retour visuel : le badge du panier rebondit (pas de toast, spec §9)
   };
 }
 
@@ -171,11 +170,9 @@ export function QuickView({ id, mode, ci }: { id: string; mode: "add" | "cart"; 
         }
       });
       modal.close();
-      toast.show("Panier mis à jour", "success");
     } else {
-      const v = addToCart(p.id);
+      addToCart(p.id);
       modal.close();
-      toast.show(`Ajouté au panier · ${v}`, "success");
     }
   };
   const pick = (k: string, v: string) => setChoice(p.id, k, v);

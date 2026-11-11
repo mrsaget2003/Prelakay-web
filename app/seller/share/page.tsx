@@ -6,12 +6,15 @@ import { storeImage } from "@/lib/data/mock/images";
 import { useDemo } from "@/lib/demo/store";
 import { myStore } from "@/lib/demo/sellerActions";
 import { useToast } from "@/components/ui/Toast";
+import { useFlash } from "@/components/ui/Feedback";
+import { fbLink, waLink } from "@/lib/proto/shareLinks";
 import { SHead, BUYER_URL } from "@/components/seller/shell";
 import { Fi, Ph, Qr } from "@/components/proto/ui";
 
 export default function Share() {
   const s = useDemo();
   const toast = useToast();
+  const [copied, flashCopied] = useFlash();
   const st = myStore(s);
   const url = `prelakay.com/store/${st.id}`;
   const copy = () => {
@@ -20,7 +23,7 @@ export default function Share() {
     } catch {
       /* presse-papiers indisponible */
     }
-    toast.show(`Copié : https://${url}`, "success");
+    flashCopied();
   };
   return (
     <>
@@ -30,23 +33,23 @@ export default function Share() {
           <h2 className="ph-t">Lien du store</h2>
           <div className="cp">
             <input className="field" value={`https://${url}`} readOnly aria-label="Lien du store" />
-            <button className="btn btn-p btn-sm" onClick={copy}>
-              Copier
+            <button className="btn btn-p btn-sm" onClick={copy} aria-live="polite">
+              {copied ? "Copié" : "Copier"}
             </button>
           </div>
           <div className="share-g" style={{ marginTop: 18 }}>
-            <button onClick={() => toast.show("Ouverture de WhatsApp…")}>
+            <a href={waLink(`https://${url}`, st.n)} target="_blank" rel="noopener noreferrer">
               <span>
                 <Fi s="whatsapp" />
               </span>
               WhatsApp
-            </button>
-            <button onClick={() => toast.show("Ouverture de Facebook…")}>
+            </a>
+            <a href={fbLink(`https://${url}`)} target="_blank" rel="noopener noreferrer">
               <span>
                 <Fi s="facebook-f" />
               </span>
               Facebook
-            </button>
+            </a>
             <button onClick={copy}>
               <span>
                 <Fi s="link" />

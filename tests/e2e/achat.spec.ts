@@ -7,9 +7,12 @@ test("achat de bout en bout (démo)", async ({ page, isMobile }, info) => {
   await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
   await page.goto("/p/tech-1");
   await expect(page.getByRole("heading", { level: 1, name: "Chargeur rapide 20 W" })).toBeVisible();
-  const add = info.project.name.startsWith("mobile") || info.project.name.startsWith("tablet") ? page.locator("#mbuy").getByRole("button", { name: "Au panier" }) : page.locator(".buy").getByRole("button", { name: "Ajouter au panier" });
+  const add = info.project.name.startsWith("mobile") || info.project.name.startsWith("tablet") ? page.locator("#mbuy .btn-s") : page.locator(".buy .btn-o");
   await add.click();
-  await expect(page.getByRole("status")).toContainText("Ajouté au panier");
+  // tri des toasts (spec §9) : pas de toast, le bouton et le badge du panier réagissent
+  await expect(add).toContainText("Ajouté");
+  await expect(page.locator(".cnt").locator("visible=true").first()).toHaveText("1");
+  await expect(page.getByRole("status").filter({ hasText: "Ajouté au panier" })).toHaveCount(0);
 
   await page.goto("/cart");
   // desktop : titre h1 ; mobile : titre de la barre du haut (comme le prototype)

@@ -8,11 +8,12 @@ import { myStore, replyReview, sellerReviews } from "@/lib/demo/sellerActions";
 import { useToast } from "@/components/ui/Toast";
 import { useModal } from "@/components/proto/modal";
 import { SHead, BUYER_URL } from "@/components/seller/shell";
-import { Fi, Ph, Stars, fr1 } from "@/components/proto/ui";
+import { FieldErr, Fi, Ph, Stars, fr1 } from "@/components/proto/ui";
 
 function ReplyForm({ k, onDone }: { k: string; onDone: () => void }) {
   const toast = useToast();
   const [t, setT] = useState("");
+  const [err, setErr] = useState<string | null>(null);
   return (
     <>
       <p className="cap" style={{ marginBottom: 10 }}>
@@ -22,12 +23,13 @@ function ReplyForm({ k, onDone }: { k: string; onDone: () => void }) {
         <label className="lbl" htmlFor="rp">
           Votre réponse
         </label>
-        <textarea className="field" id="rp" rows={3} value={t} onChange={(e) => setT(e.target.value)} />
+        <textarea className="field" id="rp" rows={3} value={t} aria-invalid={err ? true : undefined} onChange={(e) => { setT(e.target.value); setErr(null); }} />
       </div>
+      <FieldErr msg={err} />
       <button
         className="btn btn-p btn-block"
         onClick={() => {
-          if (!t.trim()) return toast.show("Écrivez une réponse.", "error");
+          if (!t.trim()) return setErr("Écrivez une réponse.");
           replyReview(k, t.trim());
           onDone();
           toast.show("Réponse publiée", "success");

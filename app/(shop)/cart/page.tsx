@@ -127,7 +127,6 @@ export default function CartPage() {
                                 d.wish[l.c.p] = true;
                                 d.cart.splice(l.i, 1);
                               });
-                              toast.show("Déplacé dans la wishlist", "success");
                             }}
                           >
                             <Fi r="heart" />

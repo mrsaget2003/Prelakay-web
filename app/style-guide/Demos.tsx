@@ -27,7 +27,7 @@ export function Demos() {
         <ComingSoon feature="native_app">
           <button type="button" className={styles.menuRow}>
             <Icon name="tag" />
-            <span>Télécharger l'app</span>
+            <span>Télécharger l&apos;app</span>
             <SoonBadge />
           </button>
         </ComingSoon>

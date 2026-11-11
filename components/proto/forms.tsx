@@ -10,7 +10,7 @@ import { demo, useDemo, type Order } from "@/lib/demo/store";
 import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { useModal } from "./modal";
-import { Fi, Ph } from "./ui";
+import { FieldErr, Fi, Ph } from "./ui";
 
 const REPORT_REASONS = ["Produit interdit ou dangereux", "Contrefaçon", "Prix trompeur", "Photos qui ne correspondent pas", "Autre"];
 
@@ -47,18 +47,20 @@ export function AskForm({ id }: { id: string }) {
   const modal = useModal();
   const toast = useToast();
   const [q, setQ] = useState("");
+  const [qErr, setQErr] = useState<string | null>(null);
   return (
     <>
       <p className="cap" style={{ marginBottom: 10 }}>Le store répond publiquement : votre question aidera d&apos;autres acheteurs.</p>
       <div className="fl">
         <label className="lbl" htmlFor="aq">Votre question</label>
-        <textarea className="field" id="aq" rows={3} style={{ height: "auto", padding: "10px 12px" }} value={q} onChange={(e) => setQ(e.target.value)} />
+        <textarea className="field" id="aq" rows={3} style={{ height: "auto", padding: "10px 12px" }} value={q} aria-invalid={qErr ? true : undefined} onChange={(e) => { setQ(e.target.value); setQErr(null); }} />
       </div>
+      <FieldErr msg={qErr} />
       <button
         className="btn btn-p btn-block"
         onClick={() => {
           const t = q.trim();
-          if (!t) return toast.show("Écrivez votre question.", "error");
+          if (!t) return setQErr("Écrivez votre question.");
           demo.update((s) => {
             s.questions.push({ k: `uq-${s.questions.length + 1}`, p: id, q: t });
           });

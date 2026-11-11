@@ -15,6 +15,7 @@ import { formatHTG as htg, formatDistance as km, formatCount as k } from "@/lib/
 import { useIsDesk } from "@/lib/proto/useIsDesk";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { useToast } from "@/components/ui/Toast";
+import { useFlash } from "@/components/ui/Feedback";
 import { ProductCard, useWish } from "@/components/proto/cards";
 import { AskForm, ReportForm } from "@/components/proto/forms";
 import { useModal } from "@/components/proto/modal";
@@ -39,6 +40,7 @@ export default function ProductPage() {
   const s = useDemo();
   const router = useRouter();
   const toast = useToast();
+  const [added, flashAdded] = useFlash();
   const modal = useModal();
   const wish = useWish();
   const desk = useIsDesk();
@@ -84,8 +86,8 @@ export default function ProductPage() {
   };
   const add = () => {
     if (!need()) return;
-    const v = addToCart(p.id, q);
-    toast.show(`Ajouté au panier · ${v}`, "success");
+    addToCart(p.id, q);
+    flashAdded();
   };
   const buy = () => {
     if (!need()) return;
@@ -412,8 +414,8 @@ export default function ProductPage() {
           <button className="btn btn-p btn-block" onClick={buy} disabled={stock === 0}>
             Acheter maintenant
           </button>
-          <button className="btn btn-o btn-block" onClick={add} disabled={stock === 0}>
-            Ajouter au panier
+          <button className="btn btn-o btn-block" onClick={add} disabled={stock === 0} aria-live="polite">
+            {added ? <><Fi s="check" /> Ajouté au panier</> : "Ajouter au panier"}
           </button>
           <div className="row2">
             <button onClick={() => share("produit", p.id)}>
@@ -435,8 +437,8 @@ export default function ProductPage() {
           {heart}
           Wishlist
         </button>
-        <button className="btn btn-s" onClick={add} disabled={stock === 0}>
-          Au panier
+        <button className="btn btn-s" onClick={add} disabled={stock === 0} aria-live="polite">
+          {added ? <><Fi s="check" /> Ajouté</> : "Au panier"}
         </button>
         <button className="btn btn-p" onClick={buy} disabled={stock === 0}>
           Acheter

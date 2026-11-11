@@ -11,6 +11,7 @@ import { createPortal } from "react-dom";
 import { CATS, STORES, PICONS, TINTS, P, catBy, storeBy } from "@/lib/data/mock/seed";
 import { productImage, storeImage } from "@/lib/data/mock/images";
 import { useDemo, hydrateDemo, demo } from "@/lib/demo/store";
+import { BumpBadge } from "@/components/ui/Feedback";
 import { cartCount, unread } from "@/lib/demo/actions";
 import { parseRoute, type ProtoRoute } from "@/lib/proto/route";
 import { formatHTG as htg } from "@/lib/format";
@@ -313,7 +314,7 @@ function HeaderInner({ r }: { r: ProtoRoute }) {
               </Popover>
               <Link className="hi" href="/cart" aria-label={`Panier, ${cc} article${cc > 1 ? "s" : ""}`}>
                 <Fi s="cart-shopping" />
-                <span className="cnt">{cc}</span>
+                <BumpBadge count={cc} always />
                 <span className="lb">
                   <br />
                   <b>Panier</b>
@@ -473,7 +474,7 @@ function MTop({ r, title }: { r: ProtoRoute; title: string }) {
         </button>
         <Link className="mb round" href="/cart" aria-label="Panier">
           <Fi s="cart-shopping" />
-          {cc ? <span className="cnt">{cc}</span> : null}
+          <BumpBadge count={cc} />
         </Link>
       </div>
     );
@@ -527,7 +528,7 @@ function TabBar({ r }: { r: ProtoRoute }) {
           <Link key={name} href={href} className={a ? "on" : ""} aria-current={a ? "page" : undefined}>
             <span className="ti">
               {icon === "user" && !a ? <Fi r="user" /> : <Fi s={icon} />}
-              {name === "cart" && cc ? <span className="cnt">{cc}</span> : null}
+              {name === "cart" ? <BumpBadge count={cc} /> : null}
               {name === "account" && unread(s) && s.logged ? <span className="dot" /> : null}
             </span>
             {label}

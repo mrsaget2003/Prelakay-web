@@ -146,6 +146,10 @@ export function DiscoverView({ q, params }: { q: string; params: Record<string, 
             <h1 className="res-h">
               {list.length} résultat{list.length > 1 ? "s" : ""} pour « {q} »
             </h1>
+          ) : params.photo === "1" ? (
+            <h1 className="res-h">
+              <Fi s="camera" /> Résultats proches de votre photo
+            </h1>
           ) : null}
           {c ? (
             <div className="pills">

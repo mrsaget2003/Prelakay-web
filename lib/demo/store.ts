@@ -29,7 +29,7 @@ export type Selection = { o: Choice; q: number };
 export type KycStatus = null | "recu" | "verif" | "ok" | "rej";
 
 /** Produit créé ou modifié dans l'espace vendeur (démo). */
-export type SellerProduct = Product & { status: string; why?: string | null; opts: OptAxis[]; desc?: string; deliverable?: boolean };
+export type SellerProduct = Product & { status: string; why?: string | null; opts: OptAxis[]; desc?: string; deliverable?: boolean; barcode?: string };
 export type Conv = { id: string; who: string; order: string; un: boolean; msgs: { me: boolean; t: string; at: string }[] };
 export type SDispute = { id: string; order: string; buyer: string; why: string; txt: string; photo: boolean; st: "open" | "escalated" | "done"; due: string };
 export type ProductForm = {
@@ -37,6 +37,8 @@ export type ProductForm = {
   weight: string; dims: string; axes: { k: string; v: string }[]; stock: Record<string, string>;
   /** Livraison à domicile proposée pour ce produit (10 nov. 2026) ; absent = oui. */
   deliverable?: boolean;
+  /** Code-barres (EAN / UPC), scanné ou saisi. */
+  barcode?: string;
 };
 /** État de l'espace vendeur (objet SL du prototype). */
 export type SellerState = {
@@ -56,6 +58,8 @@ export type SellerState = {
   notif: (Notif & { store: string })[];
   seq: number;
   form: ProductForm | null;
+  /** Comptes employés (10 nov. 2026). */
+  staff: { n: string; tel: string; role: "prep" | "cash"; st: "invited" | "active" }[];
 };
 
 /** Console admin (objet AD du prototype) : décisions qui se répercutent chez l'acheteur et le vendeur. */
@@ -83,10 +87,14 @@ export type AdminState = {
   drivers: Record<string, number>;
   /** Décisions sur les candidatures de partenaires (par identifiant). */
   partners: Record<string, { st: PartnerStatus; why?: string }>;
+  /** Fil des litiges (Dispute Center) : messages et demandes de pièces de l'admin. */
+  dthread: Record<string, { from: "admin" | "buyer" | "store"; to?: "buyer" | "store"; kind?: "msg" | "request"; t: string; at: string; who?: string }[]>;
 };
 
 export type DemoState = {
   logged: boolean; user: string; name: string; city: string;
+  /** Téléphone relié (connexion par SMS, 10 nov. 2026). */
+  phone: string | null;
   wallet: number; coins: number;
   cart: CartLine[]; wish: Record<string, boolean>; sel: Record<string, Selection>;
   orders: Order[]; introDone: boolean; introStep: number; kyc: KycStatus; kycWhy: string | null;
@@ -124,7 +132,7 @@ const DEMO_FLASH_ENDS = Date.now() + 18 * 3_600_000;
 
 export function initialState(): DemoState {
   return {
-    logged: true, user: "marckarlin", name: "Marc-Karlin", city: "Les Cayes", wallet: 450000, coins: 120,
+    logged: true, user: "marckarlin", name: "Marc-Karlin", city: "Les Cayes", wallet: 450000, coins: 120, phone: null,
     cart: [], wish: {}, sel: {},
     orders: DEMO_ORDERS.map((o) => ({ ...o, total: o.items.reduce((a, it) => a + (prodBy(it.p)?.price ?? 0) * it.q, 0) })),
     introDone: false, introStep: 0, kyc: null, kycWhy: null, kycData: null, picked: {}, hist: [], viewed: [], disputes: [], reports: [],
@@ -149,7 +157,7 @@ export function initialState(): DemoState {
     growth: { referrals: [{ u: "@lili_cayes", st: "done", date: "2 nov. 2026" }, { u: "@ti_jan", st: "pending", date: "5 nov. 2026" }], amb: null, plus: null },
     seller: {
       store: "boutik-lakay", policy: null, payMethod: null, payouts: [], stockO: {}, replies: {}, answers: {}, convs: {},
-      sorders: {}, dsp: {}, products: [], pstatus: {}, extra: {}, notif: [], seq: 1, form: null,
+      sorders: {}, dsp: {}, products: [], pstatus: {}, extra: {}, notif: [], seq: 1, form: null, staff: [],
     },
     admin: {
       kyc: {}, users: {}, stores: {}, dsp: {}, reports: {}, modSeeded: false, banners: null, sent: [], cats: null,
@@ -160,6 +168,7 @@ export function initialState(): DemoState {
       audit: [],
       drivers: {},
       partners: {},
+      dthread: {},
     },
   };
 }

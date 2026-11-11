@@ -72,6 +72,44 @@ export function allDisputes(s: DemoState): ADispute[] {
   return out.map((d) => ({ ...d, ...(s.admin.dsp[d.id] ?? {}) }));
 }
 
+/* ---------- Dispute Center (10 nov. 2026) ---------- */
+
+export type DMsg = DemoState["admin"]["dthread"][string][number];
+/** Fil d'un litige : version de l'acheteur, réponse du store, puis messages et demandes de l'admin. */
+export function disputeThread(s: DemoState, id: string): DMsg[] {
+  const d = allDisputes(s).find((x) => x.id === id);
+  if (!d) return [];
+  const base: DMsg[] = [{ from: "buyer", t: d.txt || "(aucun texte)", at: "ouverture" }];
+  if (d.reply) base.push({ from: "store", t: d.reply, at: "réponse du store" });
+  return [...base, ...(s.admin.dthread[id] ?? [])];
+}
+function notifyParty(s: DemoState, d: ADispute, to: "buyer" | "store", t: string, p: string) {
+  if (to === "store") s.seller.notif.unshift({ i: "fa-solid fa-scale-balanced", t, p, to: `/seller/disputes/${d.id}`, un: true, store: d.store });
+  else if (isMine(s, d.order)) s.notif.unshift({ i: "fa-solid fa-scale-balanced", t, p, to: "/disputes", un: true });
+}
+export function disputeMessage(me: Me, id: string, to: "buyer" | "store", text: string): string | null {
+  const d = allDisputes(demo.get()).find((x) => x.id === id);
+  if (!d) return "Litige introuvable.";
+  if (!text.trim()) return "Écrivez un message.";
+  demo.update((s) => {
+    (s.admin.dthread[id] ??= []).push({ from: "admin", to, kind: "msg", t: text.trim(), at: now(), who: me.n });
+    notifyParty(s, d, to, `Litige ${id} : message de Prélakay`, text.trim());
+    audit(s, me, "Message dans un litige", `${id} → ${to === "store" ? "store" : "acheteur"}`);
+  });
+  return null;
+}
+export function disputeRequest(me: Me, id: string, from: "buyer" | "store"): string | null {
+  const d = allDisputes(demo.get()).find((x) => x.id === id);
+  if (!d) return "Litige introuvable.";
+  const t = from === "buyer" ? "Merci d'ajouter des photos de l'article reçu et de l'emballage." : "Merci d'ajouter une preuve de remise (photo, bon de préparation).";
+  demo.update((s) => {
+    (s.admin.dthread[id] ??= []).push({ from: "admin", to: from, kind: "request", t, at: now(), who: me.n });
+    notifyParty(s, d, from, `Litige ${id} : pièces demandées`, t);
+    audit(s, me, "Pièces demandées dans un litige", `${id} → ${from === "store" ? "store" : "acheteur"}`);
+  });
+  return null;
+}
+
 /* ---------- KYC ---------- */
 
 export type KycRow = { id: string; fn: string; ln: string; store: string; type: "physique" | "virtuel"; cat: string; addr: string; date: string; age: number; st: "recu" | "verif" | "ok" | "rej"; flag?: string; why?: string | null; mine?: boolean; nif?: string; ninu?: string };

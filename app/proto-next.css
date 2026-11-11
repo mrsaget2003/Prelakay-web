@@ -277,3 +277,18 @@ body.scrolled .frail { display: flex; }
 .bdg{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;background:var(--color-lagon-100);color:var(--color-lagon-700, #0a4f56)}
 .bdg.gold{background:#f6e7b4;color:#6b4e00}
 .bdgs{display:flex;flex-wrap:wrap;gap:6px}
+
+/* ---------- Téléphone, recherche vocale (10 nov. 2026) ---------- */
+.ph-in{display:flex;align-items:stretch;gap:0}
+.ph-in span{display:flex;align-items:center;padding:0 10px;border:1px solid var(--color-neutral-300);border-right:0;border-radius:var(--radius-sm) 0 0 var(--radius-sm);background:var(--color-neutral-50, #f7f8f8);font-size:14px}
+.ph-in .field{border-radius:0 var(--radius-sm) var(--radius-sm) 0}
+.ac-voice{display:flex;align-items:center;gap:10px;width:100%;padding:8px 0;background:none;border:0;font:inherit;color:inherit;cursor:pointer;text-align:left}
+.ac-voice[aria-pressed="true"]{color:var(--color-error)}
+
+/* ---------- Dispute Center (10 nov. 2026) ---------- */
+.dt{list-style:none;margin:0 0 12px;padding:0;display:grid;gap:10px}
+.dt li{padding:10px 12px;border-radius:var(--radius-sm);background:var(--color-neutral-50, #f7f8f8);font-size:14px}
+.dt li p{margin:4px 0 0;line-height:20px}
+.dt .dt-admin{background:var(--color-lagon-100)}
+.dt .req{border-left:3px solid var(--color-warning, #b7791f)}
+.dt-f .otabs{margin-bottom:8px}

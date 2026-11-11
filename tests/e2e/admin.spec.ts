@@ -6,7 +6,7 @@ const ROUTES = [
   "/admin", "/admin/menu", "/admin/search", "/admin/search?q=PK-10", "/admin/stats", "/admin/kyc", "/admin/kyc/KYC-0146",
   "/admin/products", "/admin/products/mq-0", "/admin/reports", "/admin/disputes", "/admin/disputes/LT-150", "/admin/stores",
   "/admin/stores/bel-soley", "/admin/users", "/admin/users/jowan509", "/admin/orders", "/admin/orders/PK-1042", "/admin/banners",
-  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit", "/admin/deliveries", "/admin/partners", "/admin/partners/PP-0012", "/admin/coupons", "/admin/events", "/admin/growth",
+  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit", "/admin/deliveries", "/admin/partners", "/admin/partners/PP-0012", "/admin/coupons", "/admin/events", "/admin/growth", "/admin/finance",
 ];
 const NAV = { timeout: 30_000 };
 test.beforeEach(() => test.setTimeout(150_000));
@@ -171,4 +171,20 @@ test("events : l'admin crée un event, le store y participe, l'acheteur voit la 
   await expect(page.getByText("Offres flash")).toBeVisible();
   await page.goto("/discover", NAV);
   await expect(page.locator(".pc .tag", { hasText: "Sponsorisé" }).first()).toBeVisible();
+});
+
+test("finances plateforme (Finance) ; Marketing refusé ; message dans un litige escaladé", async ({ page }) => {
+  await as(page, "finance");
+  await page.goto("/admin/finance", NAV);
+  await expect(page.locator(".sc-main h1")).toHaveText("Finances plateforme");
+  await expect(page.getByText(/Taux de commission ⚠️ à confirmer/)).toBeVisible();
+  await expect(page.locator(".vz-nv svg").first()).toBeVisible({ timeout: 15_000 });
+  await as(page, "marketing");
+  await page.goto("/admin/finance", NAV);
+  await expect(page.getByText("Accès refusé")).toBeVisible();
+  await as(page, "support");
+  await page.goto("/admin/disputes/LT-150", NAV);
+  await page.getByLabel("Message").fill("Merci d'envoyer une photo du sac.");
+  await page.getByRole("button", { name: "Envoyer" }).click();
+  await expect(page.locator(".dt li").last()).toContainText("Merci d'envoyer une photo du sac.");
 });

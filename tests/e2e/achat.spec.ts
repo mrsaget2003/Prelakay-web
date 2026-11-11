@@ -147,3 +147,23 @@ test("Prélakay+ : s'abonner depuis le compte, badge or ; parrainage : lien et C
   await page.getByRole("button", { name: "Prototype : 1re commande" }).click();
   await expect(page.getByText("+500 Coins").last()).toBeVisible();
 });
+
+test("connexion par téléphone avec le code de démonstration", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true, logged: false })));
+  await page.goto("/login");
+  await page.getByRole("button", { name: "Avec mon numéro de téléphone" }).click();
+  await page.getByLabel("Numéro de téléphone", { exact: true }).fill("12");
+  await page.getByRole("button", { name: "Recevoir le code par SMS" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "Numéro haïtien à 8 chiffres." })).toBeVisible();
+  await page.getByLabel("Numéro de téléphone", { exact: true }).fill("3712 3456");
+  await page.getByRole("button", { name: "Recevoir le code par SMS" }).click();
+  const code = (await page.locator(".info-box b.tnum").textContent())!.trim();
+  await page.getByLabel("Code à 6 chiffres").fill("000001");
+  await page.getByRole("dialog").getByRole("button", { name: "Continuer" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "Code incorrect." })).toBeVisible();
+  await page.getByLabel("Code à 6 chiffres").fill(code);
+  await page.getByRole("dialog").getByRole("button", { name: "Continuer" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("pk-demo-v1")!).logged)).toBe(true);
+});

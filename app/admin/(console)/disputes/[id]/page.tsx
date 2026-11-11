@@ -13,6 +13,7 @@ import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { AHead, useMe } from "@/components/admin/shell";
 import { ADTag } from "@/components/admin/ui";
+import { DisputeThread } from "@/components/admin/DisputeThread";
 import { Fi, Page404, Ph } from "@/components/proto/ui";
 
 export default function AdminDispute() {
@@ -66,6 +67,7 @@ export default function AdminDispute() {
             <h3 style={{ marginBottom: 6 }}>Store {st.n}</h3>
             <p>{d.reply || (d.st === "open" ? `Pas encore de réponse (délai : ${d.due}).` : "Le store conteste la demande.")}</p>
           </div>
+          <DisputeThread id={d.id} me={me} open={d.st !== "done"} />
           <div className="panel">
             <h2 className="ph-t">Preuves</h2>
             <div className="lrow st">

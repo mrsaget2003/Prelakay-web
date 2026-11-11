@@ -13,7 +13,8 @@ import { combos, hs } from "@/lib/demo/seller";
 import { useToast } from "@/components/ui/Toast";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { SHead } from "@/components/seller/shell";
-import { Fi, Ph } from "@/components/proto/ui";
+import { FieldErr, Fi, Ph } from "@/components/proto/ui";
+import { barcodeSupported, scanBarcode } from "@/lib/ui/barcode";
 
 const SECTIONS: [string, string][] = [["base", "Informations de base"], ["media", "Photos et vidéo"], ["sku", "Caractéristiques et stock"], ["price", "Prix"], ["desc", "Description"], ["ret", "Remise et retour"]];
 
@@ -42,6 +43,33 @@ export function ProductForm({ product: p }: { product: Product | null }) {
   });
   const [err, setErr] = useState<string | null>(null);
   const set = (patch: Partial<PF>) => setF((f) => ({ ...f, ...patch }));
+  const [scanMsg, setScanMsg] = useState<string | null>(null);
+  // scan de code-barres : caméra arrière + BarcodeDetector du navigateur (6 s max), sinon saisie
+  const scan = async () => {
+    if (!barcodeSupported() || !navigator.mediaDevices?.getUserMedia) return setScanMsg("Scan indisponible sur ce navigateur : saisissez le code.");
+    let stream: MediaStream | null = null;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      const v = document.createElement("video");
+      v.srcObject = stream;
+      v.muted = true;
+      await v.play();
+      for (let i = 0; i < 12; i++) {
+        const code = await scanBarcode(v);
+        if (code) {
+          set({ barcode: code });
+          setScanMsg(null);
+          return;
+        }
+        await new Promise((r) => setTimeout(r, 500));
+      }
+      setScanMsg("Aucun code lu : rapprochez le produit ou saisissez le code.");
+    } catch {
+      setScanMsg("Caméra indisponible : saisissez le code.");
+    } finally {
+      stream?.getTracks().forEach((t) => t.stop());
+    }
+  };
   const cat = catBy(F.cat) ?? CATS[0];
   const A = formAxes(F);
   const C = A.length ? combos(A) : [{}];
@@ -256,6 +284,21 @@ export function ProductForm({ product: p }: { product: Product | null }) {
                 <input className="field" id="pf-dm" placeholder="L × l × h" value={F.dims} onChange={(e) => set({ dims: e.target.value })} />
               </div>
             </div>
+            <ComingSoon feature="barcode">
+              <div className="fl">
+                <label className="lbl" htmlFor="pf-bc">
+                  Code-barres (facultatif)
+                </label>
+                <div className="cp">
+                  <input className="field" id="pf-bc" inputMode="numeric" placeholder="EAN ou UPC" value={F.barcode ?? ""} onChange={(e) => { set({ barcode: e.target.value }); setScanMsg(null); }} />
+                  <button type="button" className="btn btn-s btn-sm" onClick={scan}>
+                    <Fi s="camera" />
+                    Scanner
+                  </button>
+                </div>
+                <FieldErr msg={scanMsg} />
+              </div>
+            </ComingSoon>
           </Sec>
           <Sec id="ret" title="Remise et retour">
             <div className="lrow st">

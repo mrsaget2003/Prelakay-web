@@ -339,7 +339,7 @@ export const AXES = ["Couleur", "Taille", "Pointure", "Longueur", "Largeur", "St
 export function formFrom(s: DemoState, p: Product | null): ProductForm {
   const f: ProductForm = {
     id: p ? p.id : null, n: p ? p.n : "", cat: p ? p.cat : myStore(s).cat, sub: p ? p.sub : "", price: p ? String(p.price) : "", was: p && p.was ? String(p.was) : "",
-    desc: (p && (p as SellerProduct).desc) || "", photos: p ? 4 : 0, weight: "", dims: "", deliverable: p ? (p as SellerProduct).deliverable !== false : true,
+    desc: (p && (p as SellerProduct).desc) || "", photos: p ? 4 : 0, weight: "", dims: "", deliverable: p ? (p as SellerProduct).deliverable !== false : true, barcode: (p as SellerProduct | null)?.barcode ?? "",
     axes: p ? optsOf(p).map((a) => ({ k: a.k, v: a.v.join(", ") })) : [], stock: {},
   };
   if (p) {
@@ -382,7 +382,7 @@ export function saveProduct(F: ProductForm, mode: "draft" | "mod"): { id: string
     const was = +F.was || 0;
     const base: SellerProduct = {
       ...(existing ?? { id, store: s.seller.store, sold: 0, reviews: 0, rating: 0, icon: cat.i, tint: TINTS[s.seller.seq % 5], isNew: true, stockLow: false, ready: myStore(s).type === "physique" }),
-      id, n: F.n.trim(), cat: F.cat, sub: F.sub, price, was, disc: was ? Math.round((1 - price / was) * 100) : 0, desc: F.desc, opts: A, why: null, deliverable: F.deliverable !== false,
+      id, n: F.n.trim(), cat: F.cat, sub: F.sub, price, was, disc: was ? Math.round((1 - price / was) * 100) : 0, desc: F.desc, opts: A, why: null, deliverable: F.deliverable !== false, barcode: F.barcode?.trim() || undefined,
       status: mode === "draft" ? "draft" : wasActive ? "active" : "mod",
     } as SellerProduct;
     const i = s.seller.products.findIndex((x) => x.id === id);

@@ -8,7 +8,7 @@ const ROUTES = [
   "/seller/orders", "/seller/orders?tab=received", "/seller/orders/PK-980", "/seller/pickup", "/seller/disputes", "/seller/disputes/LT-225",
   "/seller/marketing", "/seller/marketing/coupons", "/seller/marketing/flash", "/seller/marketing/events", "/seller/marketing/boost", "/seller/share", "/seller/finance", "/seller/payouts", "/seller/reviews", "/seller/questions",
   "/seller/messages", "/seller/messages/c0", "/seller/stats", "/seller/store", "/seller/policy", "/seller/trust",
-  "/seller/account", "/seller/notifications",
+  "/seller/account", "/seller/notifications", "/seller/staff",
 ];
 
 // Serveur de dev : chaque page compile à la première visite ; sous charge parallèle (4 largeurs),
@@ -141,4 +141,15 @@ test("livraison : préparer puis remettre au livreur, onglet Livraisons", async 
   await page.getByRole("button", { name: "Remettre au livreur" }).click();
   await expect(page.locator(".ph-h .tag")).toHaveText("Remise au livreur");
   await expect(page.getByText(/Remise au livreur · /)).toBeVisible();
+});
+
+test("employés : inviter un employé, il apparaît dans le profil du store", async ({ page }) => {
+  await asSeller(page);
+  await page.goto("/seller/staff", NAV);
+  await page.getByLabel("Nom").fill("Rose Michel");
+  await page.getByLabel("Téléphone").fill("3712 3456");
+  await page.getByRole("button", { name: "Envoyer l'invitation par SMS" }).click();
+  await expect(page.getByText("Rose Michel")).toBeVisible();
+  await page.goto("/seller/store", NAV);
+  await expect(page.getByText("Rose Michel")).toBeVisible();
 });

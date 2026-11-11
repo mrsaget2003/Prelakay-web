@@ -12,6 +12,7 @@ import { CITIES, FAQ, HELP, HELP_ALL, NOTIF_PREFS, SETS } from "@/lib/data/mock/
 import { demo, useDemo } from "@/lib/demo/store";
 import { logout, unread } from "@/lib/demo/actions";
 import { ComingSoon } from "@/components/ui/ComingSoon";
+import { PhoneAuth } from "./phone";
 import { SoonBadge } from "@/components/ui/Tag";
 import { useToast } from "@/components/ui/Toast";
 import { AccLayout } from "./account";
@@ -64,6 +65,7 @@ function useSaved() {
 export function Settings({ sec }: { sec?: string }) {
   const s = useDemo();
   const router = useRouter();
+  const modal = useModal();
   const toast = useToast();
   const saved = useSaved();
   const [prefs, setPrefs] = useState(NOTIF_PREFS.map((_, i) => i < 4));
@@ -149,10 +151,10 @@ export function Settings({ sec }: { sec?: string }) {
           <Fi s="check" className="ok" />
         </div>
         <ComingSoon feature="phone_otp">
-          <button className="lrow">
+          <button className="lrow" onClick={() => modal.open("Connexion par téléphone", <PhoneAuth mode="link" onDone={() => modal.close()} />)}>
             <Fi s="phone" />
-            Connexion par téléphone
-            <SoonBadge />
+            {s.phone ? `Téléphone relié : +509 ${s.phone.replace(/(\d{4})(\d{4})/, "$1 $2")}` : "Connexion par téléphone"}
+            {s.phone ? <Fi s="check" className="ok" /> : null}
           </button>
         </ComingSoon>
       </>

@@ -17,6 +17,7 @@ import { useModal } from "@/components/proto/modal";
 import { ShareModal } from "@/components/proto/share";
 import { MBar } from "@/components/proto/shell";
 import { Fi, NeedLogin, Ph, SecHead } from "@/components/proto/ui";
+import { AcceptedPayments } from "@/components/proto/PayLogos";
 
 function Rc({ checked, onChange, label, children }: { checked: boolean; onChange: () => void; label?: string; children?: React.ReactNode }) {
   return (
@@ -229,7 +230,8 @@ export default function CartPage() {
             <div>
               <Fi s="lock" />
               <span>
-                <b>Paiement sécurisé</b>Wallet Prélakay : MonCash, NatCash, Sogebank, carte
+                <b>Paiement sécurisé</b>Wallet Prélakay : votre argent reste protégé jusqu&apos;au retrait.
+                <AcceptedPayments height={18} />
               </span>
             </div>
           </div>

@@ -153,7 +153,7 @@ export function initialState(): DemoState {
     partners: [],
     coupons: { list: [], mine: ["BYENVI"], used: {}, off: {} },
     // une offre flash de démonstration en cours (18 h restantes au chargement)
-    marketing: { flash: [{ id: "FL-000", store: "tech-sud", product: "tech-3", price: Math.round((prodBy("tech-3")?.price ?? 2000) * 0.75), ends: DEMO_FLASH_ENDS, st: "live" }], events: [], joined: {}, boosts: [{ id: "BO-0", store: "bel-soley", product: "beaute-2", budget: 1500, on: true }] },
+    marketing: { flash: [{ id: "FL-000", store: "tech-sud", product: "tech-3", price: Math.round(basePrice("tech-3") * 0.75), ends: DEMO_FLASH_ENDS, st: "live" }], events: [], joined: {}, boosts: [{ id: "BO-0", store: "bel-soley", product: "beaute-2", budget: 1500, on: true }] },
     growth: { referrals: [{ u: "@lili_cayes", st: "done", date: "2 nov. 2026" }, { u: "@ti_jan", st: "pending", date: "5 nov. 2026" }], amb: null, plus: null },
     seller: {
       store: "boutik-lakay", policy: null, payMethod: null, payouts: [], stockO: {}, replies: {}, answers: {}, convs: {},

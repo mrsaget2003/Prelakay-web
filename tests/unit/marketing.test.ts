@@ -83,3 +83,17 @@ describe("badges", () => {
     expect(badgesOf("store", t.id, demo.get())).toContain("Store de confiance");
   });
 });
+
+// L'offre flash de démonstration part du prix catalogue, jamais du prix déjà remisé :
+// sinon chaque recalcul de l'état la re-remise, et le serveur et le navigateur
+// n'affichent plus le même prix (erreur d'hydratation sur l'accueil).
+describe("prix de l'offre flash de démonstration", () => {
+  it("ne dérive pas quand l'état initial est recalculé", async () => {
+    const { initialState } = await import("@/lib/demo/store");
+    const { basePrice } = await import("@/lib/data/mock/seed");
+    const first = initialState().marketing.flash[0];
+    const second = initialState().marketing.flash[0];
+    expect(second.price).toBe(first.price);
+    expect(first.price).toBe(Math.round(basePrice(first.product) * 0.75));
+  });
+});

@@ -45,7 +45,7 @@ Déjà présents, rien à ajouter : Next.js 16.x (App Router), React 19.
 - **Responsive** : utiliser la prop `responsive` des graphiques Recharts 3 plutôt que `ResponsiveContainer`.
 - **Données mobiles** : charger les graphiques sous la ligne de flottaison avec `next/dynamic` ; la carte avec `ssr: false`.
 - **Agrégats** : vues SQL ou fonctions RPC Supabase par jour, par statut, par store, par catégorie (voir `05-backend.md`). ⚠️ Ce sont des changements de base de données : accord de Marc-Karlin requis (règle 5).
-- **Variables d'environnement** : `GOOGLE_MAPS_API_KEY` existe déjà ; ajouter `NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID` si la carte utilise des marqueurs avancés **[À CONFIRMER]**.
+- **Carte des stores** ✅ (11 nov. 2026) : `maplibre-gl` sur un fond **MapTiler** (`streets-v2`), chargé en `ssr: false`. Les couches « poi » du fond sont masquées au chargement : hôtels, restaurants et sites touristiques disparaissent, seuls les stores Prélakay portent un repère. Clé gratuite `NEXT_PUBLIC_MAPTILER_KEY` (100 000 chargements par mois, sans carte bancaire) ; sans clé, la page garde le plan schématique. Remplace la proposition Google Maps (`@vis.gl/react-google-maps`, `GOOGLE_MAPS_API_KEY`), qui demandait un compte de facturation. Les coordonnées des stores sont dérivées des positions du prototype (`lib/data/mock/geo.ts`) ; la **géolocalisation réelle des boutiques est prévue en V3**.
 
 ### Sans bibliothèque (composants maison, CSS/SVG)
 Grille de chaleur (heures de retrait), tableau de cohortes, jauge d'objectif (pilote 20-30 stores), barre segmentée (issue des litiges, origine des fonds), entonnoir (barres horizontales), tableau « Voir les données », formats de nombres et de dates (`Intl` en `fr-FR`).
@@ -80,7 +80,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ROLE_KEY
 RESEND_API_KEY
 CALLMEBOT_API_KEY
-GOOGLE_MAPS_API_KEY
+NEXT_PUBLIC_MAPTILER_KEY
 MONCASH_CLIENT_ID
 MONCASH_CLIENT_SECRET
 NATCASH_API_KEY

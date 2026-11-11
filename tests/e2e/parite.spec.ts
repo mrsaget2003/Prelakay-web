@@ -52,3 +52,26 @@ test("store suspendu par un admin : sa page dit qu'il est indisponible", async (
   await expect(page.getByText("Ses produits ne sont plus en vente pour le moment.")).toBeVisible();
   await expect(page.locator(".pc")).toHaveCount(0);
 });
+
+// Carte des stores (11 nov. 2026) : MapLibre sur fond MapTiler quand la clé est
+// configurée, plan de repérage sinon. Les parcours tournent sans clé.
+test("carte des stores : sans clé MapTiler, le plan de repérage reste utilisable", async ({ page }) => {
+  await demo(page, {});
+  await page.goto("/map");
+  const pins = page.locator(".map button.pin:not(.me)");
+  await expect(pins.first()).toBeVisible();
+  await pins.first().click();
+  await expect(page.locator(".srow.on")).toHaveCount(1);
+  await expect(page.locator(".map .note")).toContainText("NEXT_PUBLIC_MAPTILER_KEY");
+});
+
+// Le prix de l'offre flash doit être le même au rendu serveur et après hydratation :
+// il part du prix catalogue, jamais du prix déjà remisé.
+test("offre flash : même prix avant et après hydratation (pas d'erreur de rendu)", async ({ page }) => {
+  const errors: string[] = [];
+  page.on("pageerror", (e) => errors.push(e.message));
+  await demo(page, {});
+  await page.goto("/");
+  await page.waitForLoadState("networkidle");
+  expect(errors.filter((e) => /Hydration/i.test(e)), errors.join("\n")).toEqual([]);
+});

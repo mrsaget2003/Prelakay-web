@@ -6,6 +6,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { GATEWAYS } from "@/lib/data/mock/content";
+import { GatewayLogos } from "@/components/proto/PayLogos";
 import { useDemo } from "@/lib/demo/store";
 import { topUp } from "@/lib/demo/actions";
 import { formatHTG as htg } from "@/lib/format";
@@ -37,6 +38,7 @@ export default function WalletPage() {
           <div className="gw">
             {GATEWAYS.map(([k, label, origin]) => (
               <button key={k} className={gw === k ? "on" : ""} onClick={() => setGw(k)}>
+                <GatewayLogos gateway={k} height={22} />
                 <b>{label}</b>
                 <small>{origin}</small>
               </button>

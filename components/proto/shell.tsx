@@ -16,6 +16,7 @@ import { cartCount, unread } from "@/lib/demo/actions";
 import { parseRoute, type ProtoRoute } from "@/lib/proto/route";
 import { formatHTG as htg } from "@/lib/format";
 import { Logo } from "@/components/brand/Logo";
+import { AcceptedPayments } from "./PayLogos";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { SoonBadge } from "@/components/ui/Tag";
 import { useToast } from "@/components/ui/Toast";
@@ -590,6 +591,10 @@ function Footer() {
             ))}
             <Link href="/credits">Crédits</Link>
           </div>
+        </div>
+        <div className="ftr-pay">
+          <h4>Moyens de paiement</h4>
+          <AcceptedPayments height={22} />
         </div>
         <div className="bot">
           <span>© 2026 Prélakay LLC · Les Cayes, Haïti</span>

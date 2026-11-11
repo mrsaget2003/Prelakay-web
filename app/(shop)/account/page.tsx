@@ -113,7 +113,7 @@ export default function AccountPage() {
                       {storeBy(o.store)!.n} · {o.id}
                     </span>
                   </span>
-                  {o.status === "ready" ? <span className="btn btn-p btn-sm">Code de retrait</span> : <span className="btn btn-o btn-sm">Détails</span>}
+                  {o.status === "ready" ? <span className="btn btn-p btn-sm">Code de retrait</span> : <span className="btn btn-o btn-sm">Suivre</span>}
                 </Link>
               );
             })}

@@ -27,12 +27,12 @@ export const ACC: ([string, string, string, string, FeatureKey?] | ["-"])[] = [
   ["orders", "fa-solid fa-receipt", "Commandes", "/orders"],
   ["wallet", "fa-solid fa-wallet", "Wallet", "/wallet"],
   ["disputes", "fa-solid fa-rotate-left", "Retours et litiges", "/disputes"],
-  ["myreviews", "fa-solid fa-star", "Mes avis", "/myreviews"],
+  ["myreviews", "fa-regular fa-star", "Mes avis", "/myreviews"],
   ["settings", "fa-solid fa-gear", "Paramètres", "/settings"],
-  ["notifications", "fa-solid fa-bell", "Centre de messages", "/notifications"],
+  ["notifications", "fa-regular fa-bell", "Centre de messages", "/notifications"],
   ["-"],
   ["coins", "fa-solid fa-coins", "Coins", "/coins"],
-  ["wishlist", "fa-solid fa-heart", "Wishlist", "/wishlist"],
+  ["wishlist", "fa-regular fa-heart", "Wishlist", "/wishlist"],
   ["viewed", "fa-solid fa-clock-rotate-left", "Vus récemment", "/viewed"],
   ["coupons", "fa-solid fa-ticket", "Mes coupons", "/account/coupons", "coupons"],
   ["invite", "fa-solid fa-user-plus", "Inviter des amis", "/invite", "referral"],
@@ -44,8 +44,8 @@ export const ACC: ([string, string, string, string, FeatureKey?] | ["-"])[] = [
 
 /** Raccourcis « Services » du compte mobile. */
 export const SERVICES: [string, string, string, FeatureKey?][] = [
-  ["/notifications", "fa-solid fa-bell", "Messages"],
-  ["/myreviews", "fa-solid fa-star", "Mes avis"],
+  ["/notifications", "fa-regular fa-bell", "Messages"],
+  ["/myreviews", "fa-regular fa-star", "Mes avis"],
   ["/help", "fa-solid fa-circle-question", "Aide"],
   ["/sell", "fa-solid fa-store", "Vendre"],
   ["/invite", "fa-solid fa-user-plus", "Inviter des amis", "referral"],
@@ -111,7 +111,7 @@ export const HELP_ALL: [string, string][] = HELP.flatMap(([, cat, qs]) => qs.map
 
 /** Paramètres (SETS) : [section, icône, titre]. */
 export const SETS: [string, string, string][] = [
-  ["profil", "fa-solid fa-user", "Informations personnelles"],
+  ["profil", "fa-regular fa-user", "Informations personnelles"],
   ["secu", "fa-solid fa-lock", "Sécurité et connexion"],
   ["notifs", "fa-solid fa-bell", "Notifications"],
   ["lang", "fa-solid fa-globe", "Langue et devise"],

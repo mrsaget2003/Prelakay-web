@@ -7,8 +7,8 @@ export const SMENU: Item[] = [
   ["orders", "fa-solid fa-receipt", "Commandes", [["orders", "Toutes les commandes"], ["pickup", "Valider un retrait"], ["disputes", "Retours et litiges"]]],
   ["marketing", "fa-solid fa-bullhorn", "Marketing", [["marketing", "Outils marketing"], ["share", "Partager mon store"]]],
   ["finance", "fa-solid fa-wallet", "Finances", [["finance", "Solde et escrow"], ["payouts", "Retraits"]]],
-  ["reviews", "fa-solid fa-star", "Avis et questions", [["reviews", "Avis"], ["questions", "Questions"]]],
-  ["messages", "fa-solid fa-comment-dots", "Messages", "messages"],
+  ["reviews", "fa-regular fa-star", "Avis et questions", [["reviews", "Avis"], ["questions", "Questions"]]],
+  ["messages", "fa-regular fa-comment-dots", "Messages", "messages"],
   ["stats", "fa-solid fa-chart-column", "Statistiques", "stats"],
   ["store", "fa-solid fa-store", "Mon store", [["store", "Profil du store"], ["policy", "Politique de retour"], ["trust", "Store de confiance"]]],
   ["account", "fa-solid fa-gear", "Compte", [["account", "Compte et sécurité"], ["notifications", "Notifications"]]],
@@ -19,7 +19,7 @@ export const SELLER_TABS: [string, string, string, string][] = [
   ["/seller", "home", "fa-solid fa-house", "Accueil"],
   ["/seller/orders", "orders", "fa-solid fa-receipt", "Commandes"],
   ["/seller/products", "products", "fa-solid fa-box", "Produits"],
-  ["/seller/messages", "messages", "fa-solid fa-comment-dots", "Messages"],
+  ["/seller/messages", "messages", "fa-regular fa-comment-dots", "Messages"],
   ["/seller/menu", "more", "fa-solid fa-bars", "Plus"],
 ];
 

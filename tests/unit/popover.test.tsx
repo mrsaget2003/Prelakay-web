@@ -14,7 +14,7 @@ function Menu({ hover }: { hover?: boolean }) {
   return (
     <MenuProvider>
       <Popover id="m" cls="accm" label="Mon compte" hover={hover} trigger={<button className="hi">Compte</button>}>
-        <a href="/orders">Mes commandes</a>
+        <span>Mes commandes</span>
       </Popover>
     </MenuProvider>
   );

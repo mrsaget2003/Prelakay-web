@@ -20,7 +20,7 @@ export function ThemeSwitch() {
   };
   return (
     <div className="lrow st th-sw">
-      <Fi s="moon" />
+      <Fi r="moon" />
       <span>Mode sombre</span>
       <span className="otabs sm" role="group" aria-label="Apparence">
         {([["light", "Clair"], ["dark", "Sombre"], ["system", "Appareil"]] as const).map(([k, l]) => (

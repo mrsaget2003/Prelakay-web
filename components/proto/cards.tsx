@@ -2,6 +2,7 @@
 
 // Cartes du prototype : card(p), storeCard(s) et l'aperçu rapide (quickView / renderQV).
 
+import { HeartPop } from "./motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type MouseEvent } from "react";
@@ -56,7 +57,7 @@ export function ProductCard({ p, showStore = true, badge }: { p: Product; showSt
     <Link className="pc" href={`/p/${p.id}`}>
       {badge ? <span className={`tag ctl ${badge === "Flash" ? "tag-err" : "tag-neu"}`}>{badge}</span> : p.isNew ? <span className="tag tag-new ctl">Nouveau</span> : null}
       <button className={`wish ${s.wish[p.id] ? "on" : ""}`} onClick={wish(p.id)} aria-label="Wishlist">
-        {s.wish[p.id] ? <Fi s="heart" /> : <Fi r="heart" />}
+        <HeartPop on={!!s.wish[p.id]}>{s.wish[p.id] ? <Fi s="heart" /> : <Fi r="heart" />}</HeartPop>
       </button>
       <div className="im">
         <Ph icon={p.icon} tint={p.tint} img={productImage(p.id)} alt={p.n} />

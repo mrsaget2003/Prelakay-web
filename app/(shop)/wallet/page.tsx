@@ -14,6 +14,7 @@ import { useProtoRoute } from "@/components/proto/shell";
 import { AccLayout } from "@/components/proto/account";
 import { PageTabs, StatHero } from "@/components/proto/blocks";
 import { DataIcon, FieldErr, Fi, NeedLogin } from "@/components/proto/ui";
+import { Money } from "@/components/proto/Money";
 
 export default function WalletPage() {
   const s = useDemo();
@@ -103,7 +104,7 @@ export default function WalletPage() {
 
   return (
     <AccLayout k="wallet" title="Wallet">
-      <StatHero icon="wallet" label="Solde disponible" value={htg(s.wallet)} sub={<>Coins : <b>{s.coins}</b></>} />
+      <StatHero icon="wallet" label="Solde disponible" value={<Money v={s.wallet} />} sub={<>Coins : <b>{s.coins}</b></>} />
       <PageTabs
         label="Wallet"
         value={tab}

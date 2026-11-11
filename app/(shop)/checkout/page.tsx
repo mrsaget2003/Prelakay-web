@@ -17,6 +17,7 @@ import { ComingSoon } from "@/components/ui/ComingSoon";
 import { useToast } from "@/components/ui/Toast";
 import { MBar } from "@/components/proto/shell";
 import { EmptyBox, FieldErr, Fi, NeedLogin, Ph } from "@/components/proto/ui";
+import { Money } from "@/components/proto/Money";
 
 export default function CheckoutPage() {
   const s = useDemo();
@@ -292,7 +293,9 @@ export default function CheckoutPage() {
           </div>
           <div className="tot">
             <span>À payer</span>
-            <b className="tnum">{htg(due)}</b>
+            <b className="tnum">
+              <Money v={due} />
+            </b>
           </div>
           <button className="btn btn-p btn-block" onClick={pay} disabled={!enough}>
             Payer {htg(due)}

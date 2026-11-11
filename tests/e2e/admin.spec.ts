@@ -98,7 +98,14 @@ test("store suspendu : motif obligatoire, produits masqués, réactivation", asy
   await page.goto("/admin/stores/kay-pratik");
   await page.getByRole("button", { name: "Suspendre le store" }).click();
   await page.getByLabel("Motif").selectOption("Litiges répétés");
-  await page.getByRole("button", { name: "Confirmer" }).click();
+  // action irréversible : maintenir le bouton pour confirmer (un simple clic ne fait rien)
+  const ok = page.getByRole("button", { name: /Confirmer/ });
+  await ok.click();
+  await expect(page.getByText("Motif : Litiges répétés")).toHaveCount(0);
+  await ok.hover();
+  await page.mouse.down();
+  await page.waitForTimeout(1400);
+  await page.mouse.up();
   await expect(page.getByText("Motif : Litiges répétés")).toBeVisible();
   await page.getByRole("button", { name: "Réactiver le store" }).click();
   await expect(page.getByRole("button", { name: "Suspendre le store" })).toBeVisible();

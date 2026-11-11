@@ -200,3 +200,19 @@ test("mode sombre : fond sombre, texte lisible (contraste ≥ 4,5:1) sur l'accue
   await page.getByRole("button", { name: "Clair", exact: true }).click();
   await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
 });
+
+test("vie de l'interface : carrousel Embla (flèche suivante), cœur de la wishlist, montant animé du wallet", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.goto("/");
+  const dots = page.locator(".hero .dots button");
+  await expect(dots.first()).toHaveClass(/on/);
+  // flèches sur desktop, points partout (mobile : glisser ou toucher un point)
+  await dots.nth(1).click();
+  await expect(dots.nth(1)).toHaveClass(/on/);
+  const card = page.locator(".pc").first();
+  await card.locator(".wish").click();
+  await expect(card.locator(".wish")).toHaveClass(/on/);
+  await page.goto("/wallet");
+  await expect(page.locator(".money").first()).toHaveAttribute("aria-label", /HTG$/);
+});

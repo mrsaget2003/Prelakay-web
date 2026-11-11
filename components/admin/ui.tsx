@@ -4,8 +4,9 @@
 
 import { useState } from "react";
 import { useModal } from "@/components/proto/modal";
+import { HoldToConfirm } from "@/components/proto/motion";
 
-function DecisionForm({ label, opts, onOk }: { label: string; opts: string[]; onOk: (m: string, c: string) => void }) {
+function DecisionForm({ label, opts, onOk, hold }: { label: string; opts: string[]; onOk: (m: string, c: string) => void; hold?: boolean }) {
   const [m, setM] = useState(opts[0]);
   const [c, setC] = useState("");
   return (
@@ -26,22 +27,28 @@ function DecisionForm({ label, opts, onOk }: { label: string; opts: string[]; on
         </label>
         <textarea className="field" id="dc" rows={2} value={c} onChange={(e) => setC(e.target.value)} />
       </div>
-      <button className="btn btn-p btn-block" onClick={() => onOk(m, c.trim())}>
-        Confirmer
-      </button>
+      {hold ? (
+        <HoldToConfirm label="Confirmer" className="btn btn-p btn-block" onConfirm={() => onOk(m, c.trim())} />
+      ) : (
+        <button className="btn btn-p btn-block" onClick={() => onOk(m, c.trim())}>
+          Confirmer
+        </button>
+      )}
     </>
   );
 }
 
-/** decide(titre, libellé, motifs, action) — modale « decide » du prototype. */
+/** decide(titre, libellé, motifs, action, { hold }) — modale « decide » du prototype ;
+ *  hold : action irréversible, à confirmer en maintenant le bouton (bannir, suspendre, annuler). */
 export function useDecide() {
   const modal = useModal();
-  return (title: string, label: string, opts: string[], onOk: (m: string, c: string) => void) =>
+  return (title: string, label: string, opts: string[], onOk: (m: string, c: string) => void, o: { hold?: boolean } = {}) =>
     modal.open(
       title,
       <DecisionForm
         label={label}
         opts={opts}
+        hold={o.hold}
         onOk={(m, c) => {
           modal.close();
           onOk(m, c);

@@ -292,3 +292,13 @@ body.scrolled .frail { display: flex; }
 .dt .dt-admin{background:var(--color-lagon-100)}
 .dt .req{border-left:3px solid var(--color-warning, #b7791f)}
 .dt-f .otabs{margin-bottom:8px}
+
+/* ---------- Vie de l'interface (10 nov. 2026) ---------- */
+.rv{min-width:0;display:flex;flex-direction:column}
+.rv>*{flex:1}
+.hold{position:relative;overflow:hidden;touch-action:none;user-select:none}
+.hold-bar{position:absolute;inset:0;transform-origin:left;transform:scaleX(0);background:currentColor;opacity:.18;pointer-events:none}
+.hold.on .hold-bar{transform:scaleX(1);transition:transform var(--hold) linear}
+.hold-t{position:relative}
+@media (prefers-reduced-motion:reduce){.hold.on .hold-bar{transition:none;transform:scaleX(1)}}
+.hero.em .hero-track{transition:none;touch-action:pan-y pinch-zoom}

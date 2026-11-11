@@ -105,7 +105,7 @@ export default function AdminUser() {
                   decide(`Bannir ${u.u}`, "Motif", ["Fraude au paiement ou au remboursement", "Comportement abusif", "Faux avis", "Multi-comptes", "Autre"], (m) => {
                     userBan(me, u.u, m);
                     toast.show("Utilisateur banni");
-                  });
+                  }, { hold: true });
               }}
             >
               {u.st === "banned" ? "Lever le bannissement" : "Bannir l'utilisateur"}

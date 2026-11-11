@@ -12,6 +12,9 @@ if (typeof window !== "undefined") {
     window.matchMedia = (q: string) =>
       ({ matches: false, media: q, onchange: null, addEventListener() {}, removeEventListener() {}, addListener() {}, removeListener() {}, dispatchEvent: () => false }) as MediaQueryList;
   }
+  if (!("IntersectionObserver" in window)) {
+    (window as unknown as { IntersectionObserver: unknown }).IntersectionObserver = class { observe() {} unobserve() {} disconnect() {} takeRecords() { return []; } };
+  }
   if (!("ResizeObserver" in window)) {
     (window as unknown as { ResizeObserver: unknown }).ResizeObserver = class { observe() {} unobserve() {} disconnect() {} };
   }

@@ -167,3 +167,36 @@ test("connexion par téléphone avec le code de démonstration", async ({ page }
   await expect(page).toHaveURL(/\/$/);
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("pk-demo-v1")!).logged)).toBe(true);
 });
+
+test("mode sombre : fond sombre, texte lisible (contraste ≥ 4,5:1) sur l'accueil, une fiche et le tableau de bord admin", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => {
+    localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true }));
+    sessionStorage.setItem("pk-admin", JSON.stringify({ on: true, email: "superadmin@prelakay.ht", role: "super" }));
+  });
+  await page.goto("/settings");
+  await page.getByRole("button", { name: "Sombre", exact: true }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+  const contrast = () =>
+    page.evaluate(() => {
+      const rgb = (c: string) => (c.match(/[\d.]+/g) ?? []).slice(0, 3).map(Number);
+      const lum = (c: number[]) => {
+        const [r, g, b] = c.map((v) => (v /= 255) <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+      };
+      const cs = getComputedStyle(document.body);
+      const a = lum(rgb(cs.color));
+      const b = lum(rgb(cs.backgroundColor));
+      return { ratio: (Math.max(a, b) + 0.05) / (Math.min(a, b) + 0.05), bg: lum(rgb(cs.backgroundColor)) };
+    });
+  for (const url of ["/", "/p/tech-1", "/admin"]) {
+    await page.goto(url);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    const c = await contrast();
+    expect(c.bg, url).toBeLessThan(0.05);
+    expect(c.ratio, url).toBeGreaterThanOrEqual(4.5);
+  }
+  await page.goto("/settings");
+  await page.getByRole("button", { name: "Clair", exact: true }).click();
+  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+});

@@ -13,7 +13,7 @@ import { demo, useDemo } from "@/lib/demo/store";
 import { logout, unread } from "@/lib/demo/actions";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { PhoneAuth } from "./phone";
-import { SoonBadge } from "@/components/ui/Tag";
+import { ThemeSwitch } from "./ThemeSwitch";
 import { useToast } from "@/components/ui/Toast";
 import { AccLayout } from "./account";
 import { ProductCard } from "./cards";
@@ -89,11 +89,7 @@ export function Settings({ sec }: { sec?: string }) {
             <Fi s="chevron-right" />
           </Link>
           <ComingSoon feature="dark_mode">
-            <button className="lrow">
-              <Fi s="moon" />
-              Mode sombre
-              <SoonBadge />
-            </button>
+            <ThemeSwitch />
           </ComingSoon>
           <button
             className="lrow"

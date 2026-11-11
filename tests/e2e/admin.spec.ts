@@ -103,3 +103,21 @@ test("store suspendu : motif obligatoire, produits masqués, réactivation", asy
   await page.getByRole("button", { name: "Réactiver le store" }).click();
   await expect(page.getByRole("button", { name: "Suspendre le store" })).toBeVisible();
 });
+
+test("carte des ventes : % et montant par commune du Sud, bascule ventes / commandes, 7 / 30 / 90 jours", async ({ page }) => {
+  await as(page, "super");
+  await page.goto("/admin/stats", NAV);
+  const card = page.locator("section.vz", { hasText: "Ventes par commune du Sud" });
+  await expect(card).toBeVisible();
+  await expect(card.locator(".sm-map svg path").first()).toBeVisible({ timeout: 15_000 });
+  expect(await card.locator(".sm-map svg path").count()).toBeGreaterThanOrEqual(18);
+  await expect(card.locator(".sm-lead")).toHaveText(/Les Cayes · \d+ % · [\d\s  ]+ HTG/);
+  await card.getByRole("button", { name: "Commandes", exact: true }).click();
+  await expect(card.getByRole("button", { name: "Commandes", exact: true })).toHaveAttribute("aria-pressed", "true");
+  await expect(card.locator(".vz-h .cap")).toContainText("des commandes");
+  await page.locator(".vz-filters").getByRole("button", { name: "7 jours" }).click();
+  await expect(card.locator(".vz-h .cap")).toContainText("7 derniers jours");
+  await expect(page.locator("section.vz", { hasText: "Ventes par quartier des Cayes" }).locator(".vz-b")).toHaveCount(9);
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

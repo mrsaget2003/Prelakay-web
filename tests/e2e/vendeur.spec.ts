@@ -105,3 +105,18 @@ test("retrait de fonds : moyen de retrait puis demande", async ({ page }) => {
   await page.getByRole("button", { name: "Demander le retrait" }).click();
   await expect(page.locator("td", { hasText: "MonCash •••• 3456" })).toBeVisible();
 });
+
+test("statistiques : des graphiques Nivo dans chaque onglet, avec leur tableau", async ({ page }) => {
+  await asSeller(page);
+  await page.goto("/seller/stats", NAV);
+  // l'onglet Produits n'a que des classements (barres HTML) et des jauges : pas de tracé Nivo
+  for (const t of ["Ventes", "Trafic", "Acheteurs", "Opérations"]) {
+    await page.locator(".vz-tabs").getByRole("button", { name: t, exact: true }).click();
+    const chart = page.locator(".vz-nv").first();
+    await expect(chart, t).toBeVisible();
+    await expect(chart.locator("svg").first(), t).toBeVisible({ timeout: 15_000 });
+    await expect(page.getByText("Voir les données").first(), t).toBeVisible();
+  }
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

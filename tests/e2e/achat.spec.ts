@@ -4,7 +4,7 @@ import { test, expect } from "@playwright/test";
 test("achat de bout en bout (démo)", async ({ page, isMobile }, info) => {
   // intro de première visite déjà vue
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({})));
   await page.goto("/p/tech-1");
   await expect(page.getByRole("heading", { level: 1, name: "Chargeur rapide 20 W" })).toBeVisible();
   const add = info.project.name.startsWith("mobile") || info.project.name.startsWith("tablet") ? page.locator("#mbuy .btn-s") : page.locator(".buy .btn-o");
@@ -39,7 +39,7 @@ test("livraison : payer en livraison, suivre la commande, valider le code", asyn
   test.setTimeout(120_000);
   const mob = info.project.name.startsWith("mobile") || info.project.name.startsWith("tablet");
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({})));
   await page.goto("/p/tech-1");
   const addBtn = mob ? page.locator("#mbuy .btn-s") : page.locator(".buy .btn-o");
   await addBtn.click();
@@ -80,7 +80,7 @@ test("livraison : payer en livraison, suivre la commande, valider le code", asyn
 
 test("pied de page → Devenir partenaire de livraison → candidature reçue", async ({ page }, info) => {
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({})));
   // le pied de page n'existe que sur desktop (mobile : coque de l'app, comme le prototype)
   if (info.project.name.startsWith("desktop")) {
     await page.goto("/");
@@ -95,7 +95,11 @@ test("pied de page → Devenir partenaire de livraison → candidature reçue", 
   await page.getByLabel("Téléphone").fill("3712 3456");
   await page.getByLabel("Date de naissance").fill("1998-04-12");
   await page.getByLabel("Véhicule").selectOption("moto");
-  await page.getByRole("button", { name: /Ajouter ma pièce d'identité/ }).click();
+  // pièce d'identité : deux vrais sélecteurs de fichier, comme le formulaire vendeur
+  const png = { name: "piece.png", mimeType: "image/png", buffer: Buffer.from([137, 80, 78, 71]) };
+  await page.getByLabel("Recto", { exact: true }).setInputFiles(png);
+  await page.getByLabel("Verso", { exact: true }).setInputFiles(png);
+  await expect(page.getByText("Ajoutée ✓")).toHaveCount(2);
   await page.getByRole("button", { name: "Déposer ma candidature" }).click();
   await expect(page.getByText("Candidature reçue")).toBeVisible();
   await expect(page.getByText(/PL-\d{4}/)).toBeVisible();
@@ -107,7 +111,7 @@ test("coupons : le vendeur crée un coupon, l'acheteur le garde puis l'applique 
   test.setTimeout(120_000);
   const mob = info.project.name.startsWith("mobile") || info.project.name.startsWith("tablet");
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true, kyc: "ok" })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ kyc: "ok" })));
   await page.goto("/seller/marketing/coupons");
   await page.getByLabel("Code (vide = généré)").fill("ROBE15");
   await page.getByLabel("Réduction (%)").fill("15");
@@ -136,7 +140,7 @@ test("coupons : le vendeur crée un coupon, l'acheteur le garde puis l'applique 
 
 test("Prélakay+ : s'abonner depuis le compte, badge or ; parrainage : lien et Coins", async ({ page }) => {
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({})));
   await page.goto("/plus");
   await page.getByRole("button", { name: /S'abonner/ }).click();
   await expect(page.getByText("Badge or actif")).toBeVisible();
@@ -150,7 +154,7 @@ test("Prélakay+ : s'abonner depuis le compte, badge or ; parrainage : lien et C
 
 test("connexion par téléphone avec le code de démonstration", async ({ page }) => {
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true, logged: false })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ logged: false })));
   await page.goto("/login");
   await page.getByRole("button", { name: "Avec mon numéro de téléphone" }).click();
   await page.getByLabel("Numéro de téléphone", { exact: true }).fill("12");
@@ -171,7 +175,7 @@ test("connexion par téléphone avec le code de démonstration", async ({ page }
 test("mode sombre : fond sombre, texte lisible (contraste ≥ 4,5:1) sur l'accueil, une fiche et le tableau de bord admin", async ({ page }) => {
   await page.goto("/");
   await page.evaluate(() => {
-    localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true }));
+    localStorage.setItem("pk-demo-v1", JSON.stringify({}));
     sessionStorage.setItem("pk-admin", JSON.stringify({ on: true, email: "superadmin@prelakay.ht", role: "super" }));
   });
   await page.goto("/settings");
@@ -203,7 +207,7 @@ test("mode sombre : fond sombre, texte lisible (contraste ≥ 4,5:1) sur l'accue
 
 test("vie de l'interface : carrousel Embla (flèche suivante), cœur de la wishlist, montant animé du wallet", async ({ page }) => {
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({})));
   await page.goto("/");
   const dots = page.locator(".hero .dots button");
   await expect(dots.first()).toHaveClass(/on/);
@@ -223,7 +227,7 @@ test("vie de l'interface : carrousel Embla (flèche suivante), cœur de la wishl
 test("menus du header : survol pour l'app, le compte et Plus ; clic pour ville / langue / devise", async ({ page }, info) => {
   test.skip(!info.project.name.startsWith("desktop"), "le header desktop est masqué sous 1024 px");
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({})));
   await page.goto("/");
   for (const id of ["accm", "app", "more"]) {
     const dd = page.locator(`[data-menu="${id}"]`);

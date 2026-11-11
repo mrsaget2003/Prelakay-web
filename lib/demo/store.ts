@@ -97,9 +97,9 @@ export type DemoState = {
   phone: string | null;
   wallet: number; coins: number;
   cart: CartLine[]; wish: Record<string, boolean>; sel: Record<string, Selection>;
-  orders: Order[]; introDone: boolean; introStep: number; kyc: KycStatus; kycWhy: string | null;
+  orders: Order[]; kyc: KycStatus; kycWhy: string | null;
   kycData: null | { fn: string; ln: string; dob: string; age: number; nif: string; ninu: string; date: string };
-  picked: Record<string, boolean>; hist: string[]; viewed: string[];
+  hist: string[]; viewed: string[];
   disputes: { id: string; why: string; txt: string }[];
   reports: { id: string; type: string; target: string; reason: string; by: string; date: string; st: string }[];
   notif: Notif[];
@@ -135,7 +135,7 @@ export function initialState(): DemoState {
     logged: true, user: "marckarlin", name: "Marc-Karlin", city: "Les Cayes", wallet: 450000, coins: 120, phone: null,
     cart: [], wish: {}, sel: {},
     orders: DEMO_ORDERS.map((o) => ({ ...o, total: o.items.reduce((a, it) => a + (prodBy(it.p)?.price ?? 0) * it.q, 0) })),
-    introDone: false, introStep: 0, kyc: null, kycWhy: null, kycData: null, picked: {}, hist: [], viewed: [], disputes: [], reports: [],
+    kyc: null, kycWhy: null, kycData: null, hist: [], viewed: [], disputes: [], reports: [],
     notif: [
       { i: "fa-solid fa-box", t: "Commande PK-1042 prête pour retrait", p: "Bel Soley Beauté vous attend. Code : 482 913.", to: "/orders/PK-1042", un: true },
       { i: "fa-solid fa-coins", t: "+25 Coins", p: "Merci pour votre avis sur Huile de ricin noire.", to: "/coins", un: true },

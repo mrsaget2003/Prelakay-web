@@ -97,7 +97,7 @@ export default function AdminUser() {
               className={`btn ${u.st === "banned" ? "btn-p" : "btn-o"} btn-block`}
               style={{ marginTop: 12 }}
               onClick={() => {
-                if (u.me) return toast.show("Prototype : le compte de démonstration ne peut pas être banni.", "error");
+                if (u.me) return toast.show("Ce compte ne peut pas être banni.", "error");
                 if (u.st === "banned") {
                   userBan(me, u.u, null);
                   toast.show("Bannissement levé", "success");

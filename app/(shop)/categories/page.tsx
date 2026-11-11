@@ -28,7 +28,7 @@ export default function CategoriesPage() {
         <Link className="cp-ban" href={`/discover?cat=${c.id}`}>
           <span>
             <small>Tout {c.n.toLowerCase()}</small>
-            <b>{inCat.length} produits à Les Cayes</b>
+            <b>{inCat.length} produits sur Prélakay</b>
           </span>
           <DataIcon cls={c.i} />
         </Link>

@@ -242,7 +242,7 @@ export default function ProductPage() {
             </h2>
             <ul>
               <li>
-                {p.n}, vendu par {st.n} à Les Cayes.
+                {p.n}, vendu par {st.n} sur Prélakay.
               </li>
               <li>À retirer directement en magasin avec votre code de retrait ou votre QR code.</li>
               <li>Photos réelles et description complète fournies par le store en production.</li>

@@ -1,17 +1,27 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
 // Parité de comportement avec `prototype/prelakay-prototype.html` (audit du 11 nov. 2026).
 // Chaque test reprend un écart relevé entre le prototype et l'application.
 
-async function demo(page: import("@playwright/test").Page, state: Record<string, unknown>) {
+async function demo(page: Page, state: Record<string, unknown>) {
   await page.goto("/");
-  await page.evaluate((s) => localStorage.setItem("pk-demo-v1", JSON.stringify(s)), { introDone: true, ...state });
+  await page.evaluate((s) => localStorage.setItem("pk-demo-v1", JSON.stringify(s)), { ...state });
+}
+
+/** Ajoute un produit au panier par l'interface, et attend que le clic ait pris :
+ *  le bouton affiche « Ajouté » (tri des toasts, spec §9). Sans cette attente, un clic
+ *  passé avant l'hydratation laisse le panier vide. */
+async function addToCart(page: Page, id: string) {
+  await page.goto(`/p/${id}`);
+  const add = page.locator(".buy .btn-o, #mbuy .btn-s").locator("visible=true").first();
+  await expect(add).toBeVisible();
+  await add.click();
+  await expect(add).toContainText("Ajouté");
 }
 
 test("panier → wishlist : l'article déplacé est annoncé (prototype : « Déplacé dans la wishlist »)", async ({ page }) => {
   await demo(page, {});
-  await page.goto("/p/tech-1");
-  await page.locator(".buy .btn-o, #mbuy .btn-s").first().click();
+  await addToCart(page, "tech-1");
   await page.goto("/cart");
   await page.getByRole("button", { name: "Déplacer dans la wishlist" }).first().click();
   // les toasts Sileo sont doublés par une zone « role=status » masquée visuellement
@@ -22,8 +32,7 @@ test("panier → wishlist : l'article déplacé est annoncé (prototype : « Dé
 
 test("aperçu rapide ouvert depuis le panier : « Panier mis à jour » (le résultat est caché derrière la fenêtre)", async ({ page }) => {
   await demo(page, {});
-  await page.goto("/p/mode-0");
-  await page.locator(".buy .btn-o, #mbuy .btn-s").first().click();
+  await addToCart(page, "mode-0");
   await page.goto("/cart");
   await page.locator(".vchip").first().click();
   await page.getByRole("button", { name: "Mettre à jour" }).locator("visible=true").click();

@@ -110,7 +110,7 @@ export default function KycFile() {
                       <>
                         <Ph icon={<Fi r="id-card" />} tint="g1" cls="docbig" />
                         <p className="cap" style={{ marginTop: 10 }}>
-                          Prototype : document fictif. En production, le fichier est servi par URL signée de courte durée, jamais public.
+                          Le fichier est servi par une adresse signée de courte durée : il n&apos;est jamais public.
                         </p>
                       </>,
                     )
@@ -178,7 +178,7 @@ export default function KycFile() {
           {k.mine ? (
             <div className="info-box">
               <Fi s="circle-info" />
-              <span>Prototype : c&apos;est votre propre dossier, envoyé depuis « Enregistrer son commerce ».</span>
+              <span>C&apos;est votre propre dossier, envoyé depuis « Enregistrer son commerce ».</span>
             </div>
           ) : null}
         </div>

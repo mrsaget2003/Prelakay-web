@@ -23,6 +23,25 @@ Si une information ne se trouve dans **aucun** de ces fichiers, elle n'existe pa
 8. **Avant un gros travail (nouveau build, réécriture, fonctionnalité majeure) : poser au maximum 3 questions ciblées plutôt que deviner puis livrer un résultat hors cible.** Trois bonnes questions coûtent minutes ; un livrable hors cible coûte une session entière à refaire.
 9. **Versions et toast « À venir »** : tout l'écran est construit dès la V1 (comme le prototype), mais seules les fonctionnalités de la version en cours marchent. Une fonctionnalité d'une version suivante reste visible et affiche le toast « À venir » ; l'API la refuse. Voir `CHANGELOG.md`.
 
+## Décisions récentes (11 nov 2026 — nettoyage du prototype)
+
+- ✅ **Bandeau « Prototype Prélakay · données fictives » retiré.** Remplace la règle du
+  7 nov. 2026 « données de démonstration autorisées seulement avec `PRELAKAY_ENV=demo`
+  (bandeau visible) » : le garde-fou technique reste (le build refuse `production` +
+  données de démo), mais plus rien ne l'annonce à l'écran. **À savoir** : une démo
+  publique ne dira plus d'elle-même que les chiffres sont fictifs.
+- ✅ **Onboarding supprimé** (3 écrans de première visite + choix des catégories) : code,
+  route `/intro`, état `introDone` / `introStep` / `picked`. Écart assumé avec le PRD
+  (`01-prd` activation) et `02-app-flow` §2.1 — à rouvrir si l'activation en souffre.
+- ✅ **Mentions « Prototype : … » retirées** des écrans. Les raccourcis de démonstration
+  restent (approuver un KYC, remplir un code de retrait, comptes admin), sans le préfixe.
+- ✅ **Discours hors Les Cayes** : les textes vus par les acheteurs et les partenaires
+  parlent de « la plateforme » et d'Haïti, plus du pilote des Cayes. Les tableaux de bord
+  vendeur et admin gardent « Pilote Les Cayes », qui est une donnée d'exploitation.
+- ✅ **Carte des stores : MapLibre + MapTiler** (dépendance validée par Marc-Karlin).
+  Clé gratuite en variable d'environnement, jamais en dur ; style sans hôtels ni sites
+  touristiques. La géolocalisation réelle des boutiques est prévue en **V3**.
+
 ## Décisions récentes (11 nov 2026 — livrables et domaines)
 
 - ✅ **4 livrables, 4 branches, 4 domaines** (confirme les domaines *[À CONFIRMER]* du plan §1.0) :

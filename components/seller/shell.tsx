@@ -146,12 +146,12 @@ function Gate() {
             <p className="muted">Votre dossier est {lv === 0 ? "reçu" : "en vérification"}. L&apos;espace vendeur s&apos;ouvre dès qu&apos;il est approuvé.</p>
             <div className="row-b" style={{ justifyContent: "center" }}>
               <a className="btn btn-o" href={`${BUYER_URL}/sell`}>Voir mon dossier</a>
-              <button className="btn btn-p" onClick={approve}>Prototype : approuver le dossier</button>
+              <button className="btn btn-p" onClick={approve}>Approuver le dossier</button>
             </div>
           </>
         ) : (
           <>
-            <p className="muted">Vendez aux acheteurs de Les Cayes, avec retrait en magasin et paiement protégé.</p>
+            <p className="muted">Vendez partout sur Prélakay, avec retrait en magasin et paiement protégé.</p>
             <div className="sg-b">
               {[["store", "Retrait en magasin", "Pas de livraison à gérer"], ["shield-halved", "Paiement garanti", "L'acheteur paie avant de venir"], ["location-dot", "Visible sur la carte", "Les acheteurs proches vous trouvent"]].map(([i, b, c]) => (
                 <div key={b}>
@@ -163,7 +163,7 @@ function Gate() {
             </div>
             <div className="row-b" style={{ justifyContent: "center" }}>
               <a className="btn btn-p btn-lg" href={`${BUYER_URL}/sell`}>Enregistrer son commerce</a>
-              <button className="btn btn-o btn-lg" onClick={approve}>Prototype : passer le KYC</button>
+              <button className="btn btn-o btn-lg" onClick={approve}>Passer le KYC</button>
             </div>
           </>
         )}
@@ -210,14 +210,14 @@ function Center({ children }: { children: ReactNode }) {
             </Link>
             <span className="sc-lab">Espace vendeur</span>
           </div>
-          <label className="sc-sw" title="Prototype : choisir le store à gérer">
-            <span>Prototype</span>
+          <label className="sc-sw" title="Choisir le store à gérer">
+            <span>Store</span>
             <select
-              aria-label="Store géré (prototype)"
+              aria-label="Store géré"
               value={s.seller.store}
               onChange={(e) => {
                 setManagedStore(e.target.value);
-                toast.show(`Prototype : vous gérez ${STORES.find((x) => x.id === e.target.value)!.n}`);
+                toast.show(`Vous gérez ${STORES.find((x) => x.id === e.target.value)!.n}`);
               }}
             >
               {STORES.map((x) => (

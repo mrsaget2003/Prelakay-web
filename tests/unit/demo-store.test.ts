@@ -96,14 +96,14 @@ describe("paiement (doPay)", () => {
 });
 
 describe("persistance", () => {
-  it("une écriture avant le rechargement n'écrase pas l'état sauvegardé (panier, intro)", async () => {
-    localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true, cart: [{ p: "tech-1", v: "Noir", q: 2, on: true }] }));
+  it("une écriture avant le rechargement n'écrase pas l'état sauvegardé (panier)", async () => {
+    localStorage.setItem("pk-demo-v1", JSON.stringify({ coins: 999, cart: [{ p: "tech-1", v: "Noir", q: 2, on: true }] }));
     const mod = await import("@/lib/demo/store");
     mod.__resetForTest();
     // ex. markViewed d'une fiche produit ouverte directement, avant hydrateDemo()
     mod.demo.update((s) => { s.viewed = ["tech-1"]; });
     const s = mod.demo.get();
-    expect(s.introDone).toBe(true);
+    expect(s.coins).toBe(999);
     expect(s.cart).toEqual([{ p: "tech-1", v: "Noir", q: 2, on: true }]);
     expect(JSON.parse(localStorage.getItem("pk-demo-v1")!).cart).toHaveLength(1);
   });

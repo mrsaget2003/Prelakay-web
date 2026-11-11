@@ -18,7 +18,7 @@ test.beforeEach(() => test.setTimeout(120_000));
 
 async function asSeller(page: Page) {
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true, kyc: "ok" })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ kyc: "ok" })));
 }
 
 test("chaque page de l'Espace vendeur s'affiche, sans débordement ni erreur", async ({ page }) => {
@@ -43,7 +43,7 @@ test("chaque page de l'Espace vendeur s'affiche, sans débordement ni erreur", a
 
 test("sans KYC approuvé, l'espace vendeur reste fermé", async ({ page }) => {
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true, kyc: null })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ kyc: null })));
   await page.goto("/seller/orders");
   await expect(page.getByRole("heading", { name: "Espace vendeur" })).toBeVisible();
   await expect(page.getByRole("link", { name: "Enregistrer son commerce" })).toBeVisible();
@@ -127,7 +127,7 @@ test("livraison : préparer puis remettre au livreur, onglet Livraisons", async 
     localStorage.setItem(
       "pk-demo-v1",
       JSON.stringify({
-        introDone: true, kyc: "ok",
+        kyc: "ok",
         orders: [{ id: "PK-2001", store: "boutik-lakay", items: [{ p: "mode-0", v: "Taille M", q: 1 }], status: "received", date: "6 nov. 2026", total: 3250, mode: "delivery", addr: { zone: "Bergeaud", mark: "près de l'église", phone: "37123456" }, fee: 200 }],
       }),
     ),
@@ -152,4 +152,27 @@ test("employés : inviter un employé, il apparaît dans le profil du store", as
   await expect(page.getByText("Rose Michel")).toBeVisible();
   await page.goto("/seller/store", NAV);
   await expect(page.getByText("Rose Michel")).toBeVisible();
+});
+
+// Menu latéral du vendeur : un sous-menu ouvert se déplie **sous** son bouton (prototype
+// `.sm-g.open .sm-s{display:block}`). Un `.sm-g` en grille ailleurs dans la feuille de
+// styles le renvoyait dans une deuxième colonne, à côté et tronqué.
+test("menu vendeur : le sous-menu ouvert se déplie sous son bouton", async ({ page }, info) => {
+  test.skip(!info.project.name.startsWith("desktop"), "le menu latéral est masqué sous 1024 px");
+  await page.goto("/seller");
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ kyc: "ok" })));
+  await page.goto("/seller/products");
+  const group = page.locator(".sc-side .sm-g").filter({ has: page.getByRole("button", { name: /Produits/ }) }).first();
+  await expect(group).toHaveClass(/\bopen\b/);
+  const btn = group.getByRole("button", { name: /Produits/ });
+  const sub = group.locator(".sm-s");
+  const b = (await btn.boundingBox())!;
+  const s = (await sub.boundingBox())!;
+  // dessous, pas à côté : même bord gauche, et le sous-menu commence sous le bouton
+  expect(s.y, "le sous-menu doit commencer sous le bouton").toBeGreaterThanOrEqual(b.y + b.height - 1);
+  expect(Math.abs(s.x - b.x), "le sous-menu doit être aligné sur le bouton").toBeLessThan(2);
+  expect(s.width, "le sous-menu doit occuper toute la largeur du menu").toBeGreaterThan(b.width * 0.9);
+  // pas de défilement horizontal dans le menu latéral
+  const over = await page.locator(".sc-side").evaluate((e) => e.scrollWidth - e.clientWidth);
+  expect(over, "débordement horizontal du menu latéral").toBeLessThanOrEqual(0);
 });

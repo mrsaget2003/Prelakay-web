@@ -7,7 +7,7 @@ export type Banner = { id: string; on: boolean; c: string; k: string; h: string;
 export const BANNERS: Banner[] = [
   { id: "b1", on: true, c: "s1", k: "Retrait en magasin", h: "Commandez en ligne, récupérez en 2 heures", b: "Voir les stores", href: "/map", i: "fa-solid fa-store", from: "1 nov. 2026", to: "31 déc. 2026" },
   { id: "b2", on: true, c: "s2", k: "Wallet Prélakay", h: "Payez le panier d'un proche, même depuis l'étranger", b: "Découvrir le wallet", href: "/wallet", i: "fa-solid fa-wallet", from: "1 nov. 2026", to: "31 déc. 2026" },
-  { id: "b3", on: true, c: "s3", k: "Nouveaux sur Prélakay", h: "Les stores pilotes de Les Cayes sont là", b: "Voir les nouveautés", href: "/discover?sort=new", i: "fa-solid fa-rocket", from: "1 nov. 2026", to: "30 nov. 2026" },
+  { id: "b3", on: true, c: "s3", k: "Nouveaux sur Prélakay", h: "Les nouveaux stores de Prélakay sont là", b: "Voir les nouveautés", href: "/discover?sort=new", i: "fa-solid fa-rocket", from: "1 nov. 2026", to: "30 nov. 2026" },
 ];
 
 /** Avis de démonstration (REVS du prototype) : [@auteur, note, texte, réponse du store, avec photos]. */
@@ -122,8 +122,3 @@ export const NOTIF_PREFS = ["Commande prête pour retrait", "Rappels de retrait 
 export const CITIES = ["Les Cayes", "Port-au-Prince", "Cap-Haïtien", "Jacmel", "Jérémie"];
 
 /** Intro (3 écrans max, « Passer » dès le premier — 02-app-flow §2.1). */
-export const INTRO: [string, string, string, string][] = [
-  ["fa-solid fa-location-dot", "g1", "Les stores de votre ville, sur une carte", "Trouvez un produit, voyez à quelle distance il est, et allez le chercher."],
-  ["fa-solid fa-wallet", "g5", "Payez avec votre wallet", "MonCash, NatCash, Sogebank, ou depuis l'étranger. Votre argent reste protégé jusqu'au retrait."],
-  ["fa-solid fa-coins", "g0", "Gagnez des Coins", "À chaque commande retirée et à chaque avis."],
-];

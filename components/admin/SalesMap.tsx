@@ -44,7 +44,7 @@ function ByToggle({ by, set }: { by: ShareBy; set: (b: ShareBy) => void }) {
 function Ranking({ rows }: { rows: ZoneShare[] }) {
   const top = rows.filter((r) => r.pct > 0).slice(0, 6);
   return (
-    <ol className="sm-rank">
+    <ol className="smap-rank">
       {top.map((r) => (
         <li key={r.id}>
           <span>{r.name}</span>
@@ -67,12 +67,12 @@ export function SudSalesMap({ days, compact = false }: { days: Days; compact?: b
       sub={`${days} derniers jours · part ${by === "amount" ? "des ventes (HTG)" : "des commandes"} et montant`}
       badge={<ByToggle by={by} set={setBy} />}
     >
-      <div className={`sm-g${compact ? " compact" : ""}`}>
-        <div className="sm-map" role="img" aria-label={`Carte du Sud : ${rows.filter((r) => r.pct).map((r) => `${r.name} ${shareLabel(r)}`).join(", ")}`}>
+      <div className={`smap-g${compact ? " compact" : ""}`}>
+        <div className="smap-map" role="img" aria-label={`Carte du Sud : ${rows.filter((r) => r.pct).map((r) => `${r.name} ${shareLabel(r)}`).join(", ")}`}>
           <NChoropleth features={FEATURES} areas={rows.map((r) => ({ id: r.id, name: r.name, value: r.pct, tip: tipRows(r) }))} seq={VZSEQ} />
         </div>
         <div>
-          <p className="sm-lead">
+          <p className="smap-lead">
             <b>{lead.name}</b> · {shareLabel(lead)}
           </p>
           <Ranking rows={rows} />

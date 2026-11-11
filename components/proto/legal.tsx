@@ -56,7 +56,7 @@ export function LegalDoc({ slug }: { slug: string }) {
         <h1 className="ph-t">{d.title}</h1>
         <div className="info-box">
           <Fi s="circle-info" />
-          <span>Ce document est en préparation. Il sera publié avant l&apos;ouverture du pilote de Les Cayes.</span>
+          <span>Ce document est en préparation. Il sera publié avant l&apos;ouverture de la plateforme.</span>
         </div>
         <p className="muted" style={{ marginTop: 12 }}>
           Une question en attendant ? Écrivez-nous depuis le <Link className="lk" href="/help">centre d&apos;aide</Link>.

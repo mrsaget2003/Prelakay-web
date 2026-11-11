@@ -55,7 +55,7 @@ export default function CartPage() {
         <div className="panel cart-empty">
           <Fi s="cart-shopping" />
           <h2>Votre panier est vide</h2>
-          <p className="muted">Les stores de Les Cayes ont de quoi vous plaire.</p>
+          <p className="muted">Les stores de Prélakay ont de quoi vous plaire.</p>
           <Link className="btn btn-p" href="/discover">
             Commencer vos achats
           </Link>

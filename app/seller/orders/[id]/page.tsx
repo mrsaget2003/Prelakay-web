@@ -138,7 +138,7 @@ export default function SellerOrder() {
             toast.show("Commande non retirée : stock remis à jour");
           }}
         >
-          Prototype : délai dépassé
+          Simuler le délai dépassé
         </button>
       </div>
     ) : o.status === "done" ? (

@@ -5,7 +5,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
-import { CATS, PICONS, TINTS, STORES, allProducts, catBy } from "@/lib/data/mock/seed";
+import { CATS, PICONS, TINTS, STORES, allProducts, catBy, prodBy } from "@/lib/data/mock/seed";
 import { useDemo, demo } from "@/lib/demo/store";
 import { pushHistory } from "@/lib/demo/actions";
 import { formatDistance as km } from "@/lib/format";
@@ -50,8 +50,10 @@ function Autocomplete({ q, close }: { q: string; close: () => void }) {
     setListening(true);
   };
   if (!q) {
-    const picked = Object.keys(s.picked).filter((k) => s.picked[k])[0];
-    const c = catBy(picked || "beaute")!;
+    // l'intro choisissait des catégories ; depuis sa suppression (11 nov. 2026), on part
+    // du dernier produit consulté, sinon Beauté et soins.
+    const seen = s.viewed.map((id) => prodBy(id)?.cat).find(Boolean);
+    const c = catBy(seen || "beaute")!;
     return (
       <div className="ac-2">
         <div>

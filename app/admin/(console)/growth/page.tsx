@@ -29,7 +29,7 @@ export default function Growth() {
       </VzTiles>
       <div className="err-box" style={{ margin: "12px 0" }}>
         <Fi s="triangle-exclamation" />
-        <span>Protection anti-abus du parrainage (500 Coins) : point ouvert, aucune règle appliquée dans le prototype.</span>
+        <span>Protection anti-abus du parrainage (500 Coins) : point ouvert, aucune règle n&apos;est appliquée pour l&apos;instant.</span>
       </div>
       <div className="s-grid2">
         <div className="panel">

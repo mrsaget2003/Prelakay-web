@@ -59,8 +59,8 @@ export default function Invite() {
             {r.st === "done" ? (
               <span className="tag tag-ok">+{REFERRAL_COINS} Coins</span>
             ) : (
-              <button className="btn btn-o btn-sm" onClick={() => completeReferral(r.u)} title="Prototype : simuler la première commande du filleul">
-                Prototype : 1re commande
+              <button className="btn btn-o btn-sm" onClick={() => completeReferral(r.u)} title="Simuler la première commande du filleul">
+                Simuler la 1re commande
               </button>
             )}
           </div>

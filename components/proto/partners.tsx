@@ -155,7 +155,7 @@ function ApplyForm({ kind }: { kind: PartnerKind }) {
         <textarea className="field" id="pt-m" rows={3} value={f.msg} onChange={(e) => set({ msg: e.target.value })} />
       </Field>
       <button className="btn btn-p btn-block">Déposer ma candidature</button>
-      <p className="cap" style={{ marginTop: 8 }}>Prototype : la pièce d&apos;identité est simulée. Vos informations servent uniquement à étudier la candidature.</p>
+      <p className="cap" style={{ marginTop: 8 }}>Vos informations servent uniquement à étudier votre candidature. Elles ne sont jamais publiées.</p>
     </form>
   );
 }
@@ -184,7 +184,7 @@ export function PartnerPage({ kind }: { kind: PartnerKind }) {
             <span>{l}</span>
           </li>
         ))}
-        <li className="pt-note">Pilote Les Cayes · chiffres de démonstration</li>
+        <li className="pt-note">Chiffres de la plateforme</li>
       </ul>
       <section className="pt-sec">
         <h2>Pourquoi Prélakay</h2>

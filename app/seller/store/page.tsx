@@ -53,7 +53,7 @@ export default function StoreProfile() {
               <label className="lbl" htmlFor="sd">
                 Description
               </label>
-              <textarea className="field" id="sd" rows={3} defaultValue="Store pilote à Les Cayes. Retrait en magasin, paiement par wallet." />
+              <textarea className="field" id="sd" rows={3} defaultValue="Retrait en magasin, paiement par wallet." />
             </div>
             <div className="g2">
               <div className="fl">

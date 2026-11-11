@@ -23,7 +23,6 @@ import { ModalProvider, useModal } from "./modal";
 import { SearchBox } from "./search";
 import { DataIcon, Fi, Ph, Qr, useMounted } from "./ui";
 import { ShareModal } from "./share";
-import { Intro } from "./auth";
 import { LEGAL_DOCS } from "@/lib/data/credits";
 import { MenuProvider, Popover, useMenu } from "./popover";
 
@@ -552,7 +551,7 @@ function Footer() {
               <Logo variant="full" tone="lagon" height={32} />
             </span>
             <p className="tag-line">Cherchez-vous encore votre produit ?</p>
-            <p style={{ fontSize: 13 }}>Le marketplace des stores d&apos;Haïti. Pilote à Les Cayes.</p>
+            <p style={{ fontSize: 13 }}>Le marketplace des stores d&apos;Haïti.</p>
           </div>
           <div>
             <h4>Acheter</h4>
@@ -680,9 +679,6 @@ function Chrome({ children }: { children: ReactNode }) {
     <RouteCtx.Provider value={r}>
       <BarsCtx.Provider value={barsApi}>
         <ModalProvider>
-          <div className="proto">
-            <b>Prototype Prélakay</b> · acheteur · données fictives · structure inspirée d&apos;AliExpress, identité Prélakay
-          </div>
           <Header r={r} />
           <MTop r={r} title={titleFor(r, s.cart.length)} />
           <main id="app">{children}</main>
@@ -691,7 +687,6 @@ function Chrome({ children }: { children: ReactNode }) {
           <div className="mbar" id="mbar" />
           <TabBar r={r} />
           <Frail />
-          <Intro />
         </ModalProvider>
       </BarsCtx.Provider>
     </RouteCtx.Provider>

@@ -19,7 +19,7 @@ test("chaque route de l'Acheteur s'affiche, sans débordement, sans erreur, sans
     if (m.type() === "error" && !/Download the React DevTools/.test(m.text())) errors.push(m.text().slice(0, 200));
   });
   await page.goto("/");
-  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({})));
   for (const r of ROUTES) {
     await page.goto(r);
     await page.waitForLoadState("networkidle");

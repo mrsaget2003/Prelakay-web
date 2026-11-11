@@ -127,7 +127,7 @@ function Login({ creds }: { creds: DemoCreds }) {
                 <button className="btn btn-p btn-lg btn-block">Vérifier</button>
               </form>
               <div className="row-b">
-                <button className="lk" onClick={() => toast.show(creds ? `Nouveau code envoyé (prototype : ${creds.otp})` : "Nouveau code envoyé")}>
+                <button className="lk" onClick={() => toast.show(creds ? `Nouveau code envoyé : ${creds.otp}` : "Nouveau code envoyé")}>
                   Renvoyer le code
                 </button>
                 <button
@@ -221,7 +221,7 @@ function Login({ creds }: { creds: DemoCreds }) {
                   {locked ? (
                     <div className="err-box" role="alert">
                       <Fi s="lock" />
-                      <span>Trop de tentatives. Réessayez plus tard (prototype : 20 secondes).</span>
+                      <span>Trop de tentatives. Réessayez dans 20 secondes.</span>
                     </div>
                   ) : err ? (
                     <Err>{err}</Err>
@@ -257,7 +257,7 @@ function Login({ creds }: { creds: DemoCreds }) {
         </div>
         {creds ? (
           <div className="al-demo">
-            <b>Prototype : comptes de démonstration</b>
+            <b>Comptes de démonstration</b>
             <span className="cap">
               Mot de passe : <code>{creds.password}</code> · code : <code>{creds.otp}</code>
             </span>

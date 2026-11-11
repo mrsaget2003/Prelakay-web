@@ -44,7 +44,7 @@ function Pickup() {
           </div>
           <p className="muted">Placez le QR code de l&apos;acheteur dans le cadre.</p>
         </div>
-        <p className="cap">Prototype : la caméra n&apos;est pas utilisée. Choisissez une commande prête :</p>
+        <p className="cap">Choisissez une commande prête :</p>
         {ready.length ? (
           ready.map((x) => (
             <button
@@ -138,7 +138,7 @@ function Pickup() {
                       inp.current?.focus();
                     }}
                   >
-                    Prototype : code
+                    Remplir le code
                   </button>
                 </div>
               );
@@ -146,9 +146,6 @@ function Pickup() {
           ) : (
             <p className="muted">Aucune commande en attente de retrait.</p>
           )}
-          <p className="cap" style={{ marginTop: 12 }}>
-            Le prototype montre le code pour la démonstration. En production, seul l&apos;acheteur le voit.
-          </p>
         </div>
       </div>
     </>

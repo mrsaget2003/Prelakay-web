@@ -123,7 +123,7 @@ export default function SellPage() {
           <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
             {lv < 2 ? (
               <button className="btn btn-s btn-sm" onClick={() => demo.update((d) => { d.kyc = d.kyc === "recu" ? "verif" : "ok"; })}>
-                Prototype : étape suivante
+                Étape suivante
               </button>
             ) : (
               <Link className="btn btn-p btn-sm" href="/seller">

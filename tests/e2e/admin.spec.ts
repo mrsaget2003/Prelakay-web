@@ -14,7 +14,7 @@ test.beforeEach(() => test.setTimeout(150_000));
 async function as(page: Page, role: "super" | "support" | "finance" | "marketing") {
   await page.goto("/admin/login");
   await page.evaluate((r) => {
-    localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true }));
+    localStorage.setItem("pk-demo-v1", JSON.stringify({}));
     const e = { super: "superadmin", support: "support", finance: "finance", marketing: "marketing" }[r] + "@prelakay.ht";
     sessionStorage.setItem("pk-admin", JSON.stringify({ on: true, email: e, role: r }));
   }, role);

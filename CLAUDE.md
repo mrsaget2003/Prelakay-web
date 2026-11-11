@@ -23,6 +23,15 @@ Si une information ne se trouve dans **aucun** de ces fichiers, elle n'existe pa
 8. **Avant un gros travail (nouveau build, réécriture, fonctionnalité majeure) : poser au maximum 3 questions ciblées plutôt que deviner puis livrer un résultat hors cible.** Trois bonnes questions coûtent minutes ; un livrable hors cible coûte une session entière à refaire.
 9. **Versions et toast « À venir »** : tout l'écran est construit dès la V1 (comme le prototype), mais seules les fonctionnalités de la version en cours marchent. Une fonctionnalité d'une version suivante reste visible et affiche le toast « À venir » ; l'API la refuse. Voir `CHANGELOG.md`.
 
+## Décisions récentes (11 nov 2026 — livrables et domaines)
+
+- ✅ **4 livrables, 4 branches, 4 domaines** (confirme les domaines *[À CONFIRMER]* du plan §1.0) :
+  1. **Landing** — `www.prelakay.com` (branche `landing`, hors de cette application Next.js) ;
+  2. **Espace admin** — `admin.prelakay.com`, **sans SEO** (`noindex, nofollow`) ;
+  3. **Espace vendeur** — `vendeur.prelakay.com`, **avec connexion et SEO** ;
+  4. **Application acheteur** — `app.prelakay.com`.
+- Chaque livrable garde sa branche (`landing`, `acheteur`, `vendeur`, `admin`) et son site, pour que le déploiement reste indépendant. `APP_SPACE` continue de limiter les routes servies côté application.
+
 ## Décisions récentes (10 nov 2026 — prototype complet)
 
 Spec : `docs/superpowers/specs/2026-11-10-prototype-complet-design.md`.

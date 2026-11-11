@@ -163,3 +163,19 @@ export function FieldErr({ msg }: { msg: string | null | undefined }) {
     </p>
   );
 }
+
+/** Dépôt d'une face de pièce d'identité — `label.opt` + `input[type=file]` masqué du
+ *  prototype (`data-act="kfile"`). Le nom accessible reste « Recto » / « Verso » même
+ *  une fois la face ajoutée : seul le texte visible change. En démonstration, le fichier
+ *  n'est pas envoyé ; seule sa présence est retenue. */
+export function IdPhoto({ label, on, onPick }: { label: string; on: boolean; onPick: (on: boolean) => void }) {
+  return (
+    <label className={`opt${on ? " ok" : ""}`} style={{ margin: 0, justifyContent: "center" }}>
+      <input type="file" className="sr" accept="image/*" aria-label={label} onChange={(e) => onPick(!!e.target.files?.length)} />
+      <Fi s="upload" className="big" />
+      <span>
+        <b>{on ? "Ajoutée ✓" : label}</b>
+      </span>
+    </label>
+  );
+}

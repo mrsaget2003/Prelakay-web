@@ -29,9 +29,15 @@ i.fa-ic { font-style: normal; }
 .hdr-r > .dd, .h2 > .dd { display: flex; align-items: center; }
 .hdr-r > .hi { align-self: center; }
 .ddp, .ddp.accm, .ddp.more { padding: var(--space-3); border-radius: var(--radius-sm); box-shadow: var(--shadow-pop); z-index: 70; top: calc(100% + 8px); }
-/* A.3 — ouverture pilotée par JS (survol 150 ms, clic, focus) : plus d'ouverture CSS au survol */
-.dd.hov:hover > .ddp { opacity: 0; visibility: hidden; transform: translateY(4px); }
-.dd.open > .ddp, .dd.hov.open:hover > .ddp { opacity: 1; visibility: visible; transform: none; }
+/* A.3 — ouverture au survol en CSS pur, comme le prototype (`.dd.hov:hover > .ddp`,
+   proto.css) : le menu s'ouvre même avant l'hydratation. Le JavaScript n'ajoute que le
+   clic, le clavier, Échap et « un seul menu ouvert à la fois » (`.dd.open`).
+   Le survol ne vaut que pour un vrai pointeur : sur un écran tactile, `:hover` reste
+   collé après le toucher et laisserait le panneau ouvert. */
+@media (hover: none) {
+  .dd.hov:hover > .ddp { opacity: 0; visibility: hidden; transform: translateY(4px); }
+  .dd.hov.open:hover > .ddp { opacity: 1; visibility: visible; transform: none; }
+}
 
 /* A.4 — boutons App Store / Google Play sur une ligne */
 .ddp.app { width: 380px; }
@@ -252,6 +258,8 @@ body.scrolled .frail { display: flex; }
 .pt-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 16px}
 .pt-up{display:flex;align-items:center;gap:8px;width:100%;padding:14px;border:1px dashed var(--color-neutral-300);border-radius:var(--radius-sm);background:none;margin-bottom:12px;font:inherit;cursor:pointer}
 .pt-up.on{border-style:solid;border-color:var(--color-success);color:var(--color-success)}
+.opt.ok{border-color:var(--color-success)}
+.opt.ok i.big,.opt.ok b{color:var(--color-success)}
 .pt-done{text-align:center;padding:24px 8px}
 .pt-ok{display:inline-flex;width:56px;height:56px;border-radius:50%;align-items:center;justify-content:center;background:rgba(28,131,44,.1);color:var(--color-success);font-size:24px;margin-bottom:8px}
 .pt-contact{display:flex;align-items:center;gap:8px;justify-content:center;margin:0 0 32px}

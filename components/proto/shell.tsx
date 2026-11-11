@@ -190,6 +190,9 @@ function HeaderInner({ r }: { r: ProtoRoute }) {
               <Popover
                 id="loc"
                 cls="loc"
+                // Au clic seulement (03-design §9.2 point 2 et `data-act="loc"` du prototype) :
+                // le panneau contient des listes déroulantes, il ne doit pas s'ouvrir au passage.
+                hover={false}
                 label="Ville, langue et devise"
                 trigger={
                   <button className="hi">

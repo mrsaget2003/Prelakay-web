@@ -216,3 +216,30 @@ test("vie de l'interface : carrousel Embla (flèche suivante), cœur de la wishl
   await page.goto("/wallet");
   await expect(page.locator(".money").first()).toHaveAttribute("aria-label", /HTG$/);
 });
+
+// Parité prototype (03-design §9.2) : « Télécharger l'app », « Compte » et « Plus »
+// s'ouvrent au survol en CSS pur — donc sans attendre le JavaScript ; « Ville / langue /
+// devise » s'ouvre au clic seulement.
+test("menus du header : survol pour l'app, le compte et Plus ; clic pour ville / langue / devise", async ({ page }, info) => {
+  test.skip(!info.project.name.startsWith("desktop"), "le header desktop est masqué sous 1024 px");
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.goto("/");
+  for (const id of ["accm", "app", "more"]) {
+    const dd = page.locator(`[data-menu="${id}"]`);
+    await expect(dd, id).toHaveClass(/\bhov\b/);
+    await dd.locator(".hi, > button").first().hover();
+    // ouvert par le CSS : visible bien avant le minuteur JS de 150 ms
+    await expect(page.locator(`.ddp.${id}`), id).toBeVisible({ timeout: 120 });
+    await page.mouse.move(640, 700);
+  }
+  const loc = page.locator('[data-menu="loc"]');
+  await expect(loc).not.toHaveClass(/\bhov\b/);
+  await loc.locator(".hi").hover();
+  await page.waitForTimeout(400);
+  await expect(page.locator(".ddp.loc")).toBeHidden();
+  await loc.locator(".hi").click();
+  await expect(page.locator(".ddp.loc")).toBeVisible();
+  // un menu de survol n'est pas une boîte de dialogue
+  await expect(page.locator(".ddp[role=dialog]")).toHaveCount(0);
+});

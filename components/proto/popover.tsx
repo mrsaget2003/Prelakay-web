@@ -108,7 +108,10 @@ export function Popover({
   const prevClick = trigger.props.onClick;
   return (
     <div
-      className={`dd ${cls}${isOpen ? " open" : ""}`}
+      // `hov` : la règle CSS du prototype (`.dd.hov:hover > .ddp`) ouvre le panneau
+      // sans attendre l'hydratation. Le JavaScript ci-dessous ne fait que l'épauler
+      // (clic, clavier, Échap, un seul menu ouvert à la fois).
+      className={`dd${hover ? " hov" : ""} ${cls}${isOpen ? " open" : ""}`}
       data-menu={id}
       onMouseEnter={hover ? () => m.hover(id, true) : undefined}
       onMouseLeave={
@@ -138,7 +141,9 @@ export function Popover({
           if ((e.currentTarget as HTMLElement).tagName !== "A") m.toggle(id);
         },
       })}
-      <div className={`ddp ${cls}`} id={panelId} role="dialog" aria-label={label}>
+      {/* `group`, pas `dialog` : un menu de survol n'est pas une boîte de dialogue
+          (le prototype ne met aucun rôle ; on garde seulement le nom accessible). */}
+      <div className={`ddp ${cls}`} id={panelId} role="group" aria-label={label}>
         {children}
       </div>
     </div>

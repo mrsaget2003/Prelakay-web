@@ -127,6 +127,8 @@ export default function CartPage() {
                                 d.wish[l.c.p] = true;
                                 d.cart.splice(l.i, 1);
                               });
+                              // l'article quitte le panier pour une autre page : on dit où il va
+                              toast.show("Déplacé dans la wishlist", "success");
                             }}
                           >
                             <Fi r="heart" />

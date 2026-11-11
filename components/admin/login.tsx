@@ -127,7 +127,7 @@ function Login({ creds }: { creds: DemoCreds }) {
                 <button className="btn btn-p btn-lg btn-block">Vérifier</button>
               </form>
               <div className="row-b">
-                <button className="lk" onClick={() => toast.show("Nouveau code envoyé")}>
+                <button className="lk" onClick={() => toast.show(creds ? `Nouveau code envoyé (prototype : ${creds.otp})` : "Nouveau code envoyé")}>
                   Renvoyer le code
                 </button>
                 <button

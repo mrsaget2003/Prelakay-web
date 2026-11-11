@@ -125,7 +125,7 @@ export function OrderCard({ o }: { o: Order }) {
         <button className="btn btn-p btn-sm" onClick={() => modal.open("Votre avis", <ReviewForm order={o} />)}>Laisser un avis</button>
       )
     ) : (
-      <Link className="btn btn-p btn-sm" href={`/orders/${o.id}`}>Voir la commande</Link>
+      <Link className="btn btn-p btn-sm" href={`/orders/${o.id}`}>Suivre la commande</Link>
     );
   const b2 =
     o.status === "done" ? (

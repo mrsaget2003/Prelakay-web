@@ -11,7 +11,7 @@ import { ageOn } from "@/lib/domain/kyc";
 import { demo, useDemo } from "@/lib/demo/store";
 import { useToast } from "@/components/ui/Toast";
 import { AccLayout } from "@/components/proto/account";
-import { DataIcon, Fi, NeedLogin } from "@/components/proto/ui";
+import { DataIcon, Fi, IdPhoto, NeedLogin } from "@/components/proto/ui";
 
 const TODAY = new Date(2026, 10, 6); // date de démonstration du prototype
 
@@ -31,13 +31,7 @@ function KycForm() {
     toast.show("Dossier envoyé", "success");
   };
   const file = (k: "recto" | "verso", label: string) => (
-    <label className="opt" style={{ margin: 0, justifyContent: "center", ...(files[k] ? { borderColor: "var(--color-success)" } : {}) }}>
-      <input type="file" className="sr" accept="image/*" onChange={(e) => setFiles((x) => ({ ...x, [k]: !!e.target.files?.length }))} />
-      <Fi s="upload" className="big" />
-      <span>
-        <b>{files[k] ? "Ajoutée ✓" : label}</b>
-      </span>
-    </label>
+    <IdPhoto label={label} on={files[k]} onPick={(on) => setFiles((x) => ({ ...x, [k]: on }))} />
   );
   return (
     <div className="panel">

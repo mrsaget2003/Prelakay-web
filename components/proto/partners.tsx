@@ -9,7 +9,7 @@ import { PARTNER_PAGES, VEHICLES } from "@/lib/demo/partnerContent";
 import { ORG_TYPES, submitPartner } from "@/lib/demo/partners";
 import type { PartnerInput, PartnerKind } from "@/lib/domain/partners";
 import { Crumb } from "./legal";
-import { DataIcon, FieldErr, Fi } from "./ui";
+import { DataIcon, FieldErr, Fi, IdPhoto } from "./ui";
 
 function empty(kind: PartnerKind): PartnerInput {
   return kind === "delivery"
@@ -33,6 +33,14 @@ function ApplyForm({ kind }: { kind: PartnerKind }) {
   const [f, setF] = useState<PartnerInput>(() => empty(kind));
   const [errs, setErrs] = useState<Record<string, string>>({});
   const [done, setDone] = useState<string | null>(null);
+  // Pièce d'identité du livreur : les deux faces, comme le formulaire vendeur `/sell`.
+  // `docs` ne vaut vrai que lorsque le recto et le verso sont déposés.
+  const [faces, setFaces] = useState({ recto: false, verso: false });
+  const pickFace = (k: "recto" | "verso", on: boolean) => {
+    const next = { ...faces, [k]: on };
+    setFaces(next);
+    set({ docs: next.recto && next.verso });
+  };
   const set = (p: Partial<PartnerInput>) => {
     setF((x) => ({ ...x, ...p }));
     setErrs((e) => {
@@ -134,13 +142,14 @@ function ApplyForm({ kind }: { kind: PartnerKind }) {
         )}
       </div>
       {kind === "delivery" ? (
-        <>
-          <button type="button" className={`pt-up${f.docs ? " on" : ""}`} aria-pressed={f.docs} onClick={() => set({ docs: !f.docs })}>
-            <Fi s={f.docs ? "circle-check" : "upload"} />
-            {f.docs ? "Pièce d'identité ajoutée (recto et verso)" : "Ajouter ma pièce d'identité (recto et verso)"}
-          </button>
+        <div className="fl">
+          <span className="lbl">Pièce d&apos;identité (recto et verso)</span>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <IdPhoto label="Recto" on={faces.recto} onPick={(on) => pickFace("recto", on)} />
+            <IdPhoto label="Verso" on={faces.verso} onPick={(on) => pickFace("verso", on)} />
+          </div>
           <FieldErr msg={errs.docs} />
-        </>
+        </div>
       ) : null}
       <Field id="pt-m" label="Message (facultatif)">
         <textarea className="field" id="pt-m" rows={3} value={f.msg} onChange={(e) => set({ msg: e.target.value })} />

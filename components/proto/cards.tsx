@@ -171,6 +171,8 @@ export function QuickView({ id, mode, ci }: { id: string; mode: "add" | "cart"; 
         }
       });
       modal.close();
+      // le panier est caché derrière la fenêtre qui vient de se fermer : on confirme
+      toast.show("Panier mis à jour", "success");
     } else {
       addToCart(p.id);
       modal.close();

@@ -25,14 +25,15 @@
 
 ## 1.0 Trois projets en un (✅ décidé par Marc-Karlin le 7 nov. 2026)
 
-Le dépôt contient **une seule application Next.js** et **trois projets déployables** : **Acheteur**, **Espace vendeur**, **Espace admin**. Ils partagent les fondations (design system, logo, icônes, domaine, données, auth). On construit dans l'ordre **Acheteur → Vendeur → Admin**. Chaque projet abouti est versé dans **sa branche Git**, que surveille son propre site Vercel ou Netlify.
+Le dépôt contient **une seule application Next.js** et **trois projets déployables** : **Acheteur**, **Espace vendeur**, **Espace admin** — plus la **landing**, quatrième livrable, sur sa propre branche et hors de cette application. Ils partagent les fondations (design system, logo, icônes, domaine, données, auth). On construit dans l'ordre **Acheteur → Vendeur → Admin**. Chaque projet abouti est versé dans **sa branche Git**, que surveille son propre site Vercel ou Netlify.
 
 | Branche | Projet | Variable `APP_SPACE` | Routes servies | Domaine proposé |
 |---|---|---|---|---|
 | `main` | intégration (tout) | `all` | toutes | — (local et prévisualisations) |
-| `acheteur` | Acheteur | `acheteur` | tout sauf `/seller/*` et `/admin/*` | `app.prelakay.com` *[À CONFIRMER]* |
-| `vendeur` | Espace vendeur | `vendeur` | `/seller/*` + `/login`, `/signup`, `/sell` ; `/` redirige vers `/seller` | `vendeur.prelakay.com` *[À CONFIRMER]* |
-| `admin` | Espace admin | `admin` | `/admin/*` seulement ; `/` redirige vers `/admin` | `admin.prelakay.com` *[À CONFIRMER]* |
+| `landing` | Landing | — (hors application) | la vitrine seule | `www.prelakay.com` ✅ (11 nov. 2026) |
+| `acheteur` | Acheteur | `acheteur` | tout sauf `/seller/*` et `/admin/*` | `app.prelakay.com` ✅ (11 nov. 2026) |
+| `vendeur` | Espace vendeur | `vendeur` | `/seller/*` + `/login`, `/signup`, `/sell` ; `/` redirige vers `/seller` | `vendeur.prelakay.com` ✅ (11 nov. 2026) — avec connexion et SEO |
+| `admin` | Espace admin | `admin` | `/admin/*` seulement ; `/` redirige vers `/admin` | `admin.prelakay.com` ✅ (11 nov. 2026) — sans SEO (`noindex`) |
 
 - **Flux Git** : on travaille sur `feat/<phase>-<sujet>`, on fusionne dans `main`. Quand un projet atteint un jalon validé, on fusionne `main` dans sa branche (`git switch acheteur && git merge --ff-only main`), ce qui déclenche son déploiement. On ne commite jamais directement sur `acheteur`, `vendeur` ou `admin`.
 - **Deux jalons par projet** : (1) **prototype abouti** : toutes ses pages, interactives sur données de démo, déployé avec `PRELAKAY_ENV=demo` et un bandeau permanent « Données de démonstration » ; (2) **production aboutie** : branché sur Supabase, `PRELAKAY_ENV=production`, données de démo refusées.

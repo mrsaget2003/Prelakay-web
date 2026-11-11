@@ -8,7 +8,7 @@
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { P, STORES, storeBy, catBy, followersOf, type Product, type Store } from "@/lib/data/mock/seed";
+import { P, STORES, storeBy, catBy, followersOf, isSuspended, type Product, type Store } from "@/lib/data/mock/seed";
 import { useFollowStore } from "@/lib/hooks/useFollowStore";
 import { sortList } from "@/lib/proto/sort";
 import { storeImage } from "@/lib/data/mock/images";
@@ -73,6 +73,21 @@ export default function StorePage() {
   const sort = search.get("sort") || "best";
   const [sq, setSq] = useState(q);
   if (!s) return <Page404 />;
+  // Store suspendu par un admin : sa page se ferme aux acheteurs, comme dans le prototype
+  // (ses produits ont déjà quitté le catalogue — `allProducts()` de lib/data/mock/seed.ts).
+  if (isSuspended(s.id))
+    return (
+      <div className="wrap">
+        <div className="empty" style={{ marginTop: 16 }}>
+          <Fi s="store-slash" />
+          <b>Ce store est temporairement indisponible</b>
+          <p className="muted">Ses produits ne sont plus en vente pour le moment.</p>
+          <Link className="btn btn-p" href="/discover">
+            Voir d&apos;autres produits
+          </Link>
+        </div>
+      </div>
+    );
   const tab = tabParam?.[0] || "home";
   const L = P.filter((p) => p.store === s.id);
   const reviews = L.reduce((a, p) => a + p.reviews, 0);

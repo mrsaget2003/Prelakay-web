@@ -36,6 +36,7 @@ export const ACC: ([string, string, string, string, FeatureKey?] | ["-"])[] = [
   ["viewed", "fa-solid fa-clock-rotate-left", "Vus récemment", "/viewed"],
   ["coupons", "fa-solid fa-ticket", "Mes coupons", "/account/coupons", "coupons"],
   ["invite", "fa-solid fa-user-plus", "Inviter des amis", "/invite", "referral"],
+  ["plus", "fa-solid fa-crown", "Prélakay+", "/plus", "prelakay_plus"],
   ["-"],
   ["help", "fa-solid fa-circle-question", "Centre d'aide", "/help"],
   ["sell", "fa-solid fa-store", "Enregistrer son commerce", "/sell"],
@@ -76,7 +77,7 @@ export const COINS_EARN: [string, string, string][] = [
   ["fa-regular fa-star", "Chaque avis vérifié", "+25"],
   ["fa-solid fa-gift", "Bienvenue", "montant à confirmer"],
   ["fa-solid fa-store", "Bonus retrait en magasin", "à confirmer"],
-  ["fa-solid fa-user-plus", "Inviter un ami", "À venir"],
+  ["fa-solid fa-user-plus", "Inviter un ami", "+500"],
 ];
 export const COINS_HISTORY: [string, string, string, string][] = [
   ["fa-regular fa-star", "Avis · Huile de ricin noire", "4 nov.", "+25"],

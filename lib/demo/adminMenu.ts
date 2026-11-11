@@ -25,6 +25,7 @@ export const AMENU: AMenuEntry[] = [
   ["-", "Contenu"],
   ["banners", "fa-regular fa-images", "Bannières", "banners"],
   ["coupons", "fa-solid fa-ticket", "Coupons", "coupons"],
+  ["growth", "fa-solid fa-user-plus", "Croissance", "growth"],
   ["events", "fa-regular fa-calendar", "Events et flash-offers", "events", "events"],
   ["notify", "fa-regular fa-bell", "Notifications", "notify"],
   ["categories", "fa-solid fa-sitemap", "Catégories", "categories"],

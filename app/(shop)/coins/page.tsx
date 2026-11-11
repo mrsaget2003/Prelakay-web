@@ -3,6 +3,7 @@
 // Coins — pageCoins du prototype : solde, comment gagner (50 / commande, 25 / avis ;
 // bienvenue et bonus retrait à confirmer ; parrainage « À venir »), historique.
 
+import Link from "next/link";
 import { COINS_EARN, COINS_HISTORY } from "@/lib/data/mock/content";
 import { useDemo } from "@/lib/demo/store";
 import { ComingSoon } from "@/components/ui/ComingSoon";
@@ -26,9 +27,11 @@ export default function CoinsPage() {
             <div className="t">
               <b>{label}</b>
             </div>
-            {v === "À venir" ? (
+            {label === "Inviter un ami" ? (
               <ComingSoon feature="referral">
-                <button className="tag tag-neu">À venir</button>
+                <Link className="a lk" href="/invite">
+                  {v}
+                </Link>
               </ComingSoon>
             ) : (
               <span className="a">{v}</span>

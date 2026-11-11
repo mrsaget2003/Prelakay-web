@@ -133,3 +133,17 @@ test("coupons : le vendeur crée un coupon, l'acheteur le garde puis l'applique 
   await (mob ? page.locator("#mbar").getByRole("button", { name: "Payer" }) : page.locator("aside.sum").getByRole("button", { name: /^Payer/ })).click();
   await expect(page).toHaveURL(/\/done\//, { timeout: 30_000 });
 });
+
+test("Prélakay+ : s'abonner depuis le compte, badge or ; parrainage : lien et Coins", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.goto("/plus");
+  await page.getByRole("button", { name: /S'abonner/ }).click();
+  await expect(page.getByText("Badge or actif")).toBeVisible();
+  await page.goto("/account");
+  await expect(page.locator(".bdg", { hasText: "Prélakay+" }).first()).toBeVisible();
+  await page.goto("/invite");
+  await expect(page.getByLabel("Lien de parrainage")).toHaveValue("https://prelakay.com/r/marckarlin");
+  await page.getByRole("button", { name: "Prototype : 1re commande" }).click();
+  await expect(page.getByText("+500 Coins").last()).toBeVisible();
+});

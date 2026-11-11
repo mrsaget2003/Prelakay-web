@@ -19,7 +19,7 @@ export const ADMINS: Admin[] = [
 export type Section =
   | "dash" | "stats" | "kyc" | "products" | "reports" | "disputes" | "stores" | "users" | "orders" | "banners" | "events"
   | "notify" | "categories" | "finance" | "team" | "settings" | "audit" | "search" | "menu"
-  | "deliveries" | "partners" | "coupons";
+  | "deliveries" | "partners" | "coupons" | "growth";
 
 const ALL: Role[] = ["super", "support", "finance", "marketing"];
 /** Sections visibles par rôle (PERM du prototype). */
@@ -32,7 +32,7 @@ export const PERM: Record<Section, Role[]> = {
   team: ["super"], settings: ["super", "finance"], audit: ["super"],
   // 10 nov. 2026 : livraisons (Opérations) et candidatures de partenaires (Validation)
   deliveries: ["super", "support"], partners: ["super", "support", "finance"],
-  coupons: ["super", "marketing"],
+  coupons: ["super", "marketing"], growth: ["super", "marketing"],
 };
 
 export function can(role: Role | null | undefined, s: Section): boolean {

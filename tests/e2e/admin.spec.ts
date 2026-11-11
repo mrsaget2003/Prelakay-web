@@ -6,7 +6,7 @@ const ROUTES = [
   "/admin", "/admin/menu", "/admin/search", "/admin/search?q=PK-10", "/admin/stats", "/admin/kyc", "/admin/kyc/KYC-0146",
   "/admin/products", "/admin/products/mq-0", "/admin/reports", "/admin/disputes", "/admin/disputes/LT-150", "/admin/stores",
   "/admin/stores/bel-soley", "/admin/users", "/admin/users/jowan509", "/admin/orders", "/admin/orders/PK-1042", "/admin/banners",
-  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit", "/admin/deliveries", "/admin/partners", "/admin/partners/PP-0012", "/admin/coupons", "/admin/events",
+  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit", "/admin/deliveries", "/admin/partners", "/admin/partners/PP-0012", "/admin/coupons", "/admin/events", "/admin/growth",
 ];
 const NAV = { timeout: 30_000 };
 test.beforeEach(() => test.setTimeout(150_000));

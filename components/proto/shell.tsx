@@ -565,7 +565,7 @@ function Footer() {
             <Link href="/partenaires/paiement">Devenir un partenaire de paiement</Link>
             <Link href="/partenaires/livraison">Devenir partenaire de livraison</Link>
             <ComingSoon feature="ambassadors">
-              <button>Ambassadeurs étudiants</button>
+              <Link href="/ambassadeurs">Ambassadeurs étudiants</Link>
             </ComingSoon>
           </div>
           <div>

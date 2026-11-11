@@ -19,6 +19,7 @@ export const AMENU: AMenuEntry[] = [
   ["stores", "fa-solid fa-store", "Stores", "stores"],
   ["users", "fa-solid fa-users", "Utilisateurs", "users"],
   ["orders", "fa-solid fa-receipt", "Commandes", "orders"],
+  ["deliveries", "fa-solid fa-truck", "Livraisons", "deliveries"],
   ["finance", "fa-solid fa-chart-line", "Finances plateforme", "finance", "platform_finance"],
   ["-", "Contenu"],
   ["banners", "fa-regular fa-images", "Bannières", "banners"],

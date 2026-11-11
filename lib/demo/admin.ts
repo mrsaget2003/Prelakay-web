@@ -3,6 +3,7 @@
 // Console admin — sélecteurs et actions de démonstration (objet AD et actions « ad-* » du
 // prototype). Chaque décision est journalisée et se répercute chez l'acheteur et le vendeur.
 
+import { DEMO_DELIVERIES, DEMO_DRIVERS } from "./delivery";
 import { CATS, TINTS, catBy, everyProduct, prodBy, STORES, storeBy, type Cat, type Product } from "@/lib/data/mock/seed";
 import { BANNERS, type Banner } from "@/lib/data/mock/content";
 import { formatHTG } from "@/lib/format";
@@ -20,7 +21,7 @@ export function asStore(s: DemoState, id: string): DemoState {
 const isMine = (s: DemoState, id: string) => s.orders.some((o) => o.id === id);
 const now = () => new Date().toTimeString().slice(0, 5);
 
-function audit(s: DemoState, me: Me | null, a: string, t = "") {
+export function audit(s: DemoState, me: Me | null, a: string, t = "") {
   s.admin.audit.unshift({ who: me ? me.n : "Système", role: me ? ROLES[me.role] : "", a, t, at: now() });
 }
 /** Connexion / déconnexion (journal). */
@@ -304,14 +305,43 @@ export function userBan(me: Me, u: string, why: string | null) {
 
 /* ---------- commandes ---------- */
 
+/* ---------- livraisons (10 nov. 2026) ---------- */
+
+export function deliveriesList(s: DemoState): AOrder[] {
+  const mine = allOrders(s).filter((o) => o.mode === "delivery");
+  const demoRows = DEMO_DELIVERIES.map((o) => (s.admin.drivers[o.id] != null ? { ...o, driver: { ...DEMO_DRIVERS[s.admin.drivers[o.id]] } } : o));
+  return [...mine, ...demoRows];
+}
+/** Affecte (ou remplace) le livreur d'une livraison ; l'acheteur le voit sur sa commande. */
+export function assignDriver(me: Me, id: string, driver: number): string | null {
+  const d = DEMO_DRIVERS[driver];
+  const o = deliveriesList(demo.get()).find((x) => x.id === id);
+  if (!d || !o) return "Livraison introuvable.";
+  if (["delivered", "cancelled"].includes(o.status)) return "Cette livraison est terminée.";
+  if (!isMine(demo.get(), id)) {
+    demo.update((s) => {
+      s.admin.drivers[id] = driver;
+      audit(s, me, "Livreur affecté", `${id} · ${d.n}`);
+    });
+    return null;
+  }
+  demo.update((s) => {
+    const ref = orderRef(s, id, o.store);
+    if (ref) ref.driver = { ...d };
+    if (isMine(s, id)) s.notif.unshift({ i: "fa-solid fa-truck", t: `Livreur affecté à ${id}`, p: `${d.n} · ${d.tel}`, to: `/orders/${id}`, un: true });
+    audit(s, me, "Livreur affecté", `${id} · ${d.n}`);
+  });
+  return null;
+}
+
 export function orderCancel(me: Me, id: string, m: string) {
   demo.update((s) => {
     const o = orderAt(s, id)!;
     const ref = orderRef(s, id, o.store);
-    if (!ref || !["received", "prep", "ready"].includes(ref.status)) return;
+    if (!ref || !["received", "prep", "ready", "handed"].includes(ref.status)) return;
     ref.status = "cancelled";
     if (isMine(s, id)) {
-      s.wallet += o.total;
+      s.wallet += o.total + (o.fee ?? 0);
       s.notif.unshift({ i: "fa-solid fa-circle-exclamation", t: `Commande ${id} annulée`, p: `${formatHTG(o.total)} remboursés sur votre wallet.`, to: `/orders/${id}`, un: true });
     }
     audit(s, me, "Commande annulée et remboursée", `${id} · ${m}`);

@@ -11,7 +11,6 @@ import { demo, useDemo, type ProductForm as PF } from "@/lib/demo/store";
 import { AXES, formAxes, formError, formFrom, myStore, saveProduct, simulateModeration, statusOf, whyOf } from "@/lib/demo/sellerActions";
 import { combos, hs } from "@/lib/demo/seller";
 import { useToast } from "@/components/ui/Toast";
-import { SoonBadge } from "@/components/ui/Tag";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { SHead } from "@/components/seller/shell";
 import { Fi, Ph } from "@/components/proto/ui";
@@ -270,11 +269,16 @@ export function ProductForm({ product: p }: { product: Product | null }) {
               <span className="tag tag-ok">Actif</span>
             </div>
             <ComingSoon feature="delivery">
-              <button className="lrow">
+              <label className="lrow st">
                 <Fi s="truck" />
-                <span>Livraison à domicile</span>
-                <SoonBadge />
-              </button>
+                <span>
+                  Livraison à domicile
+                  <span className="cap" style={{ display: "block" }}>
+                    Par la flotte Prélakay, aux Cayes (frais payés par l&apos;acheteur, à confirmer)
+                  </span>
+                </span>
+                <input type="checkbox" className="pf-chk" checked={F.deliverable !== false} onChange={(e) => set({ deliverable: e.target.checked })} aria-label="Proposer la livraison à domicile" />
+              </label>
             </ComingSoon>
             <Link className="lrow" href="/seller/policy">
               <Fi s="rotate-left" />

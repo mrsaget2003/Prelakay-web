@@ -13,6 +13,7 @@ import { demo, useDemo } from "@/lib/demo/store";
 import { addToCart, markViewed, selOf, setChoice, setQty } from "@/lib/demo/actions";
 import { formatHTG as htg, formatDistance as km, formatCount as k } from "@/lib/format";
 import { useIsDesk } from "@/lib/proto/useIsDesk";
+import { BUSINESS } from "@/lib/config/business";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { useToast } from "@/components/ui/Toast";
 import { useFlash } from "@/components/ui/Feedback";
@@ -397,19 +398,17 @@ export default function ProductPage() {
                 <span className="cap" style={{ display: "block" }}>Si l&apos;article est non conforme ou endommagé (photo obligatoire)</span>
               </div>
             </div>
-            <div className="ei">
-              <span style={{ color: "var(--color-neutral-500)" }}>
-                <Fi s="box" />
-              </span>
-              <div>
-                <b style={{ color: "var(--color-neutral-700)" }}>Livraison à domicile</b>{" "}
-                <ComingSoon feature="delivery">
-                  <button className="soon-t" style={{ marginLeft: 4 }}>
-                    À venir
-                  </button>
-                </ComingSoon>
+            <ComingSoon feature="delivery">
+              <div className="ei">
+                <Fi s="truck" />
+                <div>
+                  <b>Livraison à domicile</b>
+                  <span className="cap" style={{ display: "block" }}>
+                    Aux Cayes, environ {BUSINESS.demoDeliveryMinutes} min après la préparation · à partir de {htg(Math.min(...Object.values(BUSINESS.demoDeliveryFee)))}
+                  </span>
+                </div>
               </div>
-            </div>
+            </ComingSoon>
           </div>
           <button className="btn btn-p btn-block" onClick={buy} disabled={stock === 0}>
             Acheter maintenant

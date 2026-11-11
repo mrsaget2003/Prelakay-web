@@ -146,6 +146,7 @@ export function NeedLogin({ what, next }: { what: string; next: string }) {
 export const ORDER_STATUS: Record<string, [string, string]> = {
   received: ["tag-neu", "Reçue"], prep: ["tag-warn", "En préparation"], ready: ["tag-new", "Prête pour retrait"],
   done: ["tag-ok", "Retirée"], expired: ["tag-err", "Non retirée"], cancelled: ["tag-err", "Annulée"],
+  handed: ["tag-new", "Remise au livreur"], enroute: ["tag-new", "En route"], delivered: ["tag-ok", "Livrée"],
 };
 export function StTag({ s }: { s: string }) {
   const [cls, label] = ORDER_STATUS[s] ?? ["tag-neu", s];

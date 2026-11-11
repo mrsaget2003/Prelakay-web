@@ -6,7 +6,7 @@ const ROUTES = [
   "/admin", "/admin/menu", "/admin/search", "/admin/search?q=PK-10", "/admin/stats", "/admin/kyc", "/admin/kyc/KYC-0146",
   "/admin/products", "/admin/products/mq-0", "/admin/reports", "/admin/disputes", "/admin/disputes/LT-150", "/admin/stores",
   "/admin/stores/bel-soley", "/admin/users", "/admin/users/jowan509", "/admin/orders", "/admin/orders/PK-1042", "/admin/banners",
-  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit",
+  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit", "/admin/deliveries",
 ];
 const NAV = { timeout: 30_000 };
 test.beforeEach(() => test.setTimeout(150_000));
@@ -120,4 +120,18 @@ test("carte des ventes : % et montant par commune du Sud, bascule ventes / comma
   await expect(page.locator("section.vz", { hasText: "Ventes par quartier des Cayes" }).locator(".vz-b")).toHaveCount(9);
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test("livraisons : liste, affectation d'un livreur journalisée ; Marketing refusé", async ({ page }) => {
+  await as(page, "super");
+  await page.goto("/admin/deliveries", NAV);
+  await expect(page.locator(".sc-main h1")).toHaveText("Livraisons");
+  await expect(page.getByText("PK-1019")).toBeVisible();
+  await page.getByLabel("Livreur de PK-1019").selectOption({ label: "Roseline Pierre" });
+  await expect(page.getByLabel("Livreur de PK-1019")).toHaveValue("1");
+  await page.goto("/admin/audit", NAV);
+  await expect(page.getByText("Livreur affecté").first()).toBeVisible();
+  await as(page, "marketing");
+  await page.goto("/admin/deliveries", NAV);
+  await expect(page.getByText("Accès refusé")).toBeVisible();
 });

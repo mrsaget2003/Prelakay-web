@@ -9,7 +9,7 @@ import { Suspense, useState } from "react";
 import { prodBy } from "@/lib/data/mock/seed";
 import { productImage } from "@/lib/data/mock/images";
 import { useDemo } from "@/lib/demo/store";
-import { prepOrder, readyOrder, sellerOrders } from "@/lib/demo/sellerActions";
+import { prepOrder, readyOrder, sellerOrders, handToDriver } from "@/lib/demo/sellerActions";
 import type { SellerOrder } from "@/lib/demo/seller";
 import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
@@ -17,7 +17,9 @@ import { SHead } from "@/components/seller/shell";
 import { OTag } from "@/components/proto/tags";
 import { EmptyBox, Fi, Ph } from "@/components/proto/ui";
 
-const TABS: [string, string][] = [["all", "Toutes"], ["received", "À préparer"], ["prep", "En préparation"], ["ready", "Prêtes pour retrait"], ["done", "Retirées"], ["expired", "Non retirées"], ["cancelled", "Annulées"]];
+const TABS: [string, string][] = [["all", "Toutes"], ["received", "À préparer"], ["prep", "En préparation"], ["ready", "Prêtes pour retrait"], ["done", "Retirées"], ["expired", "Non retirées"], ["cancelled", "Annulées"], ["delivery", "Livraisons"]];
+/** Onglet « Livraisons » : par mode de remise ; les autres : par statut. */
+const inTab = (k: string, o: { status: string; mode?: string }) => k === "all" || (k === "delivery" ? o.mode === "delivery" : o.status === k);
 
 function Orders() {
   const s = useDemo();
@@ -30,7 +32,7 @@ function Orders() {
   const [q, setQ] = useState(q0);
   const O = sellerOrders(s);
   const ql = q0.toLowerCase();
-  const list = O.filter((o) => (tab === "all" || o.status === tab) && (!ql || `${o.id} ${o.buyer} ${o.items.map((i) => prodBy(i.p)?.n).join(" ")}`.toLowerCase().includes(ql)));
+  const list = O.filter((o) => inTab(tab, o) && (!ql || `${o.id} ${o.buyer} ${o.items.map((i) => prodBy(i.p)?.n).join(" ")}`.toLowerCase().includes(ql)));
   const act = (o: SellerOrder) =>
     o.status === "received" ? (
       <button
@@ -41,6 +43,16 @@ function Orders() {
         }}
       >
         Préparer
+      </button>
+    ) : o.status === "prep" && o.mode === "delivery" ? (
+      <button
+        className="btn btn-p btn-sm"
+        onClick={() => {
+          const err = handToDriver(o.id);
+          if (err) toast.show(err, "error");
+        }}
+      >
+        Remettre au livreur
       </button>
     ) : o.status === "prep" ? (
       <button
@@ -67,7 +79,7 @@ function Orders() {
       <div className="panel s-tools">
         <div className="otabs">
           {TABS.map(([k, l]) => {
-            const c = O.filter((o) => k === "all" || o.status === k).length;
+            const c = O.filter((o) => inTab(k, o)).length;
             return (
               <button key={k} className={tab === k ? "on" : ""} onClick={() => setTab(k)}>
                 {l}

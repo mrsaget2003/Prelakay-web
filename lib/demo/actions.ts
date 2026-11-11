@@ -3,6 +3,9 @@
 // Actions acheteur du prototype (addToCart, doPay, wish, sélection SKU…),
 // sur l'état de démo. Mêmes règles et mêmes messages que le prototype.
 
+import { addrOk, deliveryFee, type DeliveryAddr, type FulfillMode } from "@/lib/domain/delivery";
+import { BUSINESS } from "@/lib/config/business";
+import { DEMO_DRIVERS } from "./delivery";
 import { demo, type DemoState, type Selection } from "./store";
 import { prodBy, storeBy, optsOf, stockFor, defaultChoice, selLabel, type Product, type Choice } from "@/lib/data/mock/seed";
 import { formatHTG } from "@/lib/format";
@@ -101,7 +104,10 @@ export const MSG_OUT_OF_STOCK = "Cet article n'est plus disponible dans ce choix
 
 /** Paiement du panier (doPay) : une commande par store, wallet débité, lignes payées retirées.
  *  `key` : clé d'idempotence (double clic, réseau coupé) — un même paiement n'est traité qu'une fois. */
-export function payCart(key: string): PayResult {
+export type PayOpts = { modes?: Record<string, FulfillMode>; addr?: DeliveryAddr };
+export const MSG_NO_ADDR = "Indiquez l'adresse de livraison.";
+
+export function payCart(key: string, opts: PayOpts = {}): PayResult {
   const s0 = demo.get();
   if (s0.paid[key]) return { ok: true, ids: s0.paid[key] };
   const T = cartTotals(s0);
@@ -109,17 +115,25 @@ export function payCart(key: string): PayResult {
   for (const l of T.on) {
     if (stockFor(l.p, choiceFromLabel(l.p, l.c.v)) < l.c.q) return { ok: false, error: MSG_OUT_OF_STOCK };
   }
-  if (s0.wallet < T.sub) return { ok: false, error: MSG_NO_FUNDS };
   const G = groups(T.on);
+  const mode = (sid: string): FulfillMode => opts.modes?.[sid] ?? "pickup";
+  const delivered = Object.keys(G).filter((sid) => mode(sid) === "delivery");
+  if (delivered.length && !addrOk(opts.addr)) return { ok: false, error: MSG_NO_ADDR };
+  const fee = delivered.length ? deliveryFee(opts.addr!.zone) : 0;
+  if (s0.wallet < T.sub + fee * delivered.length) return { ok: false, error: MSG_NO_FUNDS };
   const ids: string[] = [];
   demo.update((s) => {
     for (const sid of Object.keys(G)) {
       const id = nextId(s);
       const ls = G[sid];
-      s.orders.push({ id, store: sid, items: ls.map((l) => ({ p: l.p.id, v: l.c.v, q: l.c.q })), status: "received", date: "6 nov. 2026", total: ls.reduce((a, l) => a + l.total, 0) });
+      const del = mode(sid) === "delivery";
+      s.orders.push({
+        id, store: sid, items: ls.map((l) => ({ p: l.p.id, v: l.c.v, q: l.c.q })), status: "received", date: "6 nov. 2026", total: ls.reduce((a, l) => a + l.total, 0),
+        ...(del ? { mode: "delivery" as const, addr: { ...opts.addr! }, fee } : {}),
+      });
       ids.push(id);
     }
-    s.wallet -= T.sub;
+    s.wallet -= T.sub + fee * delivered.length;
     s.cart = s.cart.filter((c) => !c.on);
     s.notif.unshift({ i: "fa-solid fa-receipt", t: `Commande ${ids.join(", ")} reçue`, p: "Le store prépare votre commande.", to: `/orders/${ids[0]}`, un: true });
     s.paid[key] = ids;
@@ -140,7 +154,7 @@ export function simulateStoreProgress(ids: string[], onReady?: (id: string) => v
       let ready = false;
       demo.update((s) => {
         const o = s.orders.find((x) => x.id === id);
-        if (!o || o.status !== "prep") return;
+        if (!o || o.status !== "prep" || o.mode === "delivery") return; // livraison : simulateDelivery
         o.status = "ready";
         o.code = String(100000 + Math.floor(Math.random() * 899999));
         o.due = "9 nov. 2026";
@@ -149,6 +163,48 @@ export function simulateStoreProgress(ids: string[], onReady?: (id: string) => v
       });
       if (ready) onReady?.(id);
     }, 12000 + i * 500);
+  });
+}
+
+/** Démo livraison : remise au livreur (12 s), en route (20 s) puis progression jusqu'à 90 % ; la dernière étape attend le code. */
+export function simulateDelivery(ids: string[], onEnroute?: (id: string) => void) {
+  ids.forEach((id, i) => {
+    const o0 = demo.get().orders.find((x) => x.id === id);
+    if (!o0 || o0.mode !== "delivery") return;
+    setTimeout(() => {
+      demo.update((s) => {
+        const o = s.orders.find((x) => x.id === id);
+        if (!o || o.status !== "prep") return;
+        o.status = "handed";
+        o.driver = DEMO_DRIVERS[(Number(id.replace(/\D/g, "")) || i) % DEMO_DRIVERS.length];
+        o.code = String(100000 + Math.floor(Math.random() * 899999));
+        o.track = 5;
+        s.notif.unshift({ i: "fa-solid fa-truck", t: `Commande ${id} remise au livreur`, p: `${o.driver.n} part de ${storeBy(o.store)!.n}.`, to: `/orders/${id}`, un: true });
+      });
+    }, 12000 + i * 500);
+    setTimeout(() => {
+      let go = false;
+      demo.update((s) => {
+        const o = s.orders.find((x) => x.id === id);
+        if (!o || o.status !== "handed") return;
+        o.status = "enroute";
+        o.track = 15;
+        go = true;
+        s.notif.unshift({ i: "fa-solid fa-truck", t: `Commande ${id} en route`, p: "Donnez votre code de livraison au livreur.", to: `/orders/${id}`, un: true });
+      });
+      if (!go) return;
+      onEnroute?.(id);
+      const tick = setInterval(() => {
+        let more = false;
+        demo.update((s) => {
+          const o = s.orders.find((x) => x.id === id);
+          if (!o || o.status !== "enroute") return;
+          o.track = Math.min(90, (o.track ?? 15) + 15);
+          more = o.track < 90;
+        });
+        if (!more) clearInterval(tick);
+      }, 3000);
+    }, 20000 + i * 500);
   });
 }
 
@@ -212,4 +268,20 @@ export function logout() {
 }
 export function login() {
   demo.update((d) => { d.logged = true; });
+}
+
+/** Livraison : l'acheteur donne son code au livreur ; le bon code passe la commande « Livrée ». */
+export function validateDelivery(id: string, code: string): string | null {
+  const o = demo.get().orders.find((x) => x.id === id);
+  if (!o || o.mode !== "delivery") return "Commande introuvable.";
+  if (o.status !== "enroute") return "La commande n'est pas encore en route.";
+  if (code.replace(/\s/g, "") !== o.code) return "Code incorrect.";
+  demo.update((s) => {
+    const x = s.orders.find((y) => y.id === id)!;
+    x.status = "delivered";
+    x.track = 100;
+    s.coins += BUSINESS.coinsPerOrder;
+    s.notif.unshift({ i: "fa-solid fa-truck", t: `Commande ${id} livrée`, p: `+${BUSINESS.coinsPerOrder} Coins. Merci !`, to: `/orders/${id}`, un: true });
+  });
+  return null;
 }

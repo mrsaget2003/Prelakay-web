@@ -34,3 +34,44 @@ test("visiteur : le panier demande la connexion et y revient", async ({ page }) 
   await expect(page.getByText("Connectez-vous pour continuer")).toBeVisible();
   await expect(page.getByRole("link", { name: "Se connecter" }).last()).toHaveAttribute("href", "/login?next=%2Fcart");
 });
+
+test("livraison : payer en livraison, suivre la commande, valider le code", async ({ page }, info) => {
+  test.setTimeout(120_000);
+  const mob = info.project.name.startsWith("mobile") || info.project.name.startsWith("tablet");
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  await page.goto("/p/tech-1");
+  await (mob ? page.locator("#mbuy .btn-s") : page.locator(".buy .btn-o")).click();
+  await page.goto("/checkout");
+  await page.getByRole("button", { name: /Livraison à domicile/ }).click();
+  await expect(page.getByText("Adresse de livraison")).toBeVisible();
+  await page.getByLabel("Quartier").selectOption("Bergeaud");
+  // sans repère ni téléphone : erreur sous le champ, pas de paiement
+  const pay = mob ? page.locator("#mbar").getByRole("button", { name: "Payer" }) : page.locator("aside.sum").getByRole("button", { name: /^Payer/ });
+  await pay.click();
+  await expect(page.getByRole("alert").filter({ hasText: "Indiquez l'adresse de livraison." })).toBeVisible();
+  await page.getByLabel("Repère").fill("près de l'église");
+  await page.getByLabel("Téléphone pour le livreur").fill("3712 3456");
+  if (!mob) await expect(page.locator("aside.sum")).toContainText("Livraison");
+  await pay.click();
+  await expect(page).toHaveURL(/\/done\/PK-1043$/, { timeout: 30_000 });
+  // le livreur est en route (simulation avancée) : le code s'affiche, le bon code termine la livraison
+  await page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem("pk-demo-v1")!);
+    const o = s.orders.find((x: { id: string }) => x.id === "PK-1043");
+    Object.assign(o, { status: "enroute", code: "246810", track: 60, driver: { n: "Wilner Joseph", tel: "3712 4410" } });
+    localStorage.setItem("pk-demo-v1", JSON.stringify(s));
+  });
+  await page.goto("/orders/PK-1043");
+  await expect(page.getByText("Votre commande est en route")).toBeVisible();
+  await expect(page.getByLabel("Code de livraison")).toContainText("246 810");
+  await expect(page.getByText("Bergeaud").first()).toBeVisible();
+  await page.getByLabel("Code saisi par le livreur").fill("111111");
+  await page.getByRole("button", { name: "Valider la livraison" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "Code incorrect." })).toBeVisible();
+  await page.getByLabel("Code saisi par le livreur").fill("246810");
+  await page.getByRole("button", { name: "Valider la livraison" }).click();
+  await expect(page.getByText(/Livrée le/)).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});

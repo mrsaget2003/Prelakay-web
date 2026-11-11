@@ -120,3 +120,25 @@ test("statistiques : des graphiques Nivo dans chaque onglet, avec leur tableau",
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
 });
+
+test("livraison : préparer puis remettre au livreur, onglet Livraisons", async ({ page }) => {
+  await page.goto("/");
+  await page.evaluate(() =>
+    localStorage.setItem(
+      "pk-demo-v1",
+      JSON.stringify({
+        introDone: true, kyc: "ok",
+        orders: [{ id: "PK-2001", store: "boutik-lakay", items: [{ p: "mode-0", v: "Taille M", q: 1 }], status: "received", date: "6 nov. 2026", total: 3250, mode: "delivery", addr: { zone: "Bergeaud", mark: "près de l'église", phone: "37123456" }, fee: 200 }],
+      }),
+    ),
+  );
+  await page.goto("/seller/orders?tab=delivery", NAV);
+  await expect(page.getByText("PK-2001").first()).toBeVisible();
+  await page.goto("/seller/orders/PK-2001", NAV);
+  await expect(page.getByText(/Livraison à Bergeaud/)).toBeVisible();
+  await page.getByRole("button", { name: "Commencer la préparation" }).click();
+  await expect(page.getByRole("button", { name: "Marquer prête pour retrait" })).toHaveCount(0);
+  await page.getByRole("button", { name: "Remettre au livreur" }).click();
+  await expect(page.locator(".ph-h .tag")).toHaveText("Remise au livreur");
+  await expect(page.getByText(/Remise au livreur · /)).toBeVisible();
+});

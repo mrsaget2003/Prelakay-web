@@ -96,7 +96,7 @@ export function AccLayout({ k, title, children }: { k: string; title: string; ch
   );
 }
 
-const HEAD: Record<string, string> = { received: "Commande reçue", prep: "En préparation", ready: "Prête pour retrait", done: "Retirée", expired: "Non retirée", cancelled: "Annulée par le store" };
+const HEAD: Record<string, string> = { received: "Commande reçue", prep: "En préparation", ready: "Prête pour retrait", done: "Retirée", expired: "Non retirée", cancelled: "Annulée par le store", handed: "Remise au livreur", enroute: "En route", delivered: "Livrée" };
 
 export function useRoute() {
   const toast = useToast();

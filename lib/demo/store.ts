@@ -8,25 +8,31 @@
 import { useSyncExternalStore } from "react";
 import { prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, setStoreOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
 import type { Banner } from "@/lib/data/mock/content";
+import type { PartnerApp, PartnerStatus } from "@/lib/domain/partners";
 
 export type CartLine = { p: string; v: string; q: number; on: boolean };
-export type OrderStatus = "received" | "prep" | "ready" | "done" | "expired" | "cancelled";
+export type OrderStatus = "received" | "prep" | "ready" | "done" | "expired" | "cancelled" | "handed" | "enroute" | "delivered";
 export type OrderItem = { p: string; v: string; q: number };
 export type Order = {
   id: string; store: string; items: OrderItem[]; status: OrderStatus; date: string; total: number;
   code?: string; due?: string; reviewed?: boolean; time?: string;
+  /** Livraison (10 nov. 2026) : mode, adresse, frais, livreur, progression simulée 0-100. */
+  mode?: "pickup" | "delivery"; addr?: { zone: string; mark: string; phone: string }; fee?: number;
+  driver?: { n: string; tel: string }; track?: number;
 };
 export type Notif = { i: string; t: string; p: string; to: string; un: boolean };
 export type Selection = { o: Choice; q: number };
 export type KycStatus = null | "recu" | "verif" | "ok" | "rej";
 
 /** Produit créé ou modifié dans l'espace vendeur (démo). */
-export type SellerProduct = Product & { status: string; why?: string | null; opts: OptAxis[]; desc?: string };
+export type SellerProduct = Product & { status: string; why?: string | null; opts: OptAxis[]; desc?: string; deliverable?: boolean };
 export type Conv = { id: string; who: string; order: string; un: boolean; msgs: { me: boolean; t: string; at: string }[] };
 export type SDispute = { id: string; order: string; buyer: string; why: string; txt: string; photo: boolean; st: "open" | "escalated" | "done"; due: string };
 export type ProductForm = {
   id: string | null; n: string; cat: string; sub: string; price: string; was: string; desc: string; photos: number;
   weight: string; dims: string; axes: { k: string; v: string }[]; stock: Record<string, string>;
+  /** Livraison à domicile proposée pour ce produit (10 nov. 2026) ; absent = oui. */
+  deliverable?: boolean;
 };
 /** État de l'espace vendeur (objet SL du prototype). */
 export type SellerState = {
@@ -69,6 +75,10 @@ export type AdminState = {
   team: AdminMember[] | null;
   settings: AdminSettings;
   audit: { who: string; role: string; a: string; t: string; at: string }[];
+  /** Livreur affecté par l'admin aux livraisons de démonstration (indice dans DEMO_DRIVERS). */
+  drivers: Record<string, number>;
+  /** Décisions sur les candidatures de partenaires (par identifiant). */
+  partners: Record<string, { st: PartnerStatus; why?: string }>;
 };
 
 export type DemoState = {
@@ -88,6 +98,8 @@ export type DemoState = {
   paid: Record<string, string[]>;
   seller: SellerState;
   admin: AdminState;
+  /** Candidatures envoyées depuis les pages partenaires (10 nov. 2026). */
+  partners: PartnerApp[];
 };
 
 const DEMO_ORDERS: Omit<Order, "total">[] = [
@@ -117,6 +129,7 @@ export function initialState(): DemoState {
       ["fa-solid fa-rotate-left", "Remboursement PK-0981", "28 oct.", 35000, ""],
     ],
     paid: {},
+    partners: [],
     seller: {
       store: "boutik-lakay", policy: null, payMethod: null, payouts: [], stockO: {}, replies: {}, answers: {}, convs: {},
       sorders: {}, dsp: {}, products: [], pstatus: {}, extra: {}, notif: [], seq: 1, form: null,
@@ -128,6 +141,8 @@ export function initialState(): DemoState {
       // valeurs du prototype ; vides = [À CONFIRMER] (commission, restockage, Coins de bienvenue)
       settings: { escrow: "3", escrowTrust: "24", hold: "3", commission: "", restock: "", coinsOrder: "50", coinsReview: "25", coinsWelcome: "", quota: "4", disputeDays: "3", storeReply: "48" },
       audit: [],
+      drivers: {},
+      partners: {},
     },
   };
 }

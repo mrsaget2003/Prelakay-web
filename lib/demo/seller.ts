@@ -113,11 +113,15 @@ export function series(n: number, seed: number, min: number, max: number): numbe
 
 const NEXT: Record<OrderStatus, OrderStatus[]> = {
   received: ["prep", "cancelled"],
-  prep: ["ready", "cancelled"],
+  prep: ["ready", "handed", "cancelled"],
   ready: ["done", "expired"],
   done: [],
   expired: [],
   cancelled: [],
+  // livraison (10 nov. 2026) : remise au livreur → en route → livrée (code donné au livreur)
+  handed: ["enroute"],
+  enroute: ["delivered"],
+  delivered: [],
 };
 
 /** Cycle Reçue → En préparation → Prête → Retirée ; annulation avant « Prête » ; non-retrait après « Prête ». */

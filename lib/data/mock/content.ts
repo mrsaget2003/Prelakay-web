@@ -60,6 +60,7 @@ export const ORDER_SHORTCUTS: [string, string, string][] = [
 
 /** Frise de suivi d'une commande. */
 export const ORDER_TIMELINE: [string, string][] = [["fa-solid fa-receipt", "Reçue"], ["fa-solid fa-box", "En préparation"], ["fa-solid fa-store", "Prête"], ["fa-solid fa-check", "Retirée"]];
+export const DELIVERY_TIMELINE: [string, string][] = [["fa-solid fa-receipt", "Reçue"], ["fa-solid fa-box", "En préparation"], ["fa-solid fa-box-open", "Au livreur"], ["fa-solid fa-truck", "En route"], ["fa-solid fa-check", "Livrée"]];
 export const KYC_TIMELINE: [string, string][] = [["fa-solid fa-receipt", "Reçu"], ["fa-solid fa-magnifying-glass", "En vérification"], ["fa-solid fa-circle-check", "Approuvé"]];
 export const READY_TO_SELL: [string, string][] = [["fa-solid fa-box", "Ajouter votre premier produit"], ["fa-solid fa-rotate-left", "Définir votre politique de retour"], ["fa-regular fa-credit-card", "Ajouter un moyen de paiement pour vos retraits"]];
 

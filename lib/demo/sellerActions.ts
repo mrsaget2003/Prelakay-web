@@ -177,7 +177,10 @@ export function validatePickup(raw: string): PickupResult {
 /* ---------- tâches, finances ---------- */
 
 export function sellerFin(s: DemoState) {
-  return finOf(s.seller.store, sellerOrders(s), s.seller.payouts);
+  const f = finOf(s.seller.store, sellerOrders(s), s.seller.payouts);
+  // budgets de boost (10 nov. 2026) payés par le solde disponible
+  const boosts = (s.marketing?.boosts ?? []).filter((b) => b.store === s.seller.store).reduce((a, b) => a + b.budget, 0);
+  return { ...f, avail: Math.max(0, f.avail - boosts), boosts };
 }
 
 export function todo(s: DemoState) {

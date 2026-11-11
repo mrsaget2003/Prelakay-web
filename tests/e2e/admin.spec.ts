@@ -6,7 +6,7 @@ const ROUTES = [
   "/admin", "/admin/menu", "/admin/search", "/admin/search?q=PK-10", "/admin/stats", "/admin/kyc", "/admin/kyc/KYC-0146",
   "/admin/products", "/admin/products/mq-0", "/admin/reports", "/admin/disputes", "/admin/disputes/LT-150", "/admin/stores",
   "/admin/stores/bel-soley", "/admin/users", "/admin/users/jowan509", "/admin/orders", "/admin/orders/PK-1042", "/admin/banners",
-  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit", "/admin/deliveries", "/admin/partners", "/admin/partners/PP-0012", "/admin/coupons",
+  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit", "/admin/deliveries", "/admin/partners", "/admin/partners/PP-0012", "/admin/coupons", "/admin/events",
 ];
 const NAV = { timeout: 30_000 };
 test.beforeEach(() => test.setTimeout(150_000));
@@ -147,4 +147,28 @@ test("partenaires : accepter une candidature, refus avec motif ; Finance ne voit
   await page.goto("/admin/partners", NAV);
   await expect(page.getByText("PP-0012")).toBeVisible();
   await expect(page.getByText("PL-0039")).toHaveCount(0);
+});
+
+test("events : l'admin crée un event, le store y participe, l'acheteur voit la page ; flash et sponsorisé visibles", async ({ page }) => {
+  await as(page, "marketing");
+  await page.goto("/admin/events", NAV);
+  await page.getByLabel("Nom").fill("Black Friday Sud");
+  await page.getByRole("button", { name: "Créer l'event" }).click();
+  await expect(page.getByText("Black Friday Sud")).toBeVisible();
+  await page.evaluate(() => {
+    const s = JSON.parse(localStorage.getItem("pk-demo-v1")!);
+    s.kyc = "ok";
+    localStorage.setItem("pk-demo-v1", JSON.stringify(s));
+  });
+  await page.goto("/seller/marketing/events", NAV);
+  const card = page.locator(".panel", { hasText: "Black Friday Sud" });
+  await card.getByRole("button", { name: "Participer" }).click();
+  await expect(card.getByText("Vous participez")).toBeVisible();
+  await page.goto("/events/EV-03", NAV);
+  await expect(page.getByRole("heading", { level: 1, name: "Black Friday Sud" })).toBeVisible();
+  await expect(page.locator(".pc").first()).toBeVisible();
+  await page.goto("/", NAV);
+  await expect(page.getByText("Offres flash")).toBeVisible();
+  await page.goto("/discover", NAV);
+  await expect(page.locator(".pc .tag", { hasText: "Sponsorisé" }).first()).toBeVisible();
 });

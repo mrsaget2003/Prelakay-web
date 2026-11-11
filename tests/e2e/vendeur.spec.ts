@@ -6,7 +6,7 @@ import { test, expect, type Page } from "@playwright/test";
 const ROUTES = [
   "/seller", "/seller/menu", "/seller/products", "/seller/products?q=robe", "/seller/products/new", "/seller/products/mode-0", "/seller/stock",
   "/seller/orders", "/seller/orders?tab=received", "/seller/orders/PK-980", "/seller/pickup", "/seller/disputes", "/seller/disputes/LT-225",
-  "/seller/marketing", "/seller/marketing/coupons", "/seller/share", "/seller/finance", "/seller/payouts", "/seller/reviews", "/seller/questions",
+  "/seller/marketing", "/seller/marketing/coupons", "/seller/marketing/flash", "/seller/marketing/events", "/seller/marketing/boost", "/seller/share", "/seller/finance", "/seller/payouts", "/seller/reviews", "/seller/questions",
   "/seller/messages", "/seller/messages/c0", "/seller/stats", "/seller/store", "/seller/policy", "/seller/trust",
   "/seller/account", "/seller/notifications",
 ];

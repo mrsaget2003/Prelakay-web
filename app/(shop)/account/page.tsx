@@ -10,6 +10,7 @@ import { productImage } from "@/lib/data/mock/images";
 import { ORDER_SHORTCUTS, SERVICES } from "@/lib/data/mock/content";
 import { useDemo } from "@/lib/demo/store";
 import { unread } from "@/lib/demo/actions";
+import { badgesOf } from "@/lib/demo/marketing";
 import { formatHTG as htg } from "@/lib/format";
 import { isAvailable } from "@/lib/config/release";
 import { ComingSoon } from "@/components/ui/ComingSoon";
@@ -35,6 +36,18 @@ export default function AccountPage() {
             <span className="cap">
               @{s.user} · {s.city}
             </span>
+            {badgesOf("buyer", s.user, s).length ? (
+              <ComingSoon feature="badges">
+                <span className="bdgs">
+                  {badgesOf("buyer", s.user, s).map((b) => (
+                    <span key={b} className={`bdg${b === "Prélakay+" ? " gold" : ""}`}>
+                      <Fi s={b === "VIP" ? "crown" : "star"} />
+                      {b}
+                    </span>
+                  ))}
+                </span>
+              </ComingSoon>
+            ) : null}
           </div>
           <Link className="gear mo" href="/settings" aria-label="Paramètres">
             <Fi s="gear" />

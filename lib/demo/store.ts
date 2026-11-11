@@ -6,10 +6,11 @@
 // Jamais utilisé en production (lib/config/env.ts).
 
 import { useSyncExternalStore } from "react";
-import { prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, setStoreOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
+import { basePrice, setPriceOverlay, prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, setStoreOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
 import type { Banner } from "@/lib/data/mock/content";
 import type { PartnerApp, PartnerStatus } from "@/lib/domain/partners";
 import type { Coupon } from "@/lib/domain/coupons";
+import { flashOverlay, type Boost, type Flash, type PEvent } from "@/lib/domain/marketing";
 
 export type CartLine = { p: string; v: string; q: number; on: boolean };
 export type OrderStatus = "received" | "prep" | "ready" | "done" | "expired" | "cancelled" | "handed" | "enroute" | "delivered";
@@ -105,6 +106,10 @@ export type DemoState = {
   partners: PartnerApp[];
   /** Coupons (10 nov. 2026) : créés par les vendeurs, gardés par l'acheteur, utilisations, suspensions. */
   coupons: { list: Coupon[]; mine: string[]; used: Record<string, number>; off: Record<string, boolean> };
+  /** Offres flash, events (créés et participations), boosts. */
+  marketing: { flash: Flash[]; events: PEvent[]; joined: Record<string, string[]>; boosts: Boost[] };
+  /** Parrainage, ambassadeurs, Prelakay+ (lot 10). */
+  growth: { referrals: { u: string; st: "pending" | "done"; date: string }[]; amb: null | { st: "recu" | "ok" | "rej"; school: string }; plus: null | { since: string; next: string } };
 };
 
 const DEMO_ORDERS: Omit<Order, "total">[] = [
@@ -113,6 +118,9 @@ const DEMO_ORDERS: Omit<Order, "total">[] = [
   { id: "PK-1021", store: "boutik-lakay", items: [{ p: "mode-5", v: "Lagon · M", q: 2 }], status: "done", date: "28 oct. 2026", reviewed: false },
   { id: "PK-0997", store: "mache-bon-pri", items: [{ p: "alim-0", v: "500 g", q: 1 }], status: "done", date: "15 oct. 2026", reviewed: true },
 ];
+
+/** Fin de l'offre flash de démonstration : 18 h après le chargement de la page (fixée une fois). */
+const DEMO_FLASH_ENDS = Date.now() + 18 * 3_600_000;
 
 export function initialState(): DemoState {
   return {
@@ -136,6 +144,9 @@ export function initialState(): DemoState {
     paid: {},
     partners: [],
     coupons: { list: [], mine: ["BYENVI"], used: {}, off: {} },
+    // une offre flash de démonstration en cours (18 h restantes au chargement)
+    marketing: { flash: [{ id: "FL-000", store: "tech-sud", product: "tech-3", price: Math.round((prodBy("tech-3")?.price ?? 2000) * 0.75), ends: DEMO_FLASH_ENDS, st: "live" }], events: [], joined: {}, boosts: [{ id: "BO-0", store: "bel-soley", product: "beaute-2", budget: 1500, on: true }] },
+    growth: { referrals: [{ u: "@lili_cayes", st: "done", date: "2 nov. 2026" }, { u: "@ti_jan", st: "pending", date: "5 nov. 2026" }], amb: null, plus: null },
     seller: {
       store: "boutik-lakay", policy: null, payMethod: null, payouts: [], stockO: {}, replies: {}, answers: {}, convs: {},
       sorders: {}, dsp: {}, products: [], pstatus: {}, extra: {}, notif: [], seq: 1, form: null,
@@ -162,11 +173,14 @@ function syncCatalog(s: DemoState) {
   for (const p of sl.products) statuses[p.id] = p.status;
   setCatalogOverlay(sl.products, statuses);
   setStoreOverlay(s.admin.stores);
+  setPriceOverlay(flashOverlay(s.marketing.flash, Date.now(), basePrice));
 }
 
 const KEY = "pk-demo-v1";
 const SERVER = initialState();
 let state: DemoState = SERVER;
+// overlays du catalogue (offre flash de démonstration…) appliqués dès le chargement, serveur et client
+syncCatalog(SERVER);
 const listeners = new Set<() => void>();
 
 function emit() {

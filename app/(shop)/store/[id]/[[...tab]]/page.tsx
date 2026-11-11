@@ -16,6 +16,8 @@ import { formatDistance as km, formatCount as k } from "@/lib/format";
 import { SoonBadge } from "@/components/ui/Tag";
 import { CouponCard } from "@/components/proto/coupons";
 import { DEMO_TODAY, couponsOfStore } from "@/lib/demo/coupons";
+import { badgesOf } from "@/lib/demo/marketing";
+import { ComingSoon } from "@/components/ui/ComingSoon";
 import { useDemo } from "@/lib/demo/store";
 import { useToast } from "@/components/ui/Toast";
 import { ProductCard } from "@/components/proto/cards";
@@ -247,6 +249,14 @@ export default function StorePage() {
                     <Fi s="circle-check" />
                     Store de confiance
                   </span>
+                ) : null}
+                {badgesOf("store", s.id, demoState).includes("Meilleures ventes") ? (
+                  <ComingSoon feature="badges">
+                    <span className="sbadge">
+                      <Fi s="star" />
+                      Meilleures ventes
+                    </span>
+                  </ComingSoon>
                 ) : null}
                 <span className="sbadge ghost">
                   {s.type === "physique" ? <Fi s="store" /> : <Fi s="globe" />}

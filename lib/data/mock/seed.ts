@@ -111,6 +111,19 @@ export const P: Product[] = buildProducts();
 /** Produits ajoutés par les vendeurs en démo (Espace vendeur) et statut de chaque produit
  *  (actif par défaut). Synchronisés depuis l'état de démo (lib/demo/store.ts). */
 let extraProducts: Product[] = [];
+/** Prix en cours d'une offre flash (10 nov. 2026) : appliqués par-dessus le seed. */
+let priceOverlay: Record<string, { price: number; was: number }> = {};
+export function setPriceOverlay(m: Record<string, { price: number; was: number }>) {
+  priceOverlay = m;
+}
+const withPrice = (p: Product): Product => {
+  const o = priceOverlay[p.id];
+  return o ? { ...p, price: o.price, was: o.was, disc: Math.round((1 - o.price / o.was) * 100) } : p;
+};
+/** Prix catalogue, hors offre flash. */
+export function basePrice(id: string): number {
+  return [...P, ...extraProducts].find((p) => p.id === id)?.price ?? 0;
+}
 let statusOf: Record<string, string> = {};
 export function setCatalogOverlay(extras: Product[], statuses: Record<string, string>) {
   extraProducts = extras;
@@ -134,11 +147,13 @@ export function isSuspended(storeId: string): boolean {
 export function allProducts(): Product[] {
   const base = Object.keys(statusOf).length ? P.filter((p) => productStatus(p.id) === "active") : P;
   const out = [...base, ...extraProducts.filter((p) => productStatus(p.id) === "active")];
-  return suspended.size ? out.filter((p) => !suspended.has(p.store)) : out;
+  const vis = suspended.size ? out.filter((p) => !suspended.has(p.store)) : out;
+  return Object.keys(priceOverlay).length ? vis.map(withPrice) : vis;
 }
 /** Tous les produits, quel que soit leur statut (espace vendeur, fiches). */
 export function everyProduct(): Product[] {
-  return extraProducts.length ? [...P, ...extraProducts] : P;
+  const all = extraProducts.length ? [...P, ...extraProducts] : P;
+  return Object.keys(priceOverlay).length ? all.map(withPrice) : all;
 }
 export function prodBy(id: string): Product | null {
   return everyProduct().find((p) => p.id === id) ?? null;

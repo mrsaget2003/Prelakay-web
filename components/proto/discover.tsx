@@ -8,6 +8,9 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CATS, STORES, allProducts, catBy } from "@/lib/data/mock/seed";
 import { filterProducts } from "@/lib/proto/sort";
+import { withSponsored } from "@/lib/domain/marketing";
+import { boostedIds } from "@/lib/demo/marketing";
+import { useDemo } from "@/lib/demo/store";
 import { discover, useFilters } from "@/lib/proto/discoverStore";
 import { ProductCard } from "./cards";
 import { useModal } from "./modal";
@@ -105,7 +108,13 @@ export function DiscoverView({ q, params }: { q: string; params: Record<string, 
   useEffect(() => {
     discover.applyQuery(JSON.parse(key));
   }, [key]);
-  const list = filterProducts(allProducts(), q, DF);
+  const demoS = useDemo();
+  // produits boostés : un « Sponsorisé » en tête de chaque bloc de 4, en tri par pertinence (spec §5)
+  const ranked = filterProducts(allProducts(), q, DF);
+  const flashOnly = params.flash === "1";
+  const live = new Set(demoS.marketing.flash.filter((f) => f.st === "live").map((f) => f.product));
+  const sp = DF.sort === "best" && !flashOnly ? withSponsored(ranked, boostedIds(demoS)) : { list: ranked, sponsored: new Set<string>() };
+  const list = flashOnly ? sp.list.filter((p) => live.has(p.id)) : sp.list;
   const c = DF.cat ? catBy(DF.cat) : null;
   const nf = (DF.cat ? 1 : 0) + (DF.min || DF.max ? 1 : 0) + (DF.dist ? 1 : 0) + (DF.rate ? 1 : 0) + (DF.ready ? 1 : 0) + (DF.trust ? 1 : 0) + (DF.store ? 1 : 0);
   const pr = DF.sort === "price" ? "price-d" : "price";
@@ -178,7 +187,7 @@ export function DiscoverView({ q, params }: { q: string; params: Record<string, 
           {list.length ? (
             <div className="grid">
               {list.map((p) => (
-                <ProductCard key={p.id} p={p} />
+                <ProductCard key={p.id} p={p} badge={sp.sponsored.has(p.id) ? "Sponsorisé" : live.has(p.id) ? "Flash" : undefined} />
               ))}
             </div>
           ) : (

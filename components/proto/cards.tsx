@@ -47,14 +47,14 @@ export function useQuickAdd() {
 }
 
 /** Carte produit (card du prototype). `showStore={false}` dans une page store : le nom du store n'y est pas répété. */
-export function ProductCard({ p, showStore = true }: { p: Product; showStore?: boolean }) {
+export function ProductCard({ p, showStore = true, badge }: { p: Product; showStore?: boolean; badge?: string }) {
   const s = useDemo();
   const st = storeBy(p.store)!;
   const wish = useWish();
   const qadd = useQuickAdd();
   return (
     <Link className="pc" href={`/p/${p.id}`}>
-      {p.isNew ? <span className="tag tag-new ctl">Nouveau</span> : null}
+      {badge ? <span className={`tag ctl ${badge === "Flash" ? "tag-err" : "tag-neu"}`}>{badge}</span> : p.isNew ? <span className="tag tag-new ctl">Nouveau</span> : null}
       <button className={`wish ${s.wish[p.id] ? "on" : ""}`} onClick={wish(p.id)} aria-label="Wishlist">
         {s.wish[p.id] ? <Fi s="heart" /> : <Fi r="heart" />}
       </button>

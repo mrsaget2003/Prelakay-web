@@ -269,3 +269,11 @@ body.scrolled .frail { display: flex; }
 .cpn-code{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--color-neutral-300);border-radius:6px;padding:4px 8px;background:none;font:inherit;font-weight:600;letter-spacing:1px;cursor:pointer}
 .cpn.dead{opacity:.55}
 .cp-ok{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--color-success)}
+
+/* ---------- Offres flash, events, boosts (10 nov. 2026) ---------- */
+.fl-sec{position:relative}
+.fl-cd{display:inline-flex;align-items:center;gap:6px;margin:-6px 0 10px;font-size:13px;color:var(--color-error)}
+.cdn{display:inline-block;padding:2px 8px;border-radius:6px;background:var(--color-error);color:var(--color-white);font-weight:600;letter-spacing:.5px}
+.bdg{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:var(--radius-pill);font-size:12px;font-weight:600;background:var(--color-lagon-100);color:var(--color-lagon-700, #0a4f56)}
+.bdg.gold{background:#f6e7b4;color:#6b4e00}
+.bdgs{display:flex;flex-wrap:wrap;gap:6px}

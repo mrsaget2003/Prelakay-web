@@ -48,4 +48,7 @@ export const BUSINESS = {
   demoDeliveryFeeDefault: 250,
   /** Valeur de démonstration : délai affiché d'une livraison. */
   demoDeliveryMinutes: 45,
+  /** Badges (valeurs de démonstration ; seuils de points de confiance ⚠️ ouverts). */
+  demoVipOrders: 3,
+  demoTopSellerSold: 1000,
 } as const;

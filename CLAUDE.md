@@ -31,7 +31,7 @@ Spec : `docs/superpowers/specs/2026-11-10-prototype-complet-design.md`.
 - ✅ Pages **« Devenir partenaire de paiement »** et **« Devenir partenaire de livraison »** (pied de page, modèle AliExpress) + file Admin → Partenaires.
 - ✅ **Dépendances validées** : `@nivo/*` (tous les graphiques, remplace la proposition `recharts`), `sileo` (toasts), `motion`, `@number-flow/react`, `vaul`, `embla-carousel-react`. Composants Spectrum UI repris **sans Tailwind ni shadcn** (traduits dans nos styles).
 - ✅ **Toasts triés** : pas de toast quand le résultat se voit déjà à l'écran (ex. ajout au panier).
-- ✅ **Carte des ventes admin** : communes du Sud (geoBoundaries HTI ADM2, CC BY 4.0) + quartiers des Cayes, part en % et montant.
+- ✅ **Carte des ventes admin** : communes du Sud (geoBoundaries HTI ADM3 — communes, FEWS NET, CC BY 4.0 ; l'ADM2 = arrondissements) + quartiers des Cayes, part en % et montant.
 - ✅ **On garde le français** : pas de créole dans le prototype. Mascotte : réservée à la landing page.
 
 ## Décisions récentes (7 nov 2026 — plan de construction)
@@ -72,6 +72,8 @@ Plan de référence : `docs/superpowers/plans/2026-11-07-prelakay-prototype-to-l
 - Protection anti-abus du bonus de parrainage (500 Coins)
 - Recherche vocale : v1 ou backlog v2
 - Montant des frais de restockage en cas de non-retrait Click & Collect, et à qui ils reviennent
+- **Livraison (10 nov. 2026)** : frais et zones couvertes, paiement du livreur, déclencheur et délai de libération de l'escrow à la livraison, remboursement en cas d'échec de livraison
+- Seuils des badges et des offres flash (points de confiance) — liés à la formule du Store Health Score
 - **Sourcing international (v1.1)** : mécanisme d'achat réel (API fournisseur vs. achat manuel), calcul des taxes/droits de douane, marge appliquée, qui porte le risque en cas de rupture/produit différent, et structure exacte de la table `sourcing_orders`
 
 Un point qui disparaît de cette liste doit d'abord apparaître, daté, dans la section « Décisions récentes » ci-dessus — jamais l'inverse.

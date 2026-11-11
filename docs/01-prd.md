@@ -22,7 +22,9 @@ Il se différencie par la géolocalisation des stores physiques, le Click & Coll
 - Catalogue : arbre de catégories (2 niveaux minimum), gabarit d'attributs par catégorie, variantes avec stock indépendant
 - Fiche produit complète : galerie, sélecteur de variante, avis vérifiés, Q&A publique, compteur "X vendus", indicateur de stock bas
 - Recherche (autocomplete produits/stores/catégories) + filtres (prix, distance, note, disponibilité) + tri + algorithme de classement avec quota "Nouveaux sur Prelakay"
-- **Click & Collect** : seul mode de fulfillment v1 (pas de flotte de livreurs Prelakay au lancement) — checkout, statuts Reçue → En préparation → Prête pour retrait → Retiré, code/QR de remise, délai de 3 jours avec rappels J+1/J+2
+- **Click & Collect** : checkout, statuts Reçue → En préparation → Prête pour retrait → Retiré, code/QR de remise, délai de 3 jours avec rappels J+1/J+2
+- ✅ **Livraison dès le lancement** (décision de Marc-Karlin, 10 nov. 2026 — remplace « Click & Collect, seul mode de fulfillment v1 ») : choix retrait / livraison par store au paiement, adresse (quartier, repère, téléphone), statuts Reçue → En préparation → Remise au livreur → En route → Livrée, code de livraison donné au livreur. ⚠️ Ouverts : frais et zones, paiement du livreur, libération de l'escrow à la livraison, remboursement en cas d'échec de livraison. La PWA livreur reste en phase 2.
+- ✅ Pages **« Devenir partenaire de paiement »** et **« Devenir partenaire de livraison »** (10 nov. 2026, modèle AliExpress) avec candidature et file admin
 - Wallet : recharge (MonCash/NatCash/Sogebank + Wise/Stripe/Meru pour la diaspora), paiement panier, escrow (libération 3 jours / 24h pour stores de confiance), paiement du panier d'un proche
 - Coins : 50/commande, 25/avis, bonus de bienvenue, bonus pour un retrait en magasin plutôt qu'une livraison
 - Avis vérifiés (achat réel requis), notes multi-critères, réponse vendeur, signalement

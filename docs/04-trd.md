@@ -17,7 +17,8 @@
 | Stockage média (photos/vidéos produit) | Supabase Storage | Même fournisseur que la base, évite un service supplémentaire |
 | Paiement wallet national | Intégration MonCash / NatCash / Sogebank | Imposé par les spécifications produit |
 | Paiement wallet international | Wise / Stripe / Meru | Imposé par les spécifications produit (angle diaspora) |
-| Graphiques des dashboards | 🟡 Recharts (+ `@vis.gl/react-google-maps` pour la carte) | Voir « Graphiques des dashboards » ci-dessous |
+| Graphiques des dashboards | ✅ Nivo (`@nivo/*`, validé par Marc-Karlin le 10 nov. 2026 — remplace la proposition Recharts) ; carte des ventes : `@nivo/geo` + contours geoBoundaries HTI ADM3 (CC BY 4.0) | Voir « Graphiques des dashboards » ci-dessous |
+| Toasts, mouvement, interface | ✅ `sileo` (toasts), `motion`, `@number-flow/react`, `embla-carousel-react` ; `vaul` validé, non utilisé pour l'instant (10 nov. 2026) | Composants Spectrum UI repris sans Tailwind ni shadcn |
 | Carte / géolocalisation | Google Maps | Déjà utilisé pour la capture lat/lng des stores physiques |
 | App mobile native (phase 2+) | Flutter | Décidé comme dernier livrable de la roadmap ; stack exact **[À CONFIRMER]** |
 

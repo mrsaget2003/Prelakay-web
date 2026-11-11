@@ -17,6 +17,14 @@ const withSerwist = withSerwistInit({
   disable: process.env.NODE_ENV === "development",
 });
 
+// Garde-fou (revue finale, 10 nov. 2026) : le mode du client (démo = toutes les versions actives,
+// production = V1) est figé au build. Un build de production sans PRELAKAY_ENV activerait tout
+// côté navigateur : on refuse de construire. (`next dev` n'est pas concerné.)
+const PHASE_BUILD = process.argv.includes("build");
+if (PHASE_BUILD && !process.env.PRELAKAY_ENV) {
+  throw new Error("PRELAKAY_ENV doit être défini pour construire (demo ou production) — voir lib/config/release.ts.");
+}
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,

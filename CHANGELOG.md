@@ -38,6 +38,17 @@ Ordre de construction : `docs/06-plan.md` (landing v1 « ads » → PWA complet,
 - Données de démonstration identiques au prototype (vérifiées par test) ; état de démo dans le navigateur.
 - Paiement idempotent (un double clic ne paie qu'une fois) ; choix épuisé refusé au paiement ; « escrow » jamais affiché à l'acheteur.
 
+#### Prototype complet (10-11 nov. 2026, branche `feat/phase-b9-prototype-complet`)
+Décision de Marc-Karlin (10 nov. 2026, `CLAUDE.md`) : dans le prototype de démonstration (`PRELAKAY_ENV=demo`), **toutes les versions sont actives** sauf l'application native, le sourcing et le créole. **Ce CHANGELOG reste la règle de mise en production** : avec `PRELAKAY_ENV=production`, seule la V1 est active et le tableau « Limites de la V1 » s'applique (nettoyage au branchement Supabase).
+- Versions : `releaseFor()` → `all` en démo, `1` en production ; `HELD_IN_PROTOTYPE` = natif, sourcing, créole.
+- **Livraison** dès le lancement (ajoutée à la V1, voir PRD §3) : choix par store au paiement, suivi, remise au livreur, page admin Livraisons. ⚠️ frais, zones, paiement du livreur, escrow : valeurs de démo.
+- Pages **partenaire de paiement / de livraison** + file Admin → Partenaires.
+- Graphiques **Nivo** ; **carte des ventes** du Sud et des Cayes (% et montant).
+- Toasts **Sileo**, triés (pas de toast quand le résultat se voit à l'écran).
+- Coupons, offres flash 24 h, events, produits boostés, badges, parrainage *(anti-abus ⚠️ non implémenté)*, ambassadeurs, Prélakay+, téléphone + SMS, comptes employés, recherches vocale / photo / code-barres, Dispute Center, finances plateforme *(commission ⚠️ non calculée)*, mode sombre — actifs en démo.
+- Mouvement : maintenir pour confirmer, carrousel Embla, apparition progressive, montants NumberFlow.
+- Dépendances validées : `@nivo/*`, `sileo`, `motion`, `@number-flow/react`, `vaul`, `embla-carousel-react`.
+
 ---
 
 ## V1 · Pilote Les Cayes · *à venir*

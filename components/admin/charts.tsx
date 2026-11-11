@@ -11,6 +11,7 @@ import { VZC, nfr } from "@/lib/charts/vz";
 import { sum } from "@/lib/charts/sellerData";
 import { pData } from "@/lib/charts/adminData";
 import { VzCard, VzCols, VzLine, VzMeter, VzTile, VzTiles } from "@/components/charts/vz";
+import { SudSalesMap } from "./SalesMap";
 
 export function useActiveStores() {
   const s = useDemo();
@@ -60,6 +61,7 @@ export function AdminDashCharts() {
           <VzLine labels={D.L} series={[{ n: "Stores actifs", v: D.stores, c: VZC.a }]} />
         </VzCard>
       </div>
+      <SudSalesMap days={30} compact />
     </>
   );
 }

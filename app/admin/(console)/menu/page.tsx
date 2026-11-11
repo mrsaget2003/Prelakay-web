@@ -34,7 +34,7 @@ export default function AdminMenu() {
               </button>
             </ComingSoon>
           ) : (
-            <Link key={k} className="panel lrow amr" href={`/admin${path ? "/" + path : ""}`}>
+            <Link key={k} prefetch={f ? false : undefined} className="panel lrow amr" href={`/admin${path ? "/" + path : ""}`}>
               <DataIcon cls={icon} />
               <span>{label}</span>
               <Fi s="chevron-right" />

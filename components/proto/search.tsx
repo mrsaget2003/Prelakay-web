@@ -10,7 +10,10 @@ import { useDemo, demo } from "@/lib/demo/store";
 import { pushHistory } from "@/lib/demo/actions";
 import { formatDistance as km } from "@/lib/format";
 import { ComingSoon } from "@/components/ui/ComingSoon";
+import { photoSearchCategory } from "@/lib/ui/photoSearch";
+import { NO_VOICE, startDictation } from "@/lib/ui/speech";
 import { SoonBadge } from "@/components/ui/Tag";
+import { useToast } from "@/components/ui/Toast";
 import { Fi, Ph } from "./ui";
 
 function Bold({ s, q }: { s: string; q: string }) {
@@ -27,6 +30,25 @@ function Bold({ s, q }: { s: string; q: string }) {
 
 function Autocomplete({ q, close }: { q: string; close: () => void }) {
   const s = useDemo();
+  const router = useRouter();
+  const toast = useToast();
+  const [listening, setListening] = useState(false);
+  // recherche vocale : la phrase dictée devient la recherche (API Web Speech du navigateur)
+  const voice = () => {
+    let said = "";
+    const r = startDictation(
+      (t) => (said = t),
+      () => {
+        setListening(false);
+        if (said.trim()) {
+          close();
+          router.push(`/search?q=${encodeURIComponent(said.trim())}`);
+        }
+      },
+    );
+    if (!r) return toast.show(NO_VOICE, "error");
+    setListening(true);
+  };
   if (!q) {
     const picked = Object.keys(s.picked).filter((k) => s.picked[k])[0];
     const c = catBy(picked || "beaute")!;
@@ -64,11 +86,10 @@ function Autocomplete({ q, close }: { q: string; close: () => void }) {
             </Link>
           ))}
           <ComingSoon feature="voice_search">
-            <a href="#">
+            <button type="button" className="ac-voice" onClick={voice} aria-pressed={listening}>
               <Fi s="microphone" />
-              Recherche vocale
-              <SoonBadge />
-            </a>
+              {listening ? "Je vous écoute…" : "Recherche vocale"}
+            </button>
           </ComingSoon>
         </div>
         <div>
@@ -188,9 +209,20 @@ export function SearchBox({ variant, initial, back, onFocusOpen }: { variant: "d
   );
   const camera = (cls?: string) => (
     <ComingSoon feature="photo_search">
-      <button type="button" className={cls} aria-label="Recherche par photo">
+      <label className={cls} aria-label="Recherche par photo" style={{ cursor: "pointer" }}>
         <Fi s="camera" />
-      </button>
+        <input
+          type="file"
+          accept="image/*"
+          capture="environment"
+          hidden
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            if (f) router.push(`/discover?cat=${photoSearchCategory(f.name)}&photo=1`);
+            e.target.value = "";
+          }}
+        />
+      </label>
     </ComingSoon>
   );
 

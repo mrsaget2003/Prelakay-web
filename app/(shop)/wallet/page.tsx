@@ -13,7 +13,8 @@ import { useToast } from "@/components/ui/Toast";
 import { useProtoRoute } from "@/components/proto/shell";
 import { AccLayout } from "@/components/proto/account";
 import { PageTabs, StatHero } from "@/components/proto/blocks";
-import { DataIcon, Fi, NeedLogin } from "@/components/proto/ui";
+import { DataIcon, FieldErr, Fi, NeedLogin } from "@/components/proto/ui";
+import { Money } from "@/components/proto/Money";
 
 export default function WalletPage() {
   const s = useDemo();
@@ -24,6 +25,7 @@ export default function WalletPage() {
   const [gw, setGw] = useState("moncash");
   const [amt, setAmt] = useState(100000);
   const [pr, setPr] = useState("");
+  const [prErr, setPrErr] = useState<string | null>(null);
   if (!s.logged) return <NeedLogin what="Votre wallet" next="/wallet" />;
 
   let body;
@@ -64,9 +66,10 @@ export default function WalletPage() {
         <p className="muted" style={{ marginBottom: 12 }}>Collez le lien du panier qu&apos;il vous a partagé, ou saisissez son @username.</p>
         <div className="fl">
           <label className="lbl" htmlFor="pr">Lien de panier ou @username</label>
-          <input className="field" id="pr" placeholder="prelakay.com/panier/… ou @username" value={pr} onChange={(e) => setPr(e.target.value)} />
+          <input className="field" id="pr" placeholder="prelakay.com/panier/… ou @username" value={pr} aria-invalid={prErr ? true : undefined} onChange={(e) => { setPr(e.target.value); setPrErr(null); }} />
         </div>
-        <button className="btn btn-p btn-block" onClick={() => (pr.trim() ? router.push("/shared/lili_cayes") : toast.show("Collez un lien de panier ou un @username.", "error"))}>
+        <FieldErr msg={prErr} />
+        <button className="btn btn-p btn-block" onClick={() => (pr.trim() ? router.push("/shared/lili_cayes") : setPrErr("Collez un lien de panier ou un @username."))}>
           Voir le panier
         </button>
         <div className="info-box" style={{ marginTop: 12 }}>
@@ -101,7 +104,7 @@ export default function WalletPage() {
 
   return (
     <AccLayout k="wallet" title="Wallet">
-      <StatHero icon="wallet" label="Solde disponible" value={htg(s.wallet)} sub={<>Coins : <b>{s.coins}</b></>} />
+      <StatHero icon="wallet" label="Solde disponible" value={<Money v={s.wallet} />} sub={<>Coins : <b>{s.coins}</b></>} />
       <PageTabs
         label="Wallet"
         value={tab}

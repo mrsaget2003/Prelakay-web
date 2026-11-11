@@ -107,6 +107,19 @@ describe("persistance", () => {
     expect(s.cart).toEqual([{ p: "tech-1", v: "Noir", q: 2, on: true }]);
     expect(JSON.parse(localStorage.getItem("pk-demo-v1")!).cart).toHaveLength(1);
   });
+
+  it("hydrate un ancien état : chaque tranche objet absente ou partielle reprend ses valeurs par défaut", async () => {
+    const mod = await import("@/lib/demo/store");
+    const init = mod.initialState() as unknown as Record<string, unknown>;
+    const isObj = (v: unknown) => !!v && typeof v === "object" && !Array.isArray(v);
+    const slices = Object.keys(init).filter((k) => isObj(init[k]) && Object.keys(init[k] as object).length > 0);
+    // ancien état : tranches vidées ({}), comme un localStorage écrit avant l'ajout de leurs champs
+    localStorage.setItem("pk-demo-v1", JSON.stringify(Object.fromEntries(slices.map((k) => [k, {}]))));
+    mod.__resetForTest();
+    mod.demo.update(() => {});
+    const s = mod.demo.get() as unknown as Record<string, unknown>;
+    for (const k of slices) expect(s[k], k).toEqual(init[k]);
+  });
 });
 
 describe("wishlist", () => {

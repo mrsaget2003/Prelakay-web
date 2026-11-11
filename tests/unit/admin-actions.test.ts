@@ -5,7 +5,10 @@ import { allProducts, STORES } from "@/lib/data/mock/seed";
 import {
   allDisputes, bannerDelete, bannerToggle, bannersOf, disputeDecide, kycApprove, kycList, kycReject, modQueue, orderCancel,
   pStatusOf, productApprove, productReject, queues, reportDecide, storeSuspend, storeTrust, teamInvite, type Me,
+  assignDriver, deliveriesList,
 } from "@/lib/demo/admin";
+import { can } from "@/lib/domain/admin";
+import { DEMO_DRIVERS } from "@/lib/demo/delivery";
 import { sellerOrders, setManagedStore } from "@/lib/demo/sellerActions";
 
 // Console admin : chaque décision se répercute chez l'acheteur et le vendeur (03-design §9.11).
@@ -102,5 +105,23 @@ describe("contenu et équipe", () => {
     expect(teamInvite(ME, "x@gmail.com", "support")).toBe("Utilisez une adresse @prelakay.ht.");
     expect(teamInvite(ME, "support@prelakay.ht", "support")).toBe("Ce membre existe déjà.");
     expect(teamInvite(ME, "nouveau@prelakay.ht", "marketing")).toBeNull();
+  });
+});
+
+describe("livraisons (admin)", () => {
+  it("Marketing n'a pas accès aux livraisons ni aux partenaires", () => {
+    expect(can("marketing", "deliveries")).toBe(false);
+    expect(can("support", "deliveries")).toBe(true);
+  });
+  it("affecter un livreur est journalisé et visible chez l'acheteur", () => {
+    addToCart("tech-1", 1);
+    const store = STORES.find((x) => x.id === allProducts().find((p) => p.id === "tech-1")!.store)!.id;
+    const r = payCart("k-adm-del", { modes: { [store]: "delivery" }, addr: { zone: "Simon", mark: "x", phone: "37000000" } });
+    if (!r.ok) throw new Error(r.error);
+    const id = r.ids[0];
+    expect(deliveriesList(demo.get()).map((d) => d.id)).toContain(id);
+    expect(assignDriver(ME, id, 1)).toBeNull();
+    expect(demo.get().orders.find((o) => o.id === id)!.driver?.n).toBe(DEMO_DRIVERS[1].n);
+    expect(demo.get().admin.audit[0]).toMatchObject({ a: "Livreur affecté" });
   });
 });

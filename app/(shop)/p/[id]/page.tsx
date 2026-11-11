@@ -13,8 +13,10 @@ import { demo, useDemo } from "@/lib/demo/store";
 import { addToCart, markViewed, selOf, setChoice, setQty } from "@/lib/demo/actions";
 import { formatHTG as htg, formatDistance as km, formatCount as k } from "@/lib/format";
 import { useIsDesk } from "@/lib/proto/useIsDesk";
+import { BUSINESS } from "@/lib/config/business";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { useToast } from "@/components/ui/Toast";
+import { useFlash } from "@/components/ui/Feedback";
 import { ProductCard, useWish } from "@/components/proto/cards";
 import { AskForm, ReportForm } from "@/components/proto/forms";
 import { useModal } from "@/components/proto/modal";
@@ -39,6 +41,7 @@ export default function ProductPage() {
   const s = useDemo();
   const router = useRouter();
   const toast = useToast();
+  const [added, flashAdded] = useFlash();
   const modal = useModal();
   const wish = useWish();
   const desk = useIsDesk();
@@ -84,8 +87,8 @@ export default function ProductPage() {
   };
   const add = () => {
     if (!need()) return;
-    const v = addToCart(p.id, q);
-    toast.show(`Ajouté au panier · ${v}`, "success");
+    addToCart(p.id, q);
+    flashAdded();
   };
   const buy = () => {
     if (!need()) return;
@@ -395,25 +398,23 @@ export default function ProductPage() {
                 <span className="cap" style={{ display: "block" }}>Si l&apos;article est non conforme ou endommagé (photo obligatoire)</span>
               </div>
             </div>
-            <div className="ei">
-              <span style={{ color: "var(--color-neutral-500)" }}>
-                <Fi s="box" />
-              </span>
-              <div>
-                <b style={{ color: "var(--color-neutral-700)" }}>Livraison à domicile</b>{" "}
-                <ComingSoon feature="delivery">
-                  <button className="soon-t" style={{ marginLeft: 4 }}>
-                    À venir
-                  </button>
-                </ComingSoon>
+            <ComingSoon feature="delivery">
+              <div className="ei">
+                <Fi s="truck" />
+                <div>
+                  <b>Livraison à domicile</b>
+                  <span className="cap" style={{ display: "block" }}>
+                    Aux Cayes, environ {BUSINESS.demoDeliveryMinutes} min après la préparation · à partir de {htg(Math.min(...Object.values(BUSINESS.demoDeliveryFee)))}
+                  </span>
+                </div>
               </div>
-            </div>
+            </ComingSoon>
           </div>
           <button className="btn btn-p btn-block" onClick={buy} disabled={stock === 0}>
             Acheter maintenant
           </button>
-          <button className="btn btn-o btn-block" onClick={add} disabled={stock === 0}>
-            Ajouter au panier
+          <button className="btn btn-o btn-block" onClick={add} disabled={stock === 0} aria-live="polite">
+            {added ? <><Fi s="check" /> Ajouté au panier</> : "Ajouter au panier"}
           </button>
           <div className="row2">
             <button onClick={() => share("produit", p.id)}>
@@ -435,8 +436,8 @@ export default function ProductPage() {
           {heart}
           Wishlist
         </button>
-        <button className="btn btn-s" onClick={add} disabled={stock === 0}>
-          Au panier
+        <button className="btn btn-s" onClick={add} disabled={stock === 0} aria-live="polite">
+          {added ? <><Fi s="check" /> Ajouté</> : "Au panier"}
         </button>
         <button className="btn btn-p" onClick={buy} disabled={stock === 0}>
           Acheter

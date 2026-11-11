@@ -111,7 +111,7 @@ export default function AdminOrder() {
                   decide(`Annuler ${o.id}`, "Motif", ["Store injoignable", "Article indisponible", "Demande de l'acheteur", "Autre"], (m) => {
                     orderCancel(me, o.id, m);
                     toast.show("Commande annulée, acheteur remboursé");
-                  })
+                  }, { hold: true })
                 }
               >
                 Annuler et rembourser l&apos;acheteur

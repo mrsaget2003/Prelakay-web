@@ -8,8 +8,12 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CATS, STORES, allProducts, catBy } from "@/lib/data/mock/seed";
 import { filterProducts } from "@/lib/proto/sort";
+import { withSponsored } from "@/lib/domain/marketing";
+import { boostedIds } from "@/lib/demo/marketing";
+import { useDemo } from "@/lib/demo/store";
 import { discover, useFilters } from "@/lib/proto/discoverStore";
 import { ProductCard } from "./cards";
+import { Reveal } from "./motion";
 import { useModal } from "./modal";
 import { EmptyBox, Fi, Stars } from "./ui";
 
@@ -105,7 +109,13 @@ export function DiscoverView({ q, params }: { q: string; params: Record<string, 
   useEffect(() => {
     discover.applyQuery(JSON.parse(key));
   }, [key]);
-  const list = filterProducts(allProducts(), q, DF);
+  const demoS = useDemo();
+  // produits boostés : un « Sponsorisé » en tête de chaque bloc de 4, en tri par pertinence (spec §5)
+  const ranked = filterProducts(allProducts(), q, DF);
+  const flashOnly = params.flash === "1";
+  const live = new Set(demoS.marketing.flash.filter((f) => f.st === "live").map((f) => f.product));
+  const sp = DF.sort === "best" && !flashOnly ? withSponsored(ranked, boostedIds(demoS)) : { list: ranked, sponsored: new Set<string>() };
+  const list = flashOnly ? sp.list.filter((p) => live.has(p.id)) : sp.list;
   const c = DF.cat ? catBy(DF.cat) : null;
   const nf = (DF.cat ? 1 : 0) + (DF.min || DF.max ? 1 : 0) + (DF.dist ? 1 : 0) + (DF.rate ? 1 : 0) + (DF.ready ? 1 : 0) + (DF.trust ? 1 : 0) + (DF.store ? 1 : 0);
   const pr = DF.sort === "price" ? "price-d" : "price";
@@ -136,6 +146,10 @@ export function DiscoverView({ q, params }: { q: string; params: Record<string, 
           {q ? (
             <h1 className="res-h">
               {list.length} résultat{list.length > 1 ? "s" : ""} pour « {q} »
+            </h1>
+          ) : params.photo === "1" ? (
+            <h1 className="res-h">
+              <Fi s="camera" /> Résultats proches de votre photo
             </h1>
           ) : null}
           {c ? (
@@ -177,9 +191,11 @@ export function DiscoverView({ q, params }: { q: string; params: Record<string, 
           </div>
           {list.length ? (
             <div className="grid">
-              {list.map((p) => (
-                <ProductCard key={p.id} p={p} />
-              ))}
+              <Reveal>
+                {list.map((p) => (
+                  <ProductCard key={p.id} p={p} badge={sp.sponsored.has(p.id) ? "Sponsorisé" : live.has(p.id) ? "Flash" : undefined} />
+                ))}
+              </Reveal>
             </div>
           ) : (
             <EmptyBox icon={<Fi s="magnifying-glass" />} t="Aucun produit ne correspond" p="Élargissez la distance ou retirez un filtre.">

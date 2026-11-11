@@ -3,7 +3,7 @@ import { demo, resetDemo } from "@/lib/demo/store";
 import { addToCart, payCart } from "@/lib/demo/actions";
 import {
   sellerOrders, readyOrder, prepOrder, validatePickup, cancelOrder, noShow, resolveDispute, sellerDisputes,
-  saveProduct, formFrom, formError, setProductStatus, myProducts, statusOf, setManagedStore, requestPayout, sellerFin, whyOf,
+  saveProduct, formFrom, formError, setProductStatus, myProducts, statusOf, setManagedStore, requestPayout, sellerFin, whyOf, handToDriver,
 } from "@/lib/demo/sellerActions";
 import { allProducts, prodBy, stockFor, optsOf } from "@/lib/data/mock/seed";
 
@@ -123,5 +123,44 @@ describe("produits de démonstration du store", () => {
     expect(statusOf(demo.get(), draft)).toBe("draft");
     expect(statusOf(demo.get(), rej)).toBe("rejected");
     expect(whyOf(demo.get(), rej.id)).toMatch(/^Photos floues/);
+  });
+});
+
+describe("livraison (vendeur)", () => {
+  const ADDR = { zone: "Bergeaud", mark: "église", phone: "37000000" };
+  function buyDelivered() {
+    addToCart("mode-0", 1);
+    const store = prodBy("mode-0")!.store;
+    setManagedStore(store);
+    const r = payCart(`kd-${Math.random()}`, { modes: { [store]: "delivery" }, addr: ADDR });
+    if (!r.ok) throw new Error(r.error);
+    return r.ids[0];
+  }
+  it("le store remet au livreur une commande en préparation ; l'acheteur voit le livreur", () => {
+    const id = buyDelivered();
+    expect(handToDriver(id)).toBe("Préparez d'abord la commande.");
+    prepOrder(id);
+    expect(handToDriver(id)).toBeNull();
+    const o = demo.get().orders.find((x) => x.id === id)!;
+    expect(o.status).toBe("handed");
+    expect(o.driver?.n).toBeTruthy();
+    expect(o.code).toMatch(/^\d{6}$/);
+    expect(demo.get().notif[0].t).toBe(`Commande ${id} remise au livreur`);
+  });
+  it("« Prête pour retrait » est refusée pour une livraison ; « Remettre au livreur » refusée pour un retrait", () => {
+    const id = buyDelivered();
+    prepOrder(id);
+    readyOrder(id);
+    expect(demo.get().orders.find((x) => x.id === id)!.status).toBe("prep");
+    const pick = buy();
+    prepOrder(pick);
+    expect(handToDriver(pick)).toBe("Cette commande est un retrait en magasin.");
+  });
+  it("annuler une livraison rembourse aussi les frais", () => {
+    const id = buyDelivered();
+    const o = demo.get().orders.find((x) => x.id === id)!;
+    const w = demo.get().wallet;
+    cancelOrder(id);
+    expect(demo.get().wallet).toBe(w + o.total + o.fee!);
   });
 });

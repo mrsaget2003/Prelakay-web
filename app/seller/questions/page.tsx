@@ -7,16 +7,17 @@ import { useDemo } from "@/lib/demo/store";
 import { answerQuestion, sellerQuestions } from "@/lib/demo/sellerActions";
 import { useToast } from "@/components/ui/Toast";
 import { SHead, BUYER_URL } from "@/components/seller/shell";
-import { Fi } from "@/components/proto/ui";
+import { FieldErr, Fi } from "@/components/proto/ui";
 
 export default function Questions() {
   const s = useDemo();
   const toast = useToast();
   const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const [errs, setErrs] = useState<Record<string, string>>({});
   const Q = sellerQuestions(s);
   const publish = (k: string) => {
     const t = (drafts[k] ?? "").trim();
-    if (!t) return toast.show("Écrivez une réponse.", "error");
+    if (!t) return setErrs((x) => ({ ...x, [k]: "Écrivez une réponse." }));
     answerQuestion(k, t);
     toast.show("Réponse publiée sur la fiche produit", "success");
   };
@@ -56,10 +57,11 @@ export default function Questions() {
                     publish(x.k);
                   }}
                 >
-                  <input className="field" placeholder="Votre réponse publique" aria-label="Votre réponse" value={drafts[x.k] ?? ""} onChange={(e) => setDrafts((d) => ({ ...d, [x.k]: e.target.value }))} />
+                  <input className="field" placeholder="Votre réponse publique" aria-label="Votre réponse" value={drafts[x.k] ?? ""} aria-invalid={errs[x.k] ? true : undefined} onChange={(e) => { setDrafts((d) => ({ ...d, [x.k]: e.target.value })); setErrs((m) => ({ ...m, [x.k]: "" })); }} />
                   <button className="btn btn-p btn-sm">Publier</button>
                 </form>
               )}
+              {!x.a ? <FieldErr msg={errs[x.k]} /> : null}
             </div>
           ))
         ) : (

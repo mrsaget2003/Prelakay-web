@@ -12,18 +12,18 @@ afterEach(() => vi.useRealTimers());
 describe("ComingSoon", () => {
   it("affiche « À venir » 3 s dans une région live", () => {
     vi.useFakeTimers();
-    renderWithToast(<ComingSoon feature="coupons"><a href="/coupons">Mes coupons</a></ComingSoon>);
-    fireEvent.click(screen.getByText("Mes coupons"));
+    renderWithToast(<ComingSoon feature="native_app"><a href="/app">{"Télécharger l'app"}</a></ComingSoon>);
+    fireEvent.click(screen.getByText("Télécharger l'app"));
     expect(screen.getByRole("status")).toHaveTextContent("À venir");
     act(() => vi.advanceTimersByTime(2999));
     expect(screen.getByRole("status")).toHaveTextContent("À venir");
     act(() => vi.advanceTimersByTime(1));
-    expect(screen.queryByText("À venir")).not.toBeInTheDocument();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("empêche l'action et la navigation", () => {
     const onClick = vi.fn();
-    renderWithToast(<ComingSoon feature="coupons"><button onClick={onClick}>X</button></ComingSoon>);
+    renderWithToast(<ComingSoon feature="sourcing"><button onClick={onClick}>X</button></ComingSoon>);
     const ev = new MouseEvent("click", { bubbles: true, cancelable: true });
     act(() => { screen.getByText("X").dispatchEvent(ev); });
     expect(onClick).not.toHaveBeenCalled();
@@ -35,12 +35,12 @@ describe("ComingSoon", () => {
     renderWithToast(<ComingSoon feature="cart"><button onClick={onClick}>X</button></ComingSoon>);
     fireEvent.click(screen.getByText("X"));
     expect(onClick).toHaveBeenCalledTimes(1);
-    expect(screen.queryByText("À venir")).not.toBeInTheDocument();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
   });
 
   it("option grisée (asOption) : aria-disabled + toast", () => {
-    renderWithToast(<ComingSoon feature="delivery" asOption><button>Livraison</button></ComingSoon>);
-    const opt = screen.getByText("Livraison");
+    renderWithToast(<ComingSoon feature="creole" asOption><button>Créole</button></ComingSoon>);
+    const opt = screen.getByText("Créole");
     expect(opt).toHaveAttribute("aria-disabled", "true");
     fireEvent.click(opt);
     expect(screen.getByRole("status")).toHaveTextContent("À venir");
@@ -75,6 +75,19 @@ describe("useToast", () => {
     fireEvent.click(screen.getByText("ko"));
     act(() => vi.advanceTimersByTime(2000));
     expect(screen.getByRole("status")).toBeInTheDocument();
+  });
+});
+
+describe("Sileo", () => {
+  function One() {
+    const t = useToast();
+    return <button onClick={() => t.show("Commande payée", "success")}>go</button>;
+  }
+  it("le toast est dessiné par Sileo (visuel) et annoncé par la région live", async () => {
+    renderWithToast(<One />);
+    fireEvent.click(screen.getByText("go"));
+    expect(screen.getByRole("status")).toHaveTextContent("Commande payée");
+    await vi.waitFor(() => expect(document.querySelector("[data-sileo-toast] [data-sileo-title]")?.textContent).toBe("Commande payée"));
   });
 });
 

@@ -11,22 +11,24 @@ import { AXES } from "@/lib/demo/sellerActions";
 import { useToast } from "@/components/ui/Toast";
 import { useModal } from "@/components/proto/modal";
 import { AHead, useMe } from "@/components/admin/shell";
-import { DataIcon, Fi } from "@/components/proto/ui";
+import { DataIcon, FieldErr, Fi } from "@/components/proto/ui";
 
 const count = (cid: string, sub?: string) => P.filter((p) => p.cat === cid && (!sub || p.sub === sub)).length;
 
 function NewCat({ onCreate }: { onCreate: (n: string) => void }) {
   const toast = useToast();
   const [n, setN] = useState("");
+  const [err, setErr] = useState<string | null>(null);
   return (
     <>
       <div className="fl">
         <label className="lbl" htmlFor="cn">
           Nom
         </label>
-        <input className="field" id="cn" maxLength={30} value={n} onChange={(e) => setN(e.target.value)} />
+        <input className="field" id="cn" maxLength={30} value={n} aria-invalid={err ? true : undefined} onChange={(e) => { setN(e.target.value); setErr(null); }} />
       </div>
-      <button className="btn btn-p btn-block" onClick={() => (n.trim() ? onCreate(n.trim()) : toast.show("Indiquez un nom.", "error"))}>
+      <FieldErr msg={err} />
+      <button className="btn btn-p btn-block" onClick={() => (n.trim() ? onCreate(n.trim()) : setErr("Indiquez un nom."))}>
         Créer
       </button>
     </>

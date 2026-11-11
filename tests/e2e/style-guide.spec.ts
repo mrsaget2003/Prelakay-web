@@ -15,7 +15,7 @@ test("style guide : logos, icônes, composants, « À venir », pas de débordem
   await expect(page.locator('[data-testid="icon-grid"] svg').first()).toBeVisible();
   expect(await page.locator('[data-testid="icon-grid"] [data-icon-name]').count()).toBeGreaterThanOrEqual(148);
 
-  await page.getByRole("button", { name: /Mes coupons/ }).click();
+  await page.getByRole("button", { name: /Télécharger l'app/ }).click();
   await expect(page.getByRole("status")).toHaveText(/À venir/);
 
   await page.getByRole("button", { name: "Ouvrir la modale" }).click();
@@ -27,8 +27,5 @@ test("style guide : logos, icônes, composants, « À venir », pas de débordem
   expect(overflow).toBeLessThanOrEqual(0);
 });
 
-test("une page admin d'une version future revient au tableau de bord avec « À venir »", async ({ page }) => {
-  await page.goto("/admin/events");
-  await expect(page).toHaveURL(/\/admin(\/login\?next=.*)?$/);
-  await expect(page.getByRole("status")).toHaveText(/À venir/);
-});
+// La redirection des pages d'une version future ne s'applique plus qu'en production
+// (prototype : tout actif, CLAUDE.md 10 nov. 2026) : couverte par tests/unit/release.test.ts.

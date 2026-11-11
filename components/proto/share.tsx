@@ -5,7 +5,8 @@
 
 import { useState } from "react";
 import { useDemo } from "@/lib/demo/store";
-import { useToast } from "@/components/ui/Toast";
+import { useFlash } from "@/components/ui/Feedback";
+import { fbLink, waLink } from "@/lib/proto/shareLinks";
 import { Fi, Qr } from "./ui";
 
 export function shareTitle(kind: string) {
@@ -14,7 +15,7 @@ export function shareTitle(kind: string) {
 
 export function ShareModal({ kind, id }: { kind: "produit" | "store" | "panier"; id: string }) {
   const s = useDemo();
-  const toast = useToast();
+  const [copied, flashCopied] = useFlash();
   const [qr, setQr] = useState(false);
   const url = "prelakay.com/" + (kind === "produit" ? `p/${id}` : kind === "store" ? `store/${id}` : `panier/pk-${s.user}`);
   return (
@@ -23,12 +24,12 @@ export function ShareModal({ kind, id }: { kind: "produit" | "store" | "panier";
         {kind === "panier" ? "Votre proche pourra le consulter et le payer avec son wallet." : "Un lien vers Prélakay, prêt à envoyer."}
       </p>
       <div className="share-g">
-        <button onClick={() => toast.show("Ouverture de WhatsApp…")}>
+        <a href={waLink("https://" + url)} target="_blank" rel="noopener noreferrer">
           <span>
             <Fi s="whatsapp" />
           </span>
           WhatsApp
-        </button>
+        </a>
         <button
           onClick={() => {
             try {
@@ -36,13 +37,13 @@ export function ShareModal({ kind, id }: { kind: "produit" | "store" | "panier";
             } catch {
               /* presse-papiers indisponible */
             }
-            toast.show("Lien copié", "success");
+            flashCopied();
           }}
         >
           <span>
-            <Fi s="link" />
+            {copied ? <Fi s="check" /> : <Fi s="link" />}
           </span>
-          Copier le lien
+          {copied ? "Lien copié" : "Copier le lien"}
         </button>
         <button onClick={() => setQr(true)}>
           <span>
@@ -50,12 +51,12 @@ export function ShareModal({ kind, id }: { kind: "produit" | "store" | "panier";
           </span>
           QR code
         </button>
-        <button onClick={() => toast.show("Ouverture de Facebook…")}>
+        <a href={fbLink("https://" + url)} target="_blank" rel="noopener noreferrer">
           <span>
             <Fi s="facebook-f" />
           </span>
           Facebook
-        </button>
+        </a>
       </div>
       <div id="shqr">
         {qr ? (

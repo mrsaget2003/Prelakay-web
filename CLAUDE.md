@@ -23,6 +23,17 @@ Si une information ne se trouve dans **aucun** de ces fichiers, elle n'existe pa
 8. **Avant un gros travail (nouveau build, réécriture, fonctionnalité majeure) : poser au maximum 3 questions ciblées plutôt que deviner puis livrer un résultat hors cible.** Trois bonnes questions coûtent minutes ; un livrable hors cible coûte une session entière à refaire.
 9. **Versions et toast « À venir »** : tout l'écran est construit dès la V1 (comme le prototype), mais seules les fonctionnalités de la version en cours marchent. Une fonctionnalité d'une version suivante reste visible et affiche le toast « À venir » ; l'API la refuse. Voir `CHANGELOG.md`.
 
+## Décisions récentes (10 nov 2026 — prototype complet)
+
+Spec : `docs/superpowers/specs/2026-11-10-prototype-complet-design.md`.
+- ✅ **Prototype : règle « À venir » suspendue** en démo (`PRELAKAY_ENV=demo`) : tout est construit et actif, sauf application native, PWA livreur, sourcing et créole. Le CHANGELOG reste la règle de mise en production et servira au nettoyage lors du branchement Supabase. Remplace la règle 9 **pour le prototype uniquement**.
+- ✅ **Livraison dès le lancement**, à côté du Click & Collect (remplace « Click & Collect, seul mode de fulfillment » du PRD). Frais, zones, paiement du livreur, libération de l'escrow à la livraison : ⚠️ ouverts (valeurs de démo).
+- ✅ Pages **« Devenir partenaire de paiement »** et **« Devenir partenaire de livraison »** (pied de page, modèle AliExpress) + file Admin → Partenaires.
+- ✅ **Dépendances validées** : `@nivo/*` (tous les graphiques, remplace la proposition `recharts`), `sileo` (toasts), `motion`, `@number-flow/react`, `vaul`, `embla-carousel-react`. Composants Spectrum UI repris **sans Tailwind ni shadcn** (traduits dans nos styles).
+- ✅ **Toasts triés** : pas de toast quand le résultat se voit déjà à l'écran (ex. ajout au panier).
+- ✅ **Carte des ventes admin** : communes du Sud (geoBoundaries HTI ADM3 — communes, FEWS NET, CC BY 4.0 ; l'ADM2 = arrondissements) + quartiers des Cayes, part en % et montant.
+- ✅ **On garde le français** : pas de créole dans le prototype. Mascotte : réservée à la landing page.
+
 ## Décisions récentes (7 nov 2026 — plan de construction)
 
 Plan de référence : `docs/superpowers/plans/2026-11-07-prelakay-prototype-to-launch.md`.
@@ -61,6 +72,8 @@ Plan de référence : `docs/superpowers/plans/2026-11-07-prelakay-prototype-to-l
 - Protection anti-abus du bonus de parrainage (500 Coins)
 - Recherche vocale : v1 ou backlog v2
 - Montant des frais de restockage en cas de non-retrait Click & Collect, et à qui ils reviennent
+- **Livraison (10 nov. 2026)** : frais et zones couvertes, paiement du livreur, déclencheur et délai de libération de l'escrow à la livraison, remboursement en cas d'échec de livraison
+- Seuils des badges et des offres flash (points de confiance) — liés à la formule du Store Health Score
 - **Sourcing international (v1.1)** : mécanisme d'achat réel (API fournisseur vs. achat manuel), calcul des taxes/droits de douane, marge appliquée, qui porte le risque en cas de rupture/produit différent, et structure exacte de la table `sourcing_orders`
 
 Un point qui disparaît de cette liste doit d'abord apparaître, daté, dans la section « Décisions récentes » ci-dessus — jamais l'inverse.

@@ -10,7 +10,7 @@ import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { useModal } from "@/components/proto/modal";
 import { SHead } from "@/components/seller/shell";
-import { Fi } from "@/components/proto/ui";
+import { FieldErr, Fi } from "@/components/proto/ui";
 
 const GW = ["MonCash", "NatCash", "Sogebank"];
 
@@ -18,6 +18,7 @@ function PayMethodForm({ onDone }: { onDone: () => void }) {
   const toast = useToast();
   const [t, setT] = useState(GW[0]);
   const [num, setNum] = useState("");
+  const [err, setErr] = useState<string | null>(null);
   return (
     <>
       <div className="gw">
@@ -32,8 +33,9 @@ function PayMethodForm({ onDone }: { onDone: () => void }) {
         <label className="lbl" htmlFor="pmn">
           Numéro de téléphone ou de compte
         </label>
-        <input className="field" id="pmn" inputMode="numeric" placeholder="Ex. 3712 3456" value={num} onChange={(e) => setNum(e.target.value)} />
+        <input className="field" id="pmn" inputMode="numeric" placeholder="Ex. 3712 3456" value={num} aria-invalid={err ? true : undefined} onChange={(e) => { setNum(e.target.value); setErr(null); }} />
       </div>
+      <FieldErr msg={err} />
       <p className="cap" style={{ marginBottom: 12 }}>
         Le titulaire doit être la personne vérifiée dans le KYC.
       </p>
@@ -41,7 +43,7 @@ function PayMethodForm({ onDone }: { onDone: () => void }) {
         className="btn btn-p btn-block"
         onClick={() => {
           const n = num.replace(/\D/g, "");
-          if (n.length < 6) return toast.show("Numéro trop court.", "error");
+          if (n.length < 6) return setErr("Numéro trop court.");
           savePayMethod(t, n);
           onDone();
           toast.show("Moyen de retrait enregistré", "success");

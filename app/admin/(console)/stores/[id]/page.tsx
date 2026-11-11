@@ -130,7 +130,7 @@ export default function AdminStore() {
                   decide(`Suspendre ${x.n}`, "Motif", ["Fraude ou contrefaçon", "Litiges répétés", "Non-respect des règles de retrait", "Demande du propriétaire", "Autre"], (m) => {
                     storeSuspend(me, x.id, m);
                     toast.show("Store suspendu : ses produits sont masqués");
-                  });
+                  }, { hold: true });
               }}
             >
               {x.suspended ? "Réactiver le store" : "Suspendre le store"}

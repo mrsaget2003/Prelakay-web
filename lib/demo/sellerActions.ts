@@ -4,6 +4,7 @@
 // sellerReviews, sellerQuestions, sellerConvs et les actions « sl-* »). Les commandes de
 // l'acheteur de démo apparaissent chez le store ; chaque changement de statut le prévient.
 
+import { DEMO_DRIVERS } from "./delivery";
 import { CATS, TINTS, catBy, everyProduct, optsOf, prodBy, stockFor, storeBy, type OptAxis, type Product } from "@/lib/data/mock/seed";
 import { REVS } from "@/lib/data/mock/content";
 import { formatHTG } from "@/lib/format";
@@ -93,7 +94,7 @@ export function readyOrder(id: string) {
   demo.update((s) => {
     let code = "";
     withOrder(s, id, (o) => {
-      if (!canTransition(o.status, "ready")) return;
+      if (!canTransition(o.status, "ready") || o.mode === "delivery") return;
       o.status = "ready";
       o.code = code = nextCode();
       o.due = "9 nov. 2026";
@@ -107,12 +108,32 @@ export function cancelOrder(id: string) {
     withOrder(s, id, (o) => {
       if (!canTransition(o.status, "cancelled")) return;
       o.status = "cancelled";
-      total = o.total;
+      total = o.total + (o.fee ?? 0);
     });
     if (total && isMine(s, id)) s.wallet += total;
     if (total) buyerNotif(s, id, `Commande ${id} annulée par le store`, `${formatHTG(total)} remboursés sur votre wallet.`);
   });
 }
+/** Livraison : la commande préparée est remise au livreur (le code de livraison est créé ici). */
+export function handToDriver(id: string): string | null {
+  const o = orderById(demo.get(), id);
+  if (!o) return "Commande introuvable.";
+  if (o.mode !== "delivery") return "Cette commande est un retrait en magasin.";
+  if (o.status !== "prep") return "Préparez d'abord la commande.";
+  demo.update((s) => {
+    let driver = "";
+    withOrder(s, id, (x) => {
+      x.status = "handed";
+      x.driver = DEMO_DRIVERS[(Number(id.replace(/\D/g, "")) || 0) % DEMO_DRIVERS.length];
+      x.code = nextCode();
+      x.track = 5;
+      driver = x.driver.n;
+    });
+    if (isMine(s, id)) s.notif.unshift({ i: "fa-solid fa-truck", t: `Commande ${id} remise au livreur`, p: `${driver} part de ${myStore(s).n}.`, to: `/orders/${id}`, un: true });
+  });
+  return null;
+}
+
 /** Non retirée après 3 jours : statut « Non retirée », unités remises en stock. */
 export function noShow(id: string) {
   demo.update((s) => {
@@ -156,7 +177,10 @@ export function validatePickup(raw: string): PickupResult {
 /* ---------- tâches, finances ---------- */
 
 export function sellerFin(s: DemoState) {
-  return finOf(s.seller.store, sellerOrders(s), s.seller.payouts);
+  const f = finOf(s.seller.store, sellerOrders(s), s.seller.payouts);
+  // budgets de boost (10 nov. 2026) payés par le solde disponible
+  const boosts = (s.marketing?.boosts ?? []).filter((b) => b.store === s.seller.store).reduce((a, b) => a + b.budget, 0);
+  return { ...f, avail: Math.max(0, f.avail - boosts), boosts };
 }
 
 export function todo(s: DemoState) {
@@ -315,7 +339,7 @@ export const AXES = ["Couleur", "Taille", "Pointure", "Longueur", "Largeur", "St
 export function formFrom(s: DemoState, p: Product | null): ProductForm {
   const f: ProductForm = {
     id: p ? p.id : null, n: p ? p.n : "", cat: p ? p.cat : myStore(s).cat, sub: p ? p.sub : "", price: p ? String(p.price) : "", was: p && p.was ? String(p.was) : "",
-    desc: (p && (p as SellerProduct).desc) || "", photos: p ? 4 : 0, weight: "", dims: "",
+    desc: (p && (p as SellerProduct).desc) || "", photos: p ? 4 : 0, weight: "", dims: "", deliverable: p ? (p as SellerProduct).deliverable !== false : true, barcode: (p as SellerProduct | null)?.barcode ?? "",
     axes: p ? optsOf(p).map((a) => ({ k: a.k, v: a.v.join(", ") })) : [], stock: {},
   };
   if (p) {
@@ -358,7 +382,7 @@ export function saveProduct(F: ProductForm, mode: "draft" | "mod"): { id: string
     const was = +F.was || 0;
     const base: SellerProduct = {
       ...(existing ?? { id, store: s.seller.store, sold: 0, reviews: 0, rating: 0, icon: cat.i, tint: TINTS[s.seller.seq % 5], isNew: true, stockLow: false, ready: myStore(s).type === "physique" }),
-      id, n: F.n.trim(), cat: F.cat, sub: F.sub, price, was, disc: was ? Math.round((1 - price / was) * 100) : 0, desc: F.desc, opts: A, why: null,
+      id, n: F.n.trim(), cat: F.cat, sub: F.sub, price, was, disc: was ? Math.round((1 - price / was) * 100) : 0, desc: F.desc, opts: A, why: null, deliverable: F.deliverable !== false, barcode: F.barcode?.trim() || undefined,
       status: mode === "draft" ? "draft" : wasActive ? "active" : "mod",
     } as SellerProduct;
     const i = s.seller.products.findIndex((x) => x.id === id);

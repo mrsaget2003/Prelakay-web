@@ -146,8 +146,20 @@ export function NeedLogin({ what, next }: { what: string; next: string }) {
 export const ORDER_STATUS: Record<string, [string, string]> = {
   received: ["tag-neu", "Reçue"], prep: ["tag-warn", "En préparation"], ready: ["tag-new", "Prête pour retrait"],
   done: ["tag-ok", "Retirée"], expired: ["tag-err", "Non retirée"], cancelled: ["tag-err", "Annulée"],
+  handed: ["tag-new", "Remise au livreur"], enroute: ["tag-new", "En route"], delivered: ["tag-ok", "Livrée"],
 };
 export function StTag({ s }: { s: string }) {
   const [cls, label] = ORDER_STATUS[s] ?? ["tag-neu", s];
   return <span className={`tag ${cls}`}>{label}</span>;
+}
+
+/** Erreur de champ affichée sous le champ (tri des toasts, spec §9) — remplace le toast d'erreur. */
+export function FieldErr({ msg }: { msg: string | null | undefined }) {
+  if (!msg) return null;
+  return (
+    <p className="ferr" role="alert">
+      <Fi s="circle-exclamation" />
+      <span>{msg}</span>
+    </p>
+  );
 }

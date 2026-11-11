@@ -5,6 +5,7 @@
 export const OST: Record<string, [string, string]> = {
   received: ["tag-warn", "À préparer"], prep: ["tag-neu", "En préparation"], ready: ["tag-new", "Prête pour retrait"],
   done: ["tag-ok", "Retirée"], expired: ["tag-err", "Non retirée"], cancelled: ["tag-err", "Annulée"],
+  handed: ["tag-new", "Remise au livreur"], enroute: ["tag-new", "En route"], delivered: ["tag-ok", "Livrée"],
 };
 export function OTag({ s }: { s: string }) {
   const [c, l] = OST[s] ?? ["tag-neu", s];

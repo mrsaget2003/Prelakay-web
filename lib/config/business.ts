@@ -39,4 +39,16 @@ export const BUSINESS = {
   restockFee: null,
   /** [À CONFIRMER] critères « Store de confiance ». */
   trustedStoreCriteria: null,
+  /** Livraison (CLAUDE.md 10 nov. 2026) — valeurs de démonstration, ⚠️ frais et zones ouverts. */
+  demoDeliveryFee: {
+    "Centre-ville": 150, "Quatre Chemins": 175, Bergeaud: 200, Laborde: 225, "Gelée": 200,
+    "Torbeck (route)": 300, Simon: 225, Bourdet: 250, "Camp-Perrin (route)": 350,
+  },
+  /** Valeur de démonstration : quartier hors liste. */
+  demoDeliveryFeeDefault: 250,
+  /** Valeur de démonstration : délai affiché d'une livraison. */
+  demoDeliveryMinutes: 45,
+  /** Badges (valeurs de démonstration ; seuils de points de confiance ⚠️ ouverts). */
+  demoVipOrders: 3,
+  demoTopSellerSold: 1000,
 } as const;

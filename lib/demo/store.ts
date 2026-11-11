@@ -6,27 +6,39 @@
 // Jamais utilisé en production (lib/config/env.ts).
 
 import { useSyncExternalStore } from "react";
-import { prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, setStoreOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
+import { basePrice, setPriceOverlay, prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, setStoreOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
 import type { Banner } from "@/lib/data/mock/content";
+import type { PartnerApp, PartnerStatus } from "@/lib/domain/partners";
+import type { Coupon } from "@/lib/domain/coupons";
+import { flashOverlay, type Boost, type Flash, type PEvent } from "@/lib/domain/marketing";
 
 export type CartLine = { p: string; v: string; q: number; on: boolean };
-export type OrderStatus = "received" | "prep" | "ready" | "done" | "expired" | "cancelled";
+export type OrderStatus = "received" | "prep" | "ready" | "done" | "expired" | "cancelled" | "handed" | "enroute" | "delivered";
 export type OrderItem = { p: string; v: string; q: number };
 export type Order = {
   id: string; store: string; items: OrderItem[]; status: OrderStatus; date: string; total: number;
   code?: string; due?: string; reviewed?: boolean; time?: string;
+  /** Livraison (10 nov. 2026) : mode, adresse, frais, livreur, progression simulée 0-100. */
+  mode?: "pickup" | "delivery"; addr?: { zone: string; mark: string; phone: string }; fee?: number;
+  driver?: { n: string; tel: string }; track?: number;
+  /** Coupon appliqué à cette commande et remise en HTG. */
+  coupon?: string; off?: number;
 };
 export type Notif = { i: string; t: string; p: string; to: string; un: boolean };
 export type Selection = { o: Choice; q: number };
 export type KycStatus = null | "recu" | "verif" | "ok" | "rej";
 
 /** Produit créé ou modifié dans l'espace vendeur (démo). */
-export type SellerProduct = Product & { status: string; why?: string | null; opts: OptAxis[]; desc?: string };
+export type SellerProduct = Product & { status: string; why?: string | null; opts: OptAxis[]; desc?: string; deliverable?: boolean; barcode?: string };
 export type Conv = { id: string; who: string; order: string; un: boolean; msgs: { me: boolean; t: string; at: string }[] };
 export type SDispute = { id: string; order: string; buyer: string; why: string; txt: string; photo: boolean; st: "open" | "escalated" | "done"; due: string };
 export type ProductForm = {
   id: string | null; n: string; cat: string; sub: string; price: string; was: string; desc: string; photos: number;
   weight: string; dims: string; axes: { k: string; v: string }[]; stock: Record<string, string>;
+  /** Livraison à domicile proposée pour ce produit (10 nov. 2026) ; absent = oui. */
+  deliverable?: boolean;
+  /** Code-barres (EAN / UPC), scanné ou saisi. */
+  barcode?: string;
 };
 /** État de l'espace vendeur (objet SL du prototype). */
 export type SellerState = {
@@ -46,6 +58,8 @@ export type SellerState = {
   notif: (Notif & { store: string })[];
   seq: number;
   form: ProductForm | null;
+  /** Comptes employés (10 nov. 2026). */
+  staff: { n: string; tel: string; role: "prep" | "cash"; st: "invited" | "active" }[];
 };
 
 /** Console admin (objet AD du prototype) : décisions qui se répercutent chez l'acheteur et le vendeur. */
@@ -69,10 +83,18 @@ export type AdminState = {
   team: AdminMember[] | null;
   settings: AdminSettings;
   audit: { who: string; role: string; a: string; t: string; at: string }[];
+  /** Livreur affecté par l'admin aux livraisons de démonstration (indice dans DEMO_DRIVERS). */
+  drivers: Record<string, number>;
+  /** Décisions sur les candidatures de partenaires (par identifiant). */
+  partners: Record<string, { st: PartnerStatus; why?: string }>;
+  /** Fil des litiges (Dispute Center) : messages et demandes de pièces de l'admin. */
+  dthread: Record<string, { from: "admin" | "buyer" | "store"; to?: "buyer" | "store"; kind?: "msg" | "request"; t: string; at: string; who?: string }[]>;
 };
 
 export type DemoState = {
   logged: boolean; user: string; name: string; city: string;
+  /** Téléphone relié (connexion par SMS, 10 nov. 2026). */
+  phone: string | null;
   wallet: number; coins: number;
   cart: CartLine[]; wish: Record<string, boolean>; sel: Record<string, Selection>;
   orders: Order[]; introDone: boolean; introStep: number; kyc: KycStatus; kycWhy: string | null;
@@ -88,6 +110,14 @@ export type DemoState = {
   paid: Record<string, string[]>;
   seller: SellerState;
   admin: AdminState;
+  /** Candidatures envoyées depuis les pages partenaires (10 nov. 2026). */
+  partners: PartnerApp[];
+  /** Coupons (10 nov. 2026) : créés par les vendeurs, gardés par l'acheteur, utilisations, suspensions. */
+  coupons: { list: Coupon[]; mine: string[]; used: Record<string, number>; off: Record<string, boolean> };
+  /** Offres flash, events (créés et participations), boosts. */
+  marketing: { flash: Flash[]; events: PEvent[]; joined: Record<string, string[]>; boosts: Boost[] };
+  /** Parrainage, ambassadeurs, Prelakay+ (lot 10). */
+  growth: { referrals: { u: string; st: "pending" | "done"; date: string }[]; amb: null | { st: "recu" | "ok" | "rej"; school: string }; plus: null | { since: string; next: string } };
 };
 
 const DEMO_ORDERS: Omit<Order, "total">[] = [
@@ -97,9 +127,12 @@ const DEMO_ORDERS: Omit<Order, "total">[] = [
   { id: "PK-0997", store: "mache-bon-pri", items: [{ p: "alim-0", v: "500 g", q: 1 }], status: "done", date: "15 oct. 2026", reviewed: true },
 ];
 
+/** Fin de l'offre flash de démonstration : 18 h après le chargement de la page (fixée une fois). */
+const DEMO_FLASH_ENDS = Date.now() + 18 * 3_600_000;
+
 export function initialState(): DemoState {
   return {
-    logged: true, user: "marckarlin", name: "Marc-Karlin", city: "Les Cayes", wallet: 450000, coins: 120,
+    logged: true, user: "marckarlin", name: "Marc-Karlin", city: "Les Cayes", wallet: 450000, coins: 120, phone: null,
     cart: [], wish: {}, sel: {},
     orders: DEMO_ORDERS.map((o) => ({ ...o, total: o.items.reduce((a, it) => a + (prodBy(it.p)?.price ?? 0) * it.q, 0) })),
     introDone: false, introStep: 0, kyc: null, kycWhy: null, kycData: null, picked: {}, hist: [], viewed: [], disputes: [], reports: [],
@@ -117,9 +150,14 @@ export function initialState(): DemoState {
       ["fa-solid fa-rotate-left", "Remboursement PK-0981", "28 oct.", 35000, ""],
     ],
     paid: {},
+    partners: [],
+    coupons: { list: [], mine: ["BYENVI"], used: {}, off: {} },
+    // une offre flash de démonstration en cours (18 h restantes au chargement)
+    marketing: { flash: [{ id: "FL-000", store: "tech-sud", product: "tech-3", price: Math.round((prodBy("tech-3")?.price ?? 2000) * 0.75), ends: DEMO_FLASH_ENDS, st: "live" }], events: [], joined: {}, boosts: [{ id: "BO-0", store: "bel-soley", product: "beaute-2", budget: 1500, on: true }] },
+    growth: { referrals: [{ u: "@lili_cayes", st: "done", date: "2 nov. 2026" }, { u: "@ti_jan", st: "pending", date: "5 nov. 2026" }], amb: null, plus: null },
     seller: {
       store: "boutik-lakay", policy: null, payMethod: null, payouts: [], stockO: {}, replies: {}, answers: {}, convs: {},
-      sorders: {}, dsp: {}, products: [], pstatus: {}, extra: {}, notif: [], seq: 1, form: null,
+      sorders: {}, dsp: {}, products: [], pstatus: {}, extra: {}, notif: [], seq: 1, form: null, staff: [],
     },
     admin: {
       kyc: {}, users: {}, stores: {}, dsp: {}, reports: {}, modSeeded: false, banners: null, sent: [], cats: null,
@@ -128,6 +166,9 @@ export function initialState(): DemoState {
       // valeurs du prototype ; vides = [À CONFIRMER] (commission, restockage, Coins de bienvenue)
       settings: { escrow: "3", escrowTrust: "24", hold: "3", commission: "", restock: "", coinsOrder: "50", coinsReview: "25", coinsWelcome: "", quota: "4", disputeDays: "3", storeReply: "48" },
       audit: [],
+      drivers: {},
+      partners: {},
+      dthread: {},
     },
   };
 }
@@ -141,11 +182,14 @@ function syncCatalog(s: DemoState) {
   for (const p of sl.products) statuses[p.id] = p.status;
   setCatalogOverlay(sl.products, statuses);
   setStoreOverlay(s.admin.stores);
+  setPriceOverlay(flashOverlay(s.marketing.flash, Date.now(), basePrice));
 }
 
 const KEY = "pk-demo-v1";
 const SERVER = initialState();
 let state: DemoState = SERVER;
+// overlays du catalogue (offre flash de démonstration…) appliqués dès le chargement, serveur et client
+syncCatalog(SERVER);
 const listeners = new Set<() => void>();
 
 function emit() {
@@ -153,6 +197,16 @@ function emit() {
 }
 
 let hydrated = false;
+
+/** Ancien état sauvegardé : chaque tranche objet (seller, admin, et les suivantes) est complétée par ses valeurs par défaut. */
+function mergeSaved(init: DemoState, saved: Partial<DemoState>): DemoState {
+  const out = { ...init, ...saved } as Record<string, unknown>;
+  for (const [k, v] of Object.entries(init)) {
+    const sv = (saved as Record<string, unknown>)[k];
+    if (v && typeof v === "object" && !Array.isArray(v) && sv && typeof sv === "object" && !Array.isArray(sv)) out[k] = { ...v, ...sv };
+  }
+  return out as DemoState;
+}
 
 /** Relit l'état sauvegardé une seule fois, avant toute écriture : sans cela, une écriture
  *  faite avant hydrateDemo() (ex. « vus récemment » d'une fiche ouverte directement)
@@ -165,7 +219,7 @@ function ensureHydrated(): boolean {
     if (raw) {
       const saved = JSON.parse(raw);
       const init = initialState();
-      state = { ...init, ...saved, seller: { ...init.seller, ...(saved.seller ?? {}) }, admin: { ...init.admin, ...(saved.admin ?? {}) } };
+      state = mergeSaved(init, saved);
       syncCatalog(state);
       return true;
     }

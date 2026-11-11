@@ -3,6 +3,7 @@
 // Profil du store — sStore du prototype : identité, adresse et carte, horaires, aperçu,
 // comptes (employés : V2, « À venir »).
 
+import Link from "next/link";
 import { CATS, STORES } from "@/lib/data/mock/seed";
 import { storeImage } from "@/lib/data/mock/images";
 import { useDemo } from "@/lib/demo/store";
@@ -149,12 +150,23 @@ export default function StoreProfile() {
                 </span>
               </span>
             </div>
+            {s.seller.staff.map((m) => (
+              <div className="lrow st" key={m.tel}>
+                <Fi s="user" />
+                <span>
+                  {m.n}
+                  <span className="cap" style={{ display: "block" }}>
+                    {m.role === "prep" ? "Préparation" : "Caisse"} · {m.st === "invited" ? "invitation envoyée" : "actif"}
+                  </span>
+                </span>
+              </div>
+            ))}
             <ComingSoon feature="staff_accounts">
-              <button className="lrow">
+              <Link className="lrow" href="/seller/staff">
                 <Fi s="user-plus" />
                 <span>Ajouter un employé</span>
-                <SoonBadge />
-              </button>
+                <Fi s="chevron-right" />
+              </Link>
             </ComingSoon>
           </div>
         </div>

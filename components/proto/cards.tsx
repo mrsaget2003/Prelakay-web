@@ -2,6 +2,7 @@
 
 // Cartes du prototype : card(p), storeCard(s) et l'aperçu rapide (quickView / renderQV).
 
+import { HeartPop } from "./motion";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type MouseEvent } from "react";
@@ -42,22 +43,21 @@ export function useQuickAdd() {
     const p = prodBy(id)!;
     setQty(id, 1);
     if (hasOpts(p)) return modal.openRaw("qv", <QuickView id={id} mode="add" />);
-    addToCart(id, 1);
-    toast.show("Ajouté au panier", "success");
+    addToCart(id, 1); // retour visuel : le badge du panier rebondit (pas de toast, spec §9)
   };
 }
 
 /** Carte produit (card du prototype). `showStore={false}` dans une page store : le nom du store n'y est pas répété. */
-export function ProductCard({ p, showStore = true }: { p: Product; showStore?: boolean }) {
+export function ProductCard({ p, showStore = true, badge }: { p: Product; showStore?: boolean; badge?: string }) {
   const s = useDemo();
   const st = storeBy(p.store)!;
   const wish = useWish();
   const qadd = useQuickAdd();
   return (
     <Link className="pc" href={`/p/${p.id}`}>
-      {p.isNew ? <span className="tag tag-new ctl">Nouveau</span> : null}
+      {badge ? <span className={`tag ctl ${badge === "Flash" ? "tag-err" : "tag-neu"}`}>{badge}</span> : p.isNew ? <span className="tag tag-new ctl">Nouveau</span> : null}
       <button className={`wish ${s.wish[p.id] ? "on" : ""}`} onClick={wish(p.id)} aria-label="Wishlist">
-        {s.wish[p.id] ? <Fi s="heart" /> : <Fi r="heart" />}
+        <HeartPop on={!!s.wish[p.id]}>{s.wish[p.id] ? <Fi s="heart" /> : <Fi r="heart" />}</HeartPop>
       </button>
       <div className="im">
         <Ph icon={p.icon} tint={p.tint} img={productImage(p.id)} alt={p.n} />
@@ -171,11 +171,9 @@ export function QuickView({ id, mode, ci }: { id: string; mode: "add" | "cart"; 
         }
       });
       modal.close();
-      toast.show("Panier mis à jour", "success");
     } else {
-      const v = addToCart(p.id);
+      addToCart(p.id);
       modal.close();
-      toast.show(`Ajouté au panier · ${v}`, "success");
     }
   };
   const pick = (k: string, v: string) => setChoice(p.id, k, v);

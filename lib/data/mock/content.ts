@@ -1,3 +1,4 @@
+import type { FeatureKey } from "@/lib/config/release";
 // Contenu de démonstration du prototype : bannières de l'accueil (gérées par l'admin,
 // 03-design §9.11 Contenu). Portées à l'identique (ligne ~1758 du prototype).
 
@@ -19,8 +20,9 @@ export const REVS: [string, number, string, string, boolean][] = [
   ["@mimi_ht", 5, "Exactement comme sur les photos.", "", true],
 ];
 
-/** Menu latéral du compte (ACC du prototype) : [clé, icône, libellé, lien | "soon:fonctionnalité"] ; "-" = séparateur. */
-export const ACC: ([string, string, string, string] | ["-"])[] = [
+/** Menu latéral du compte (ACC du prototype) : [clé, icône, libellé, lien, fonctionnalité d'une version future ?] ; "-" = séparateur.
+ *  La fonctionnalité sert au « À venir » hors prototype (lib/config/release.ts). */
+export const ACC: ([string, string, string, string, FeatureKey?] | ["-"])[] = [
   ["account", "fa-solid fa-table-cells-large", "Aperçu", "/account"],
   ["orders", "fa-solid fa-receipt", "Commandes", "/orders"],
   ["wallet", "fa-solid fa-wallet", "Wallet", "/wallet"],
@@ -32,20 +34,22 @@ export const ACC: ([string, string, string, string] | ["-"])[] = [
   ["coins", "fa-solid fa-coins", "Coins", "/coins"],
   ["wishlist", "fa-solid fa-heart", "Wishlist", "/wishlist"],
   ["viewed", "fa-solid fa-clock-rotate-left", "Vus récemment", "/viewed"],
-  ["invite", "fa-solid fa-user-plus", "Inviter des amis", "soon:referral"],
+  ["coupons", "fa-solid fa-ticket", "Mes coupons", "/account/coupons", "coupons"],
+  ["invite", "fa-solid fa-user-plus", "Inviter des amis", "/invite", "referral"],
+  ["plus", "fa-solid fa-crown", "Prélakay+", "/plus", "prelakay_plus"],
   ["-"],
   ["help", "fa-solid fa-circle-question", "Centre d'aide", "/help"],
   ["sell", "fa-solid fa-store", "Enregistrer son commerce", "/sell"],
 ];
 
 /** Raccourcis « Services » du compte mobile. */
-export const SERVICES: [string, string, string][] = [
+export const SERVICES: [string, string, string, FeatureKey?][] = [
   ["/notifications", "fa-solid fa-bell", "Messages"],
   ["/myreviews", "fa-solid fa-star", "Mes avis"],
   ["/help", "fa-solid fa-circle-question", "Aide"],
   ["/sell", "fa-solid fa-store", "Vendre"],
-  ["soon:referral", "fa-solid fa-user-plus", "Inviter des amis"],
-  ["soon:prelakay_plus", "fa-solid fa-crown", "Prélakay+"],
+  ["/invite", "fa-solid fa-user-plus", "Inviter des amis", "referral"],
+  ["/plus", "fa-solid fa-crown", "Prélakay+", "prelakay_plus"],
   ["/settings", "fa-solid fa-gear", "Paramètres"],
   ["/map", "fa-solid fa-map", "Carte des stores"],
 ];
@@ -60,6 +64,7 @@ export const ORDER_SHORTCUTS: [string, string, string][] = [
 
 /** Frise de suivi d'une commande. */
 export const ORDER_TIMELINE: [string, string][] = [["fa-solid fa-receipt", "Reçue"], ["fa-solid fa-box", "En préparation"], ["fa-solid fa-store", "Prête"], ["fa-solid fa-check", "Retirée"]];
+export const DELIVERY_TIMELINE: [string, string][] = [["fa-solid fa-receipt", "Reçue"], ["fa-solid fa-box", "En préparation"], ["fa-solid fa-box-open", "Au livreur"], ["fa-solid fa-truck", "En route"], ["fa-solid fa-check", "Livrée"]];
 export const KYC_TIMELINE: [string, string][] = [["fa-solid fa-receipt", "Reçu"], ["fa-solid fa-magnifying-glass", "En vérification"], ["fa-solid fa-circle-check", "Approuvé"]];
 export const READY_TO_SELL: [string, string][] = [["fa-solid fa-box", "Ajouter votre premier produit"], ["fa-solid fa-rotate-left", "Définir votre politique de retour"], ["fa-regular fa-credit-card", "Ajouter un moyen de paiement pour vos retraits"]];
 
@@ -72,7 +77,7 @@ export const COINS_EARN: [string, string, string][] = [
   ["fa-regular fa-star", "Chaque avis vérifié", "+25"],
   ["fa-solid fa-gift", "Bienvenue", "montant à confirmer"],
   ["fa-solid fa-store", "Bonus retrait en magasin", "à confirmer"],
-  ["fa-solid fa-user-plus", "Inviter un ami", "À venir"],
+  ["fa-solid fa-user-plus", "Inviter un ami", "+500"],
 ];
 export const COINS_HISTORY: [string, string, string, string][] = [
   ["fa-regular fa-star", "Avis · Huile de ricin noire", "4 nov.", "+25"],

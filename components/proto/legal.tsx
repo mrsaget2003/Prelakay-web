@@ -1,18 +1,15 @@
 "use client";
 
-// Pages « Légal », « Crédits » et « Devenir un partenaire de paiement » (pied de page).
+// Pages « Légal » et « Crédits » (pied de page). Pages partenaires : ./partners.tsx.
 // Les textes juridiques ne sont pas rédigés ici : ils restent « en préparation »
 // tant que la base légale n'est pas fixée ([À CONFIRMER], plan I5).
 
 import Link from "next/link";
 import { CREDITS, LEGAL_DOCS } from "@/lib/data/credits";
 import { photoCredits } from "@/lib/data/mock/images";
-import { useDemo } from "@/lib/demo/store";
-import { useModal } from "./modal";
-import { SupportForm } from "./shell";
 import { Fi, Page404 } from "./ui";
 
-function Crumb({ items }: { items: [string, string?][] }) {
+export function Crumb({ items }: { items: [string, string?][] }) {
   return (
     <nav className="crumb">
       <Link href="/">Accueil</Link>
@@ -115,27 +112,6 @@ export function Credits() {
             ))}
           </ul>
         </section>
-      </div>
-    </div>
-  );
-}
-
-export function PaymentPartner() {
-  const s = useDemo();
-  const modal = useModal();
-  return (
-    <div className="wrap legal">
-      <Crumb items={[["Devenir un partenaire de paiement"]]} />
-      <div className="panel">
-        <h1 className="ph-t">Devenir un partenaire de paiement</h1>
-        <p style={{ marginBottom: 12 }}>
-          Prélakay fonctionne avec un wallet rechargeable en Haïti (MonCash, NatCash, Sogebank) et depuis l&apos;étranger (Wise, carte, Meru). Vous êtes une banque, une
-          passerelle ou un service de transfert et souhaitez vous connecter au wallet Prélakay ?
-        </p>
-        <button className="btn btn-p" onClick={() => modal.open("Support Prélakay", <SupportForm user={s.user} />)}>
-          <Fi s="comment-dots" />
-          Nous contacter
-        </button>
       </div>
     </div>
   );

@@ -4,9 +4,29 @@
 // vzCohort, vzFunnel, vzSeg, vzMeter, vzSpark, vzTile, vzBubbles) : même balisage, classes vz-*.
 // Chaque graphique : infobulle au survol et au focus clavier, tableau « Voir les données ».
 
-import { useEffect, useRef, type ReactNode } from "react";
+import { useEffect, type ReactNode } from "react";
+import dynamic from "next/dynamic";
 import { Fi } from "@/components/proto/ui";
-import { VZC, VZCAT, VZSEQ, cpt, nfr, niceStep, tip, type TipRow } from "@/lib/charts/vz";
+import { useIsDesk } from "@/lib/proto/useIsDesk";
+import { VZC, VZCAT, VZSEQ, cpt, nfr, tip, type TipRow } from "@/lib/charts/vz";
+
+// Tracés Nivo (CLAUDE.md, 10 nov. 2026) : courbes, colonnes, chaleur, entonnoir, anneau.
+// Chargés côté client ; le cadre (role="img" + résumé) et le tableau restent rendus ici.
+const NLine = dynamic(() => import("./nivo").then((m) => m.NLine), { ssr: false });
+const NBars = dynamic(() => import("./nivo").then((m) => m.NBars), { ssr: false });
+const NHeat = dynamic(() => import("./nivo").then((m) => m.NHeat), { ssr: false });
+const NFunnel = dynamic(() => import("./nivo").then((m) => m.NFunnel), { ssr: false });
+const NPie = dynamic(() => import("./nivo").then((m) => m.NPie), { ssr: false });
+
+/** Cadre d'un tracé Nivo : hauteur fixe (pas de saut de mise en page), résumé pour les lecteurs d'écran. */
+function Plot({ label, h, cls, children }: { label: string; h: number; cls?: string; children: ReactNode }) {
+  return (
+    <div className={`vz-nv${cls ? " " + cls : ""}`} role="img" aria-label={label} style={{ height: h }}>
+      {children}
+    </div>
+  );
+}
+const axisF = (fmt?: Fmt) => (v: number) => String(fmt ? fmt(v) : cpt(v)).replace(/\s?HTG$/, "");
 
 export type Series = { n: string; v: number[]; c: string; muted?: boolean };
 type Fmt = (v: number) => string;
@@ -72,99 +92,18 @@ export function VzCard({ title, sub, cls, badge, children }: { title: string; su
   );
 }
 
-function XLabels({ labels, pts }: { labels: string[]; pts?: boolean }) {
-  const n = labels.length;
-  const dk = Math.max(1, Math.ceil(n / (pts ? 7 : 12)));
-  const mk = Math.max(1, Math.ceil(n / (pts ? 4 : 6)));
-  return (
-    <div className={`vz-x${pts ? " pts" : ""}`}>
-      {labels.map((l, i) => {
-        const last = i === n - 1;
-        const near = (k: number) => !last && n - 1 - i < k * (pts ? 0.6 : 1);
-        const hd = (i % dk || near(dk)) && !last;
-        const hm = (i % mk || near(mk)) && !last;
-        const cls = `${hd ? "dh " : ""}${hm ? "mh" : ""}${pts && i === 0 ? " f" : ""}${pts && last ? " l" : ""}`.trim();
-        return (
-          <span key={i} className={cls || undefined} style={pts ? { left: `${n < 2 ? 50 : (i / (n - 1)) * 100}%` } : undefined}>
-            {l}
-          </span>
-        );
-      })}
-    </div>
-  );
-}
-
-function yAxis(max: number, fmt?: Fmt) {
-  const st = niceStep(max);
-  const top = Math.ceil(max / st) * st || 1;
-  const ticks: number[] = [];
-  for (let v = 0; v <= top + 1e-9; v += st) ticks.push(v);
-  const node = (
-    <>
-      <div className="vz-y">
-        {ticks.map((v) => (
-          <span key={v} style={{ bottom: `${(v / top) * 100}%` }}>
-            {String(fmt ? fmt(v) : cpt(v)).replace(/\s?HTG$/, "")}
-          </span>
-        ))}
-      </div>
-      <div className="vz-grid">
-        {ticks.map((v) => (
-          <i key={v} style={{ bottom: `${(v / top) * 100}%` }} />
-        ))}
-      </div>
-    </>
-  );
-  return { top, node };
-}
-
 /** Courbe (1 à 3 séries) ; une série « muted » = période précédente en gris. */
 export function VzLine({ labels: L, series: S, fmt, area, target }: { labels: string[]; series: Series[]; fmt?: Fmt; area?: boolean; target?: { v: number; label: string } }) {
+  const desk = useIsDesk();
   const n = L.length;
-  const max = Math.max(...S.flatMap((s) => s.v), ...(target ? [target.v] : [])) || 1;
-  const Y = yAxis(max * 1.05, fmt);
-  const fx = (i: number) => (n < 2 ? 50 : (i / (n - 1)) * 100);
-  const fy = (v: number) => 100 - (v / Y.top) * 100;
-  const cross = useRef<HTMLElement>(null);
-  const main = S.find((s) => !s.muted) ?? S[0];
-  const lastV = main.v[n - 1];
   const f = (v: number) => (fmt ? fmt(v) : nfr(v));
+  const label = S.map((s) => `${s.n} : ${f(s.v[0])} le ${L[0]}, ${f(s.v[n - 1])} le ${L[n - 1]}`).join(" ; ");
   return (
     <>
       <VzLegend series={S} kind="line" />
-      <div className="vz-plot">
-        {Y.node}
-        <div className="vz-area">
-          <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-            {S.map((s, k) => {
-              const d = s.v.map((v, i) => `${i ? "L" : "M"}${fx(i).toFixed(2)} ${fy(v).toFixed(2)}`).join(" ");
-              return (
-                <g key={s.n}>
-                  {area && k === 0 && !s.muted ? <path d={`${d} L100 100 L0 100 Z`} fill={s.c} opacity=".1" /> : null}
-                  <path d={d} fill="none" stroke={s.c} strokeWidth="2" vectorEffect="non-scaling-stroke" strokeLinejoin="round" strokeLinecap="round" />
-                </g>
-              );
-            })}
-          </svg>
-          {target ? (
-            <div className="vz-tgt" style={{ bottom: `${(target.v / Y.top) * 100}%` }}>
-              <span>{target.label}</span>
-            </div>
-          ) : null}
-          <span className="vz-dot" style={{ left: `${fx(n - 1)}%`, top: `${fy(lastV)}%`, background: main.c }} />
-          <span className="vz-end" style={{ top: `${fy(lastV)}%` }}>
-            {fmt ? fmt(lastV) : cpt(lastV)}
-          </span>
-          <i className="vz-cross" ref={cross} />
-          {L.map((l, i) => {
-            const w = 100 / Math.max(1, n - 1);
-            const lo = Math.max(0, fx(i) - w / 2);
-            const hi = Math.min(100, fx(i) + w / 2);
-            return <span key={i} className="vz-hx" style={{ left: `${lo}%`, width: `${hi - lo}%` }} data-x={fx(i)} {...tip(l, S.map((s): TipRow => [s.n, f(s.v[i]), s.c, "line"]))} />;
-          })}
-        </div>
-      </div>
-      <XLabels labels={L} pts />
+      <Plot label={label} h={200}>
+        <NLine labels={L} series={S} fmt={f} axisFmt={axisF(fmt)} area={area} target={target} narrow={!desk} />
+      </Plot>
       <VzTable head={["Date", ...S.map((s) => s.n)]} rows={L.map((l, i) => [l, ...S.map((s) => f(s.v[i]))])} />
     </>
   );
@@ -172,40 +111,17 @@ export function VzLine({ labels: L, series: S, fmt, area, target }: { labels: st
 
 /** Colonnes simples, groupées ou empilées. */
 export function VzCols({ labels: L, series: S, fmt, stacked, hl }: { labels: string[]; series: Series[]; fmt?: Fmt; stacked?: boolean; hl?: boolean }) {
+  const desk = useIsDesk();
   const n = L.length;
-  const tot = L.map((_, i) => S.reduce((a, s) => a + s.v[i], 0));
-  const max = stacked ? Math.max(...tot) : Math.max(...S.flatMap((s) => s.v));
-  const Y = yAxis(max || 1, fmt);
   const f = fmt ?? ((v: number) => nfr(v));
+  const tot = L.map((_, i) => S.reduce((a, s) => a + s.v[i], 0));
+  const label = `${S.map((s) => s.n).join(", ")} : ${f(tot[n - 1])} le ${L[n - 1]}`;
   return (
     <>
       <VzLegend series={S} kind="bar" />
-      <div className="vz-plot">
-        {Y.node}
-        <div className="vz-area vz-cols" style={{ ["--n" as string]: n }}>
-          {L.map((l, i) => (
-            <div key={i} className={`vz-c${hl && i === n - 1 ? " hl" : ""}`} {...tip(l, [...S.map((s): TipRow => [s.n, f(s.v[i]), s.c, "sq"]), ...(stacked && S.length > 1 ? [["Total", f(tot[i]), "", ""] as TipRow] : [])])}>
-              {stacked ? (
-                <div className="vz-stk" style={{ height: `${(tot[i] / Y.top) * 100}%` }}>
-                  {S.map((s) => (s.v[i] ? <i key={s.n} style={{ flex: s.v[i], background: s.c }} /> : null))}
-                </div>
-              ) : (
-                <div className="vz-grp">
-                  {S.map((s) => (
-                    <i key={s.n} style={{ height: `${(s.v[i] / Y.top) * 100}%`, background: hl && i === n - 1 ? VZC.a : s.c }} />
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
-          {hl ? (
-            <span className="vz-cap" style={{ bottom: `${(tot[n - 1] / Y.top) * 100}%` }}>
-              {f(tot[n - 1])}
-            </span>
-          ) : null}
-        </div>
-      </div>
-      <XLabels labels={L} />
+      <Plot label={label} h={200}>
+        <NBars labels={L} series={S} fmt={f} axisFmt={axisF(fmt)} stacked={stacked} hl={hl} narrow={!desk} />
+      </Plot>
       <VzTable head={["Date", ...S.map((s) => s.n)]} rows={L.map((l, i) => [l, ...S.map((s) => f(s.v[i]))])} />
     </>
   );
@@ -279,27 +195,16 @@ export function VzDiverge({ items: I }: { items: [string, number][] }) {
 
 /** Carte de chaleur (rampe Lagon). */
 export function VzHeat({ rows: R, cols: C, data: D, fmt, unit, lo, hi }: { rows: string[]; cols: string[]; data: number[][]; fmt?: Fmt; unit?: string; lo?: string; hi?: string }) {
-  const max = Math.max(...D.flat()) || 1;
   const f = fmt ?? ((v: number) => nfr(v));
-  const step = (v: number) => Math.min(4, Math.floor((v / max) * 4.999));
+  const flat = D.flat();
+  const mx = Math.max(...flat);
+  const ri = Math.floor(flat.indexOf(mx) / (C.length || 1));
+  const ci = flat.indexOf(mx) % (C.length || 1);
   return (
     <>
-      <div className="vz-hm" style={{ ["--c" as string]: C.length }}>
-        <span />
-        {C.map((c, i) => (
-          <span key={c + i} className={`vz-hc${i % 2 ? " mh" : ""}`}>
-            {c}
-          </span>
-        ))}
-        {R.map((r, ri) => (
-          <RowFrag key={r}>
-            <span className="vz-hrl">{r}</span>
-            {D[ri].map((v, ci) => (
-              <i key={ci} style={{ background: VZSEQ[step(v)] }} {...tip(`${r} · ${C[ci]}`, [[unit || "Valeur", f(v), "", ""]])} />
-            ))}
-          </RowFrag>
-        ))}
-      </div>
+      <Plot label={`Maximum : ${f(mx)} (${R[ri]} · ${C[ci]})`} h={Math.max(120, 30 + R.length * 26)}>
+        <NHeat rows={R} cols={C} data={D} fmt={f} unit={unit || "Valeur"} seq={VZSEQ} />
+      </Plot>
       <div className="vz-scale">
         <span>{lo || "Peu"}</span>
         {VZSEQ.map((c) => (
@@ -355,28 +260,16 @@ export function VzFunnel({ steps: S }: { steps: [string, number][] }) {
   const top = S[0][1] || 1;
   return (
     <>
+      <Plot label={S.map((s) => `${s[0]} ${nfr(s[1])}`).join(", ")} h={150}>
+        <NFunnel steps={S} />
+      </Plot>
       <div className="vz-fn">
-        {S.map((s, i) => {
-          const w = Math.max(2, Math.min(100, (s[1] / top) * 100));
-          const rate = i ? Math.round((s[1] / (S[i - 1][1] || 1)) * 100) : null;
-          return (
-            <RowFrag key={s[0]}>
-              {i ? (
-                <div className="vz-fr">
-                  <Fi s="arrow-down" />
-                  {rate} % passent à l&apos;étape suivante
-                </div>
-              ) : null}
-              <div className="vz-fs" {...tip(s[0], [["Nombre", nfr(s[1]), VZC.a, "sq"], ["Part du départ", `${Math.round((s[1] / top) * 100)} %`, "", ""]])}>
-                <span className="vz-hl">{s[0]}</span>
-                <span className="vz-ft">
-                  <i style={{ width: `${w}%` }} />
-                </span>
-                <b className="tnum">{nfr(s[1])}</b>
-              </div>
-            </RowFrag>
-          );
-        })}
+        {S.slice(1).map((s, i) => (
+          <div className="vz-fr" key={s[0]}>
+            <Fi s="arrow-down" />
+            {S[i][0]} → {s[0]} : {Math.round((s[1] / (S[i][1] || 1)) * 100)} % passent à l&apos;étape suivante
+          </div>
+        ))}
       </div>
       <VzTable head={["Étape", "Nombre", "Part du départ"]} rows={S.map((s) => [s[0], nfr(s[1]), `${Math.round((s[1] / top) * 100)} %`])} />
     </>
@@ -389,21 +282,14 @@ export function VzSeg({ parts: P, fmt }: { parts: [string, number][]; fmt?: Fmt 
   const f = fmt ?? ((v: number) => nfr(v));
   return (
     <>
-      <div className="vz-sg" role="img" aria-label={P.map((p) => `${p[0]} ${Math.round((p[1] / t) * 100)} %`).join(", ")}>
-        {P.map((p, i) => {
-          const sh = Math.round((p[1] / t) * 100);
-          return p[1] ? (
-            <i key={p[0]} style={{ flex: p[1], background: VZCAT[i], color: i === 3 ? "#0b0c10" : "#fffaf7" }} {...tip(p[0], [["Part", `${sh} %`, VZCAT[i], "sq"], ["Valeur", f(p[1]), "", ""]])}>
-              {sh >= 12 ? `${sh} %` : ""}
-            </i>
-          ) : null;
-        })}
-      </div>
+      <Plot label={P.map((p) => `${p[0]} ${Math.round((p[1] / t) * 100)} %`).join(", ")} h={190} cls="pie">
+        <NPie parts={P} fmt={f} colors={VZCAT} />
+      </Plot>
       <div className="vz-leg">
         {P.map((p, i) => (
           <span key={p[0]}>
             <i className="sq" style={{ background: VZCAT[i] }} />
-            {p[0]}
+            {p[0]} · {Math.round((p[1] / t) * 100)} %
           </span>
         ))}
       </div>

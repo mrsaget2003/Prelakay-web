@@ -4,9 +4,15 @@
 
 /** Ordre des versions. « 1.x » (au fil du pilote) précède « 1.1 » : ce n'est pas un ordre numérique. */
 export const RELEASE_ORDER = ["1", "1.x", "1.1", "2", "3"] as const;
-export type Release = (typeof RELEASE_ORDER)[number];
+/** « all » : prototype de démonstration, tout est actif sauf HELD_IN_PROTOTYPE (CLAUDE.md, 10 nov. 2026). */
+export type Release = (typeof RELEASE_ORDER)[number] | "all";
 
-export const CURRENT_RELEASE: Release = "1";
+/** Production → V1 (règle du CHANGELOG) ; démo et développement → tout actif. */
+export function releaseFor(prelakayEnv: string | undefined): Release {
+  return prelakayEnv === "production" ? "1" : "all";
+}
+
+export const CURRENT_RELEASE: Release = releaseFor(process.env.NEXT_PUBLIC_PRELAKAY_ENV);
 
 export const FEATURES = {
   // V1 · Pilote Les Cayes
@@ -23,11 +29,15 @@ export const FEATURES = {
   voice_search: "2", photo_search: "2", barcode: "2", boost: "2", platform_finance: "2",
   // V3 · Application native
   native_app: "3",
-} as const satisfies Record<string, Release>;
+} as const satisfies Record<string, Exclude<Release, "all">>;
 
 export type FeatureKey = keyof typeof FEATURES;
 
+/** Restent « À venir » même dans le prototype : application native, sourcing (CLAUDE.md), créole. */
+export const HELD_IN_PROTOTYPE: readonly FeatureKey[] = ["native_app", "sourcing", "creole"];
+
 export function isAvailable(key: FeatureKey, current: Release = CURRENT_RELEASE): boolean {
+  if (current === "all") return !HELD_IN_PROTOTYPE.includes(key);
   return RELEASE_ORDER.indexOf(FEATURES[key]) <= RELEASE_ORDER.indexOf(current);
 }
 

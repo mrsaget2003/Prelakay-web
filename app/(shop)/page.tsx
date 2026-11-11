@@ -6,32 +6,46 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { CATS, STORES, P, TINTS } from "@/lib/data/mock/seed";
+import useEmblaCarousel from "embla-carousel-react";
+import { CATS, STORES, P, TINTS, prodBy } from "@/lib/data/mock/seed";
 import { bannerImage } from "@/lib/data/mock/images";
 import { bannersOf } from "@/lib/demo/admin";
 import { useDemo } from "@/lib/demo/store";
 import { useIsDesk } from "@/lib/proto/useIsDesk";
 import { ProductCard, StoreCard } from "@/components/proto/cards";
+import { Countdown } from "@/components/proto/Countdown";
+import { Reveal } from "@/components/proto/motion";
 import { DataIcon, Fi, Ph, SecHead } from "@/components/proto/ui";
 
 function Hero() {
   // bannières gérées dans la console admin (ordre, en ligne / masquée)
   const B = bannersOf(useDemo());
   const slides = B.filter((x) => x.on).length ? B.filter((x) => x.on) : [B[0]];
+  // Embla (validé le 10 nov. 2026) : glisser au doigt ; mêmes classes que le prototype
+  const [ref, api] = useEmblaCarousel({ loop: slides.length > 1 });
   const [i, setI] = useState(0);
   const [auto, setAuto] = useState(true);
   useEffect(() => {
-    if (!auto) return;
-    const t = setInterval(() => setI((x) => (x + 1) % slides.length), 6000);
+    if (!api) return;
+    const on = () => setI(api.selectedScrollSnap());
+    const stop = () => setAuto(false);
+    api.on("select", on).on("pointerDown", stop);
+    return () => {
+      api.off("select", on).off("pointerDown", stop);
+    };
+  }, [api]);
+  useEffect(() => {
+    if (!auto || !api) return;
+    const t = setInterval(() => api.scrollNext(), 6000);
     return () => clearInterval(t);
-  }, [auto, slides.length]);
+  }, [auto, api]);
   const go = (n: number) => {
-    setI((n + slides.length) % slides.length);
+    api?.scrollTo((n + slides.length) % slides.length);
     setAuto(false);
   };
   return (
-    <section className="hero" aria-label="À la une">
-      <div className="hero-track" id="track" style={{ transform: `translateX(${-100 * (i % slides.length)}%)` }}>
+    <section className="hero em" aria-label="À la une" ref={ref}>
+      <div className="hero-track" id="track">
         {slides.map((s) => {
           const img = bannerImage(s.id);
           return (
@@ -71,6 +85,8 @@ function Hero() {
 export default function HomePage() {
   const s = useDemo();
   const desk = useIsDesk();
+  // offres flash validées ; l'expiration est revérifiée à chaque mise à jour de l'état (syncCatalog)
+  const flash = s.marketing.flash.filter((f) => f.st === "live");
   const [more, setMore] = useState(0);
   const near = STORES.filter((x) => x.type === "physique").sort((a, b) => a.km - b.km);
   const nw = P.filter((p) => p.isNew).slice(0, 10);
@@ -109,6 +125,20 @@ export default function HomePage() {
           </div>
         ))}
       </div>
+      {flash.length ? (
+        <section className="sec fl-sec">
+          <SecHead icon={<Fi s="bolt" />} title="Offres flash" sub="24 h seulement, dans des stores de confiance" href="/discover?flash=1" />
+          <div className="fl-cd">
+            Se termine dans <Countdown ends={flash[0].ends} />
+          </div>
+          <div className="rail">
+            {flash.map((f) => {
+              const fp = prodBy(f.product);
+              return fp ? <ProductCard key={f.id} p={fp} badge="Flash" /> : null;
+            })}
+          </div>
+        </section>
+      ) : null}
       <section className="sec">
         <SecHead icon={<Fi s="location-dot" />} title="Près de vous" sub={`Stores physiques autour de ${s.city}`} href="/map" label="Voir la carte" />
         <div className="rail">
@@ -136,9 +166,11 @@ export default function HomePage() {
       <section className="sec">
         <SecHead icon={<Fi r="heart" />} title="Pour vous" />
         <div className="grid" id="fy">
-          {[...fy, ...extra].map((p, i) => (
-            <ProductCard key={`${p.id}-${i}`} p={p} />
-          ))}
+          <Reveal>
+            {[...fy, ...extra].map((p, i) => (
+              <ProductCard key={`${p.id}-${i}`} p={p} />
+            ))}
+          </Reveal>
         </div>
         <div className="more-btn">
           {more >= 3 ? (

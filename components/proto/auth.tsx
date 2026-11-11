@@ -9,12 +9,15 @@ import { CATS } from "@/lib/data/mock/seed";
 import { INTRO } from "@/lib/data/mock/content";
 import { demo, useDemo } from "@/lib/demo/store";
 import { ComingSoon } from "@/components/ui/ComingSoon";
+import { PhoneAuth } from "./phone";
+import { useModal } from "./modal";
 import { useToast } from "@/components/ui/Toast";
 import { useProtoRoute } from "./shell";
 import { DataIcon, Fi, Ph, useMounted } from "./ui";
 
 export function AuthPage({ sign }: { sign: boolean }) {
   const router = useRouter();
+  const modal = useModal();
   const toast = useToast();
   const r = useProtoRoute();
   // retour à la page de départ après connexion (02-app-flow §1) ; uniquement un chemin interne
@@ -59,7 +62,11 @@ export function AuthPage({ sign }: { sign: boolean }) {
             {sign ? "Créer mon compte" : "Se connecter"}
           </button>
           <ComingSoon feature="phone_otp">
-            <button className="btn btn-block" style={{ marginTop: 8, color: "var(--color-neutral-700)" }}>
+            <button
+              className="btn btn-block"
+              style={{ marginTop: 8, color: "var(--color-neutral-700)" }}
+              onClick={() => modal.open("Avec mon numéro de téléphone", <PhoneAuth mode="login" onDone={() => { modal.close(); router.push(next); }} />)}
+            >
               <Fi s="phone" />
               Avec mon numéro de téléphone
             </button>

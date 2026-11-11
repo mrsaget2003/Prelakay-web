@@ -91,7 +91,7 @@ function Side({ sec, me, cnt }: { sec: Section; me: Me; cnt: Partial<Record<Sect
                   </a>
                 </ComingSoon>
               ) : (
-                <Link key={k} className={`sm-i${k === sec ? " on" : ""}`} href={`/admin${path ? "/" + path : ""}`} aria-current={k === sec ? "page" : undefined}>
+                <Link key={k} prefetch={f ? false : undefined} className={`sm-i${k === sec ? " on" : ""}`} href={`/admin${path ? "/" + path : ""}`} aria-current={k === sec ? "page" : undefined}>
                   <DataIcon cls={icon} />
                   {label}
                   {cnt[k] ? <span className="n">{cnt[k]}</span> : null}

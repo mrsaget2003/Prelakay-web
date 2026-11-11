@@ -11,11 +11,12 @@ import { catsOf, storeState } from "@/lib/demo/admin";
 import { hs } from "@/lib/demo/seller";
 import { VZC, nfr, walk } from "@/lib/charts/vz";
 import { sum } from "@/lib/charts/sellerData";
-import { ZONES, pData } from "@/lib/charts/adminData";
+import { pData } from "@/lib/charts/adminData";
+import { CayesQuarterMap, SudSalesMap } from "@/components/admin/SalesMap";
 import { formatHTG as htg } from "@/lib/format";
 import { AHead } from "@/components/admin/shell";
 import { OrdStatus, useActiveStores } from "@/components/admin/charts";
-import { VzBubbles, VzCard, VzCohort, VzCols, VzDiverge, VzFunnel, VzHBars, VzLine, VzSeg, VzTile, VzTiles } from "@/components/charts/vz";
+import { VzCard, VzCohort, VzCols, VzDiverge, VzFunnel, VzHBars, VzLine, VzSeg, VzTile, VzTiles } from "@/components/charts/vz";
 
 const TABS: [string, string][] = [["ventes", "Commandes"], ["acheteurs", "Acheteurs"], ["stores", "Stores"], ["cats", "Catégories"], ["ops", "Opérations"]];
 
@@ -49,9 +50,8 @@ export default function AdminStats() {
         <VzCard title="Commandes par statut" sub="Chaque jour">
           <OrdStatus D={D} />
         </VzCard>
-        <VzCard title="Commandes par zone de Les Cayes" sub="Taille du cercle : nombre de commandes retirées dans la zone">
-          <VzBubbles points={ZONES.map(([n, x, y], i) => ({ n, x, y, v: Math.round(sum(D.picked) * [0.24, 0.18, 0.12, 0.09, 0.1, 0.07, 0.09, 0.06, 0.05][i]) }))} unit="Commandes" />
-        </VzCard>
+        <SudSalesMap days={d as 7 | 30 | 90} />
+        <CayesQuarterMap days={d as 7 | 30 | 90} />
       </>
     );
   } else if (tab === "acheteurs") {

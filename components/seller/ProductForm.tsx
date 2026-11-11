@@ -11,10 +11,10 @@ import { demo, useDemo, type ProductForm as PF } from "@/lib/demo/store";
 import { AXES, formAxes, formError, formFrom, myStore, saveProduct, simulateModeration, statusOf, whyOf } from "@/lib/demo/sellerActions";
 import { combos, hs } from "@/lib/demo/seller";
 import { useToast } from "@/components/ui/Toast";
-import { SoonBadge } from "@/components/ui/Tag";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { SHead } from "@/components/seller/shell";
-import { Fi, Ph } from "@/components/proto/ui";
+import { FieldErr, Fi, Ph } from "@/components/proto/ui";
+import { barcodeSupported, scanBarcode } from "@/lib/ui/barcode";
 
 const SECTIONS: [string, string][] = [["base", "Informations de base"], ["media", "Photos et vidéo"], ["sku", "Caractéristiques et stock"], ["price", "Prix"], ["desc", "Description"], ["ret", "Remise et retour"]];
 
@@ -43,6 +43,33 @@ export function ProductForm({ product: p }: { product: Product | null }) {
   });
   const [err, setErr] = useState<string | null>(null);
   const set = (patch: Partial<PF>) => setF((f) => ({ ...f, ...patch }));
+  const [scanMsg, setScanMsg] = useState<string | null>(null);
+  // scan de code-barres : caméra arrière + BarcodeDetector du navigateur (6 s max), sinon saisie
+  const scan = async () => {
+    if (!barcodeSupported() || !navigator.mediaDevices?.getUserMedia) return setScanMsg("Scan indisponible sur ce navigateur : saisissez le code.");
+    let stream: MediaStream | null = null;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      const v = document.createElement("video");
+      v.srcObject = stream;
+      v.muted = true;
+      await v.play();
+      for (let i = 0; i < 12; i++) {
+        const code = await scanBarcode(v);
+        if (code) {
+          set({ barcode: code });
+          setScanMsg(null);
+          return;
+        }
+        await new Promise((r) => setTimeout(r, 500));
+      }
+      setScanMsg("Aucun code lu : rapprochez le produit ou saisissez le code.");
+    } catch {
+      setScanMsg("Caméra indisponible : saisissez le code.");
+    } finally {
+      stream?.getTracks().forEach((t) => t.stop());
+    }
+  };
   const cat = catBy(F.cat) ?? CATS[0];
   const A = formAxes(F);
   const C = A.length ? combos(A) : [{}];
@@ -257,6 +284,21 @@ export function ProductForm({ product: p }: { product: Product | null }) {
                 <input className="field" id="pf-dm" placeholder="L × l × h" value={F.dims} onChange={(e) => set({ dims: e.target.value })} />
               </div>
             </div>
+            <ComingSoon feature="barcode">
+              <div className="fl">
+                <label className="lbl" htmlFor="pf-bc">
+                  Code-barres (facultatif)
+                </label>
+                <div className="cp">
+                  <input className="field" id="pf-bc" inputMode="numeric" placeholder="EAN ou UPC" value={F.barcode ?? ""} onChange={(e) => { set({ barcode: e.target.value }); setScanMsg(null); }} />
+                  <button type="button" className="btn btn-s btn-sm" onClick={scan}>
+                    <Fi s="camera" />
+                    Scanner
+                  </button>
+                </div>
+                <FieldErr msg={scanMsg} />
+              </div>
+            </ComingSoon>
           </Sec>
           <Sec id="ret" title="Remise et retour">
             <div className="lrow st">
@@ -270,11 +312,16 @@ export function ProductForm({ product: p }: { product: Product | null }) {
               <span className="tag tag-ok">Actif</span>
             </div>
             <ComingSoon feature="delivery">
-              <button className="lrow">
+              <label className="lrow st">
                 <Fi s="truck" />
-                <span>Livraison à domicile</span>
-                <SoonBadge />
-              </button>
+                <span>
+                  Livraison à domicile
+                  <span className="cap" style={{ display: "block" }}>
+                    Par la flotte Prélakay, aux Cayes (frais payés par l&apos;acheteur, à confirmer)
+                  </span>
+                </span>
+                <input type="checkbox" className="pf-chk" checked={F.deliverable !== false} onChange={(e) => set({ deliverable: e.target.checked })} aria-label="Proposer la livraison à domicile" />
+              </label>
             </ComingSoon>
             <Link className="lrow" href="/seller/policy">
               <Fi s="rotate-left" />

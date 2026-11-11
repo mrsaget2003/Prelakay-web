@@ -8,7 +8,7 @@ import { useParams, useRouter } from "next/navigation";
 import { prodBy } from "@/lib/data/mock/seed";
 import { productImage } from "@/lib/data/mock/images";
 import { useDemo } from "@/lib/demo/store";
-import { myStore, noShow, openChat, orderById, prepOrder, readyOrder } from "@/lib/demo/sellerActions";
+import { handToDriver, myStore, noShow, openChat, orderById, prepOrder, readyOrder } from "@/lib/demo/sellerActions";
 import { formatHTG as htg } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { SHead } from "@/components/seller/shell";
@@ -18,6 +18,9 @@ import { EmptyBox, Fi, Ph } from "@/components/proto/ui";
 
 const STEPS = [["receipt", "Reçue"], ["box", "En préparation"], ["store", "Prête"], ["check", "Retirée"]] as const;
 const LVL: Record<string, number> = { received: 0, prep: 1, ready: 2, done: 3, expired: 3, cancelled: 0 };
+/** Livraison (10 nov. 2026) : Reçue → En préparation → Au livreur → En route → Livrée. */
+const DSTEPS = [["receipt", "Reçue"], ["box", "En préparation"], ["box-open", "Au livreur"], ["truck", "En route"], ["check", "Livrée"]] as const;
+const DLVL: Record<string, number> = { received: 0, prep: 1, handed: 2, enroute: 3, delivered: 4, cancelled: 0 };
 
 export default function SellerOrder() {
   const { id } = useParams<{ id: string }>();
@@ -38,7 +41,10 @@ export default function SellerOrder() {
         </EmptyBox>
       </>
     );
-  const lvl = LVL[o.status];
+  const del = o.mode === "delivery";
+  const lvl = (del ? DLVL : LVL)[o.status] ?? 0;
+  const steps = del ? DSTEPS : STEPS;
+  const finished = o.status === "done" || o.status === "delivered";
   const cancelBtn = (
     <button className="btn btn-o" onClick={() => cancel(o.id)}>
       Annuler (rupture)
@@ -49,7 +55,11 @@ export default function SellerOrder() {
       <div className="s-next">
         <div>
           <b>Nouvelle commande</b>
-          <span className="cap">Préparez les articles, puis marquez la commande comme prête. L&apos;acheteur reçoit alors son code de retrait.</span>
+          <span className="cap">
+            {del
+              ? `Livraison à ${o.addr?.zone} : préparez les articles, puis remettez la commande au livreur.`
+              : "Préparez les articles, puis marquez la commande comme prête. L'acheteur reçoit alors son code de retrait."}
+          </span>
         </div>
         <button
           className="btn btn-p"
@@ -61,6 +71,38 @@ export default function SellerOrder() {
           Commencer la préparation
         </button>
         {cancelBtn}
+      </div>
+    ) : o.status === "prep" && del ? (
+      <div className="s-next">
+        <div>
+          <b>En préparation · livraison</b>
+          <span className="cap">
+            {o.addr?.zone} · {o.addr?.mark} · {o.addr?.phone}
+          </span>
+        </div>
+        <button
+          className="btn btn-p"
+          onClick={() => {
+            const err = handToDriver(o.id);
+            toast.show(err ?? "Remise au livreur : l'acheteur suit sa commande", err ? "error" : "success");
+          }}
+        >
+          <Fi s="truck" />
+          Remettre au livreur
+        </button>
+        {cancelBtn}
+      </div>
+    ) : o.status === "handed" || o.status === "enroute" ? (
+      <div className="info-box">
+        <Fi s="truck" />
+        <span>
+          {o.status === "handed" ? "Remise au livreur" : "En route"} · {o.driver?.n} ({o.driver?.tel}). Le paiement est libéré après la saisie du code de livraison (délai à confirmer).
+        </span>
+      </div>
+    ) : o.status === "delivered" ? (
+      <div className="info-box">
+        <Fi s="circle-check" />
+        <span>Livrée à {o.addr?.zone}. Paiement en escrow, libéré selon la règle de livraison (à confirmer).</span>
       </div>
     ) : o.status === "prep" ? (
       <div className="s-next">
@@ -126,8 +168,8 @@ export default function SellerOrder() {
               <OTag s={o.status} />
             </div>
             <div className="tl">
-              {STEPS.map(([i, l], k) => (
-                <div key={l} className={o.status === "cancelled" ? "" : k < lvl || (o.status === "done" && k === 3) ? "ok" : k === lvl ? "now" : ""}>
+              {steps.map(([i, l], k) => (
+                <div key={l} className={o.status === "cancelled" ? "" : k < lvl || (finished && k === steps.length - 1) ? "ok" : k === lvl ? "now" : ""}>
                   <span>
                     <Fi s={i} />
                   </span>

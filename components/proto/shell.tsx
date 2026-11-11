@@ -11,6 +11,7 @@ import { createPortal } from "react-dom";
 import { CATS, STORES, PICONS, TINTS, P, catBy, storeBy } from "@/lib/data/mock/seed";
 import { productImage, storeImage } from "@/lib/data/mock/images";
 import { useDemo, hydrateDemo, demo } from "@/lib/demo/store";
+import { BumpBadge } from "@/components/ui/Feedback";
 import { cartCount, unread } from "@/lib/demo/actions";
 import { parseRoute, type ProtoRoute } from "@/lib/proto/route";
 import { formatHTG as htg } from "@/lib/format";
@@ -53,7 +54,7 @@ const TITLES: Record<string, string> = {
   wishlist: "Wishlist", sell: "Enregistrer son commerce", help: "Centre d'aide", shared: "Panier partagé", login: "Connexion", signup: "Créer un compte",
   account: "Compte", categories: "Catégories", notifications: "Centre de messages", settings: "Paramètres", viewed: "Vus récemment",
   disputes: "Retours et litiges", myreviews: "Mes avis", map: "Carte des stores", discover: "Produits",
-  legal: "Légal", credits: "Crédits", partenaires: "Partenaire de paiement",
+  legal: "Légal", credits: "Crédits", partenaires: "Partenaires",
 };
 const SETTINGS_TITLES: Record<string, string> = {
   profile: "Informations personnelles", secu: "Sécurité du compte", notifs: "Notifications", lang: "Langue et devise", ville: "Ville de retrait", privacy: "Confidentialité",
@@ -285,11 +286,10 @@ function HeaderInner({ r }: { r: ProtoRoute }) {
                 {L("/wallet", <Fi s="wallet" />, "Wallet")}
                 {L("/wishlist", <Fi s="heart" />, "Wishlist")}
                 <ComingSoon feature="coupons">
-                  <button className="mi">
+                  <Link className="mi" href={s.logged ? "/account/coupons" : "/login"}>
                     <Fi s="tag" />
                     Mes coupons
-                    <SoonBadge />
-                  </button>
+                  </Link>
                 </ComingSoon>
                 <hr />
                 <Link className="sm" href={s.logged ? "/settings" : "/login"}>Paramètres</Link>
@@ -313,7 +313,7 @@ function HeaderInner({ r }: { r: ProtoRoute }) {
               </Popover>
               <Link className="hi" href="/cart" aria-label={`Panier, ${cc} article${cc > 1 ? "s" : ""}`}>
                 <Fi s="cart-shopping" />
-                <span className="cnt">{cc}</span>
+                <BumpBadge count={cc} always />
                 <span className="lb">
                   <br />
                   <b>Panier</b>
@@ -473,7 +473,7 @@ function MTop({ r, title }: { r: ProtoRoute; title: string }) {
         </button>
         <Link className="mb round" href="/cart" aria-label="Panier">
           <Fi s="cart-shopping" />
-          {cc ? <span className="cnt">{cc}</span> : null}
+          <BumpBadge count={cc} />
         </Link>
       </div>
     );
@@ -527,7 +527,7 @@ function TabBar({ r }: { r: ProtoRoute }) {
           <Link key={name} href={href} className={a ? "on" : ""} aria-current={a ? "page" : undefined}>
             <span className="ti">
               {icon === "user" && !a ? <Fi r="user" /> : <Fi s={icon} />}
-              {name === "cart" && cc ? <span className="cnt">{cc}</span> : null}
+              {name === "cart" ? <BumpBadge count={cc} /> : null}
               {name === "account" && unread(s) && s.logged ? <span className="dot" /> : null}
             </span>
             {label}
@@ -563,8 +563,9 @@ function Footer() {
             <Link href="/sell">Enregistrer son commerce</Link>
             <Link href="/help">Devenir store de confiance</Link>
             <Link href="/partenaires/paiement">Devenir un partenaire de paiement</Link>
+            <Link href="/partenaires/livraison">Devenir partenaire de livraison</Link>
             <ComingSoon feature="ambassadors">
-              <button>Ambassadeurs étudiants</button>
+              <Link href="/ambassadeurs">Ambassadeurs étudiants</Link>
             </ComingSoon>
           </div>
           <div>

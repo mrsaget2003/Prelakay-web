@@ -24,17 +24,17 @@ export function Demos() {
   return (
     <div className={styles.stack}>
       <div className={styles.row}>
-        <ComingSoon feature="coupons">
+        <ComingSoon feature="native_app">
           <button type="button" className={styles.menuRow}>
             <Icon name="tag" />
-            <span>Mes coupons</span>
+            <span>Télécharger l&apos;app</span>
             <SoonBadge />
           </button>
         </ComingSoon>
-        <ComingSoon feature="delivery" asOption>
+        <ComingSoon feature="creole" asOption>
           <button type="button" className={styles.option}>
             <Icon name="truck" />
-            <span>Livraison</span>
+            <span>Créole</span>
             <SoonBadge />
           </button>
         </ComingSoon>

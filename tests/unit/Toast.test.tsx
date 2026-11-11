@@ -12,8 +12,8 @@ afterEach(() => vi.useRealTimers());
 describe("ComingSoon", () => {
   it("affiche « À venir » 3 s dans une région live", () => {
     vi.useFakeTimers();
-    renderWithToast(<ComingSoon feature="coupons"><a href="/coupons">Mes coupons</a></ComingSoon>);
-    fireEvent.click(screen.getByText("Mes coupons"));
+    renderWithToast(<ComingSoon feature="native_app"><a href="/app">Télécharger l'app</a></ComingSoon>);
+    fireEvent.click(screen.getByText("Télécharger l'app"));
     expect(screen.getByRole("status")).toHaveTextContent("À venir");
     act(() => vi.advanceTimersByTime(2999));
     expect(screen.getByRole("status")).toHaveTextContent("À venir");
@@ -23,7 +23,7 @@ describe("ComingSoon", () => {
 
   it("empêche l'action et la navigation", () => {
     const onClick = vi.fn();
-    renderWithToast(<ComingSoon feature="coupons"><button onClick={onClick}>X</button></ComingSoon>);
+    renderWithToast(<ComingSoon feature="sourcing"><button onClick={onClick}>X</button></ComingSoon>);
     const ev = new MouseEvent("click", { bubbles: true, cancelable: true });
     act(() => { screen.getByText("X").dispatchEvent(ev); });
     expect(onClick).not.toHaveBeenCalled();
@@ -39,8 +39,8 @@ describe("ComingSoon", () => {
   });
 
   it("option grisée (asOption) : aria-disabled + toast", () => {
-    renderWithToast(<ComingSoon feature="delivery" asOption><button>Livraison</button></ComingSoon>);
-    const opt = screen.getByText("Livraison");
+    renderWithToast(<ComingSoon feature="creole" asOption><button>Créole</button></ComingSoon>);
+    const opt = screen.getByText("Créole");
     expect(opt).toHaveAttribute("aria-disabled", "true");
     fireEvent.click(opt);
     expect(screen.getByRole("status")).toHaveTextContent("À venir");

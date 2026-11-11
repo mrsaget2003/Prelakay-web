@@ -20,6 +20,8 @@ const withSerwist = withSerwistInit({
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // Le client sait s'il est en démo (tout actif) ou en production (V1) : lib/config/release.ts.
+  env: { NEXT_PUBLIC_PRELAKAY_ENV: process.env.PRELAKAY_ENV ?? "development" },
   // Images compressées / lazy-load par défaut via next/image — contrainte
   // "connectivité Haïti" documentée dans 04-trd.md.
   images: {

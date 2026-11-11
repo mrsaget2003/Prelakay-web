@@ -163,7 +163,7 @@ describe("Tabs", () => {
         tabs={[
           { id: "all", label: "Toutes" },
           { id: "ready", label: "Prêtes pour retrait" },
-          { id: "promos", label: "Promos", feature: "coupons" },
+          { id: "promos", label: "Promos", feature: "native_app" },
         ]}
       />
     );

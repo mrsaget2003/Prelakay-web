@@ -154,6 +154,16 @@ function emit() {
 
 let hydrated = false;
 
+/** Ancien état sauvegardé : chaque tranche objet (seller, admin, et les suivantes) est complétée par ses valeurs par défaut. */
+function mergeSaved(init: DemoState, saved: Partial<DemoState>): DemoState {
+  const out = { ...init, ...saved } as Record<string, unknown>;
+  for (const [k, v] of Object.entries(init)) {
+    const sv = (saved as Record<string, unknown>)[k];
+    if (v && typeof v === "object" && !Array.isArray(v) && sv && typeof sv === "object" && !Array.isArray(sv)) out[k] = { ...v, ...sv };
+  }
+  return out as DemoState;
+}
+
 /** Relit l'état sauvegardé une seule fois, avant toute écriture : sans cela, une écriture
  *  faite avant hydrateDemo() (ex. « vus récemment » d'une fiche ouverte directement)
  *  écraserait le panier et la wishlist enregistrés. */
@@ -165,7 +175,7 @@ function ensureHydrated(): boolean {
     if (raw) {
       const saved = JSON.parse(raw);
       const init = initialState();
-      state = { ...init, ...saved, seller: { ...init.seller, ...(saved.seller ?? {}) }, admin: { ...init.admin, ...(saved.admin ?? {}) } };
+      state = mergeSaved(init, saved);
       syncCatalog(state);
       return true;
     }

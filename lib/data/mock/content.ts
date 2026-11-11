@@ -1,3 +1,4 @@
+import type { FeatureKey } from "@/lib/config/release";
 // Contenu de démonstration du prototype : bannières de l'accueil (gérées par l'admin,
 // 03-design §9.11 Contenu). Portées à l'identique (ligne ~1758 du prototype).
 
@@ -19,8 +20,9 @@ export const REVS: [string, number, string, string, boolean][] = [
   ["@mimi_ht", 5, "Exactement comme sur les photos.", "", true],
 ];
 
-/** Menu latéral du compte (ACC du prototype) : [clé, icône, libellé, lien | "soon:fonctionnalité"] ; "-" = séparateur. */
-export const ACC: ([string, string, string, string] | ["-"])[] = [
+/** Menu latéral du compte (ACC du prototype) : [clé, icône, libellé, lien, fonctionnalité d'une version future ?] ; "-" = séparateur.
+ *  La fonctionnalité sert au « À venir » hors prototype (lib/config/release.ts). */
+export const ACC: ([string, string, string, string, FeatureKey?] | ["-"])[] = [
   ["account", "fa-solid fa-table-cells-large", "Aperçu", "/account"],
   ["orders", "fa-solid fa-receipt", "Commandes", "/orders"],
   ["wallet", "fa-solid fa-wallet", "Wallet", "/wallet"],
@@ -32,20 +34,21 @@ export const ACC: ([string, string, string, string] | ["-"])[] = [
   ["coins", "fa-solid fa-coins", "Coins", "/coins"],
   ["wishlist", "fa-solid fa-heart", "Wishlist", "/wishlist"],
   ["viewed", "fa-solid fa-clock-rotate-left", "Vus récemment", "/viewed"],
-  ["invite", "fa-solid fa-user-plus", "Inviter des amis", "soon:referral"],
+  ["coupons", "fa-solid fa-ticket", "Mes coupons", "/account/coupons", "coupons"],
+  ["invite", "fa-solid fa-user-plus", "Inviter des amis", "/invite", "referral"],
   ["-"],
   ["help", "fa-solid fa-circle-question", "Centre d'aide", "/help"],
   ["sell", "fa-solid fa-store", "Enregistrer son commerce", "/sell"],
 ];
 
 /** Raccourcis « Services » du compte mobile. */
-export const SERVICES: [string, string, string][] = [
+export const SERVICES: [string, string, string, FeatureKey?][] = [
   ["/notifications", "fa-solid fa-bell", "Messages"],
   ["/myreviews", "fa-solid fa-star", "Mes avis"],
   ["/help", "fa-solid fa-circle-question", "Aide"],
   ["/sell", "fa-solid fa-store", "Vendre"],
-  ["soon:referral", "fa-solid fa-user-plus", "Inviter des amis"],
-  ["soon:prelakay_plus", "fa-solid fa-crown", "Prélakay+"],
+  ["/invite", "fa-solid fa-user-plus", "Inviter des amis", "referral"],
+  ["/plus", "fa-solid fa-crown", "Prélakay+", "prelakay_plus"],
   ["/settings", "fa-solid fa-gear", "Paramètres"],
   ["/map", "fa-solid fa-map", "Carte des stores"],
 ];

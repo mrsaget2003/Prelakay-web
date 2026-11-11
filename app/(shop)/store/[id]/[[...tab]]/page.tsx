@@ -14,6 +14,9 @@ import { sortList } from "@/lib/proto/sort";
 import { storeImage } from "@/lib/data/mock/images";
 import { formatDistance as km, formatCount as k } from "@/lib/format";
 import { SoonBadge } from "@/components/ui/Tag";
+import { CouponCard } from "@/components/proto/coupons";
+import { DEMO_TODAY, couponsOfStore } from "@/lib/demo/coupons";
+import { useDemo } from "@/lib/demo/store";
 import { useToast } from "@/components/ui/Toast";
 import { ProductCard } from "@/components/proto/cards";
 import { ReportForm } from "@/components/proto/forms";
@@ -62,6 +65,7 @@ export default function StorePage() {
   const router = useRouter();
   const toast = useToast();
   const modal = useModal();
+  const demoState = useDemo();
   const s = storeBy(id);
   const q = search.get("q") || "";
   const sort = search.get("sort") || "best";
@@ -211,8 +215,19 @@ export default function StorePage() {
       </div>
     );
   } else if (tab === "promos") {
-    body = (
-      <EmptyBox icon={<Fi s="tag" />} t="Les promos de ce store arrivent bientôt" p="Suivez ce store pour être averti de ses promos et nouveautés.">
+    const promos = couponsOfStore(demoState, s.id).filter((c) => c.on && c.to >= DEMO_TODAY);
+    body = promos.length ? (
+      <>
+        <SecHead title={`Coupons de ${s.n}`} />
+        <div className="cpn-g">
+          {promos.map((c) => (
+            <CouponCard key={c.code} c={c} />
+          ))}
+        </div>
+        <p className="cap" style={{ marginTop: 10 }}>Gardez un coupon, puis saisissez son code au paiement.</p>
+      </>
+    ) : (
+      <EmptyBox icon={<Fi s="tag" />} t="Pas de coupon en ce moment" p="Suivez ce store pour être averti de ses prochaines promos.">
         <FollowButton s={s} />
       </EmptyBox>
     );

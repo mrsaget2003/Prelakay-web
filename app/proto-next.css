@@ -257,3 +257,15 @@ body.scrolled .frail { display: flex; }
 .pt-contact{display:flex;align-items:center;gap:8px;justify-content:center;margin:0 0 32px}
 @media (max-width:1023px){.pt-cards,.pt-steps{grid-template-columns:repeat(2,1fr)}.pt-two{grid-template-columns:1fr}}
 @media (max-width:599px){.pt-hero{padding:20px;flex-direction:column;align-items:flex-start}.pt-hero h1{font-size:24px;line-height:30px}.pt-hi{display:none}.pt-stats{grid-template-columns:1fr 1fr}.pt-cards,.pt-steps,.pt-prof,.pt-grid{grid-template-columns:1fr}}
+
+/* ---------- Coupons (10 nov. 2026) ---------- */
+.cpn-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.cpn{display:flex;background:var(--color-white);border-radius:var(--radius-sm);overflow:hidden;border:1px solid var(--color-neutral-100)}
+.cpn-v{flex:none;width:96px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;background:var(--color-black);color:var(--color-white);padding:12px 6px;text-align:center;border-right:2px dashed var(--color-white)}
+.cpn-v b{font-size:22px;line-height:26px}
+.cpn-v span{font-size:11px;color:var(--color-lagon-100)}
+.cpn-b{flex:1;min-width:0;padding:12px;display:flex;flex-direction:column;gap:4px}
+.cpn-a{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:4px}
+.cpn-code{display:inline-flex;align-items:center;gap:6px;border:1px dashed var(--color-neutral-300);border-radius:6px;padding:4px 8px;background:none;font:inherit;font-weight:600;letter-spacing:1px;cursor:pointer}
+.cpn.dead{opacity:.55}
+.cp-ok{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-top:8px;font-size:13px;color:var(--color-success)}

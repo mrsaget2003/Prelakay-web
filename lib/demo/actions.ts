@@ -6,6 +6,8 @@
 import { addrOk, deliveryFee, type DeliveryAddr, type FulfillMode } from "@/lib/domain/delivery";
 import { BUSINESS } from "@/lib/config/business";
 import { DEMO_DRIVERS } from "./delivery";
+import { DEMO_TODAY, couponByCode, usedOf } from "./coupons";
+import { couponCheck, type CouponResult } from "@/lib/domain/coupons";
 import { demo, type DemoState, type Selection } from "./store";
 import { prodBy, storeBy, optsOf, stockFor, defaultChoice, selLabel, type Product, type Choice } from "@/lib/data/mock/seed";
 import { formatHTG } from "@/lib/format";
@@ -104,8 +106,21 @@ export const MSG_OUT_OF_STOCK = "Cet article n'est plus disponible dans ce choix
 
 /** Paiement du panier (doPay) : une commande par store, wallet débité, lignes payées retirées.
  *  `key` : clé d'idempotence (double clic, réseau coupé) — un même paiement n'est traité qu'une fois. */
-export type PayOpts = { modes?: Record<string, FulfillMode>; addr?: DeliveryAddr };
+export type PayOpts = { modes?: Record<string, FulfillMode>; addr?: DeliveryAddr; coupon?: string };
 export const MSG_NO_ADDR = "Indiquez l'adresse de livraison.";
+
+export type CouponPick = { ok: true; code: string; sid: string; off: number };
+/** Coupon appliqué au premier store sélectionné du panier où il est valable. */
+export function pickCoupon(s: DemoState, code: string): CouponPick | { ok: false; error: string } {
+  const G = groups(cartTotals(s).on);
+  const c = couponByCode(s, code);
+  let last: CouponResult = { ok: false, error: "Code inconnu." };
+  for (const sid of Object.keys(G)) {
+    last = couponCheck(c, { store: sid, subtotal: G[sid].reduce((a, l) => a + l.total, 0), today: DEMO_TODAY, used: c ? usedOf(s, c.code) : 0 });
+    if (last.ok) return { ok: true, code: c!.code, sid, off: last.off };
+  }
+  return { ok: false, error: last.ok ? "Code inconnu." : last.error };
+}
 
 export function payCart(key: string, opts: PayOpts = {}): PayResult {
   const s0 = demo.get();
@@ -120,7 +135,15 @@ export function payCart(key: string, opts: PayOpts = {}): PayResult {
   const delivered = Object.keys(G).filter((sid) => mode(sid) === "delivery");
   if (delivered.length && !addrOk(opts.addr)) return { ok: false, error: MSG_NO_ADDR };
   const fee = delivered.length ? deliveryFee(opts.addr!.zone) : 0;
-  if (s0.wallet < T.sub + fee * delivered.length) return { ok: false, error: MSG_NO_FUNDS };
+  // coupon vérifié de nouveau au paiement (stock, dates), même s'il était appliqué au panier
+  let cp: CouponPick | null = null;
+  if (opts.coupon?.trim()) {
+    const r = pickCoupon(s0, opts.coupon);
+    if (!r.ok) return { ok: false, error: r.error };
+    cp = r;
+  }
+  const off = cp?.off ?? 0;
+  if (s0.wallet < T.sub + fee * delivered.length - off) return { ok: false, error: MSG_NO_FUNDS };
   const ids: string[] = [];
   demo.update((s) => {
     for (const sid of Object.keys(G)) {
@@ -130,10 +153,12 @@ export function payCart(key: string, opts: PayOpts = {}): PayResult {
       s.orders.push({
         id, store: sid, items: ls.map((l) => ({ p: l.p.id, v: l.c.v, q: l.c.q })), status: "received", date: "6 nov. 2026", total: ls.reduce((a, l) => a + l.total, 0),
         ...(del ? { mode: "delivery" as const, addr: { ...opts.addr! }, fee } : {}),
+        ...(cp && cp.sid === sid ? { coupon: cp.code, off: cp.off } : {}),
       });
       ids.push(id);
     }
-    s.wallet -= T.sub + fee * delivered.length;
+    s.wallet -= T.sub + fee * delivered.length - off;
+    if (cp) s.coupons.used[cp.code] = (s.coupons.used[cp.code] ?? 0) + 1;
     s.cart = s.cart.filter((c) => !c.on);
     s.notif.unshift({ i: "fa-solid fa-receipt", t: `Commande ${ids.join(", ")} reçue`, p: "Le store prépare votre commande.", to: `/orders/${ids[0]}`, un: true });
     s.paid[key] = ids;

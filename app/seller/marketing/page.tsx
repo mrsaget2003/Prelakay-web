@@ -1,19 +1,19 @@
 "use client";
 
-// Outils marketing — sMarketing du prototype : coupons, offres flash, événements (V1.x),
-// mise en avant (V2) restent visibles avec « À venir » ; « Partager mon store » est actif.
+// Outils marketing — sMarketing du prototype : coupons, offres flash, événements, mise en avant.
+// Actifs dans le prototype (CLAUDE.md 10 nov. 2026) ; « À venir » seulement hors prototype.
 
 import Link from "next/link";
-import type { FeatureKey } from "@/lib/config/release";
+import { isAvailable, type FeatureKey } from "@/lib/config/release";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { SHead } from "@/components/seller/shell";
 import { Fi } from "@/components/proto/ui";
 
-const TOOLS: [React.ReactNode, string, string, FeatureKey, string][] = [
-  [<Fi key="i" s="ticket" />, "Coupons du store", "Code à 6 chiffres, pourcentage, montant minimum et maximum.", "coupons", "V1.x"],
-  [<Fi key="i" s="bolt" />, "Offres flash 24 h", "Proposées par Prélakay aux stores bien notés.", "flash_offers", "V1.x"],
-  [<Fi key="i" r="calendar" />, "Événements Prélakay", "Participez aux opérations commerciales avec exonération de commission.", "events", "V1.x"],
-  [<Fi key="i" s="rocket" />, "Mettre en avant un produit", "Boost payant dans les résultats.", "boost", "V2"],
+const TOOLS: [React.ReactNode, string, string, FeatureKey, string, string][] = [
+  [<Fi key="i" s="ticket" />, "Coupons du store", "Code à 6 caractères, pourcentage, montant minimum, dates et nombre d'utilisations.", "coupons", "V1.x", "/seller/marketing/coupons"],
+  [<Fi key="i" s="bolt" />, "Offres flash 24 h", "Proposées par Prélakay aux stores bien notés.", "flash_offers", "V1.x", "/seller/marketing/flash"],
+  [<Fi key="i" r="calendar" />, "Événements Prélakay", "Participez aux opérations commerciales avec exonération de commission.", "events", "V1.x", "/seller/marketing/events"],
+  [<Fi key="i" s="rocket" />, "Mettre en avant un produit", "Boost payant dans les résultats.", "boost", "V2", "/seller/marketing/boost"],
 ];
 
 export default function Marketing() {
@@ -21,15 +21,17 @@ export default function Marketing() {
     <>
       <SHead title="Marketing" crumb={[["Marketing"]]} />
       <div className="mk-g">
-        {TOOLS.map(([icon, t, p, f, v]) => (
-          <div className="panel mk" key={t}>
+        {TOOLS.map(([icon, t, p, f, v, href]) => (
+          <div className={`panel mk${isAvailable(f) ? " on" : ""}`} key={t}>
             <span className="mk-i">{icon}</span>
             <h3>{t}</h3>
             <p className="muted">{p}</p>
             <ComingSoon feature={f}>
-              <button className="btn btn-o btn-sm">Créer</button>
+              <Link className="btn btn-o btn-sm" href={href} prefetch={false}>
+                Ouvrir
+              </Link>
             </ComingSoon>
-            <span className="soon-t">À venir · {v}</span>
+            {isAvailable(f) ? null : <span className="soon-t">À venir · {v}</span>}
           </div>
         ))}
         <div className="panel mk on">

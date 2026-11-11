@@ -6,7 +6,7 @@ const ROUTES = [
   "/admin", "/admin/menu", "/admin/search", "/admin/search?q=PK-10", "/admin/stats", "/admin/kyc", "/admin/kyc/KYC-0146",
   "/admin/products", "/admin/products/mq-0", "/admin/reports", "/admin/disputes", "/admin/disputes/LT-150", "/admin/stores",
   "/admin/stores/bel-soley", "/admin/users", "/admin/users/jowan509", "/admin/orders", "/admin/orders/PK-1042", "/admin/banners",
-  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit", "/admin/deliveries",
+  "/admin/notify", "/admin/categories", "/admin/team", "/admin/settings", "/admin/audit", "/admin/deliveries", "/admin/partners", "/admin/partners/PP-0012", "/admin/coupons",
 ];
 const NAV = { timeout: 30_000 };
 test.beforeEach(() => test.setTimeout(150_000));
@@ -134,4 +134,17 @@ test("livraisons : liste, affectation d'un livreur journalisée ; Marketing refu
   await as(page, "marketing");
   await page.goto("/admin/deliveries", NAV);
   await expect(page.getByText("Accès refusé")).toBeVisible();
+});
+
+test("partenaires : accepter une candidature, refus avec motif ; Finance ne voit que le paiement", async ({ page }) => {
+  await as(page, "support");
+  await page.goto("/admin/partners", NAV);
+  await expect(page.getByText("PL-0041")).toBeVisible();
+  await page.goto("/admin/partners/PL-0041", NAV);
+  await page.getByRole("button", { name: "Accepter" }).click();
+  await expect(page.locator(".ph-h .tag")).toHaveText("Acceptée");
+  await as(page, "finance");
+  await page.goto("/admin/partners", NAV);
+  await expect(page.getByText("PP-0012")).toBeVisible();
+  await expect(page.getByText("PL-0039")).toHaveCount(0);
 });

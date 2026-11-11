@@ -11,7 +11,7 @@ import { ORDER_SHORTCUTS, SERVICES } from "@/lib/data/mock/content";
 import { useDemo } from "@/lib/demo/store";
 import { unread } from "@/lib/demo/actions";
 import { formatHTG as htg } from "@/lib/format";
-import type { FeatureKey } from "@/lib/config/release";
+import { isAvailable } from "@/lib/config/release";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { AccLayout } from "@/components/proto/account";
 import { StatHero } from "@/components/proto/blocks";
@@ -57,11 +57,11 @@ export default function AccountPage() {
             Coins
           </Link>
           <ComingSoon feature="coupons">
-            <a href="#">
-              <b>—</b>
+            <Link href="/account/coupons">
+              <b>{s.coupons.mine.length}</b>
               <Fi s="tag" />
               Coupons
-            </a>
+            </Link>
           </ComingSoon>
         </div>
       </div>
@@ -117,16 +117,16 @@ export default function AccountPage() {
           <h2>Services</h2>
         </div>
         <div className="short">
-          {SERVICES.map(([href, icon, label]) =>
-            href.startsWith("soon:") ? (
-              <ComingSoon key={label} feature={href.slice(5) as FeatureKey}>
+          {SERVICES.map(([href, icon, label, feat]) =>
+            feat && !isAvailable(feat) ? (
+              <ComingSoon key={label} feature={feat}>
                 <button>
                   <DataIcon cls={icon} />
                   {label}
                 </button>
               </ComingSoon>
             ) : (
-              <Link key={label} href={href} style={{ position: "relative" }}>
+              <Link key={label} href={href} prefetch={feat ? false : undefined} style={{ position: "relative" }}>
                 <DataIcon cls={icon} />
                 {label}
                 {href === "/notifications" && n ? <span className="cnt">{n}</span> : null}

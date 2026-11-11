@@ -198,7 +198,9 @@ export default function CartPage() {
             <div className="ln">
               <span>Code promo</span>
               <ComingSoon feature="coupons">
-                <button className="lk">Ajouter</button>
+                <Link className="lk" href={T.n ? `${go}#promo` : "/account/coupons"}>
+                  Ajouter
+                </Link>
               </ComingSoon>
             </div>
             <div className="tot">

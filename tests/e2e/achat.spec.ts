@@ -41,7 +41,9 @@ test("livraison : payer en livraison, suivre la commande, valider le code", asyn
   await page.goto("/");
   await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
   await page.goto("/p/tech-1");
-  await (mob ? page.locator("#mbuy .btn-s") : page.locator(".buy .btn-o")).click();
+  const addBtn = mob ? page.locator("#mbuy .btn-s") : page.locator(".buy .btn-o");
+  await addBtn.click();
+  await expect(addBtn).toContainText("Ajouté");
   await page.goto("/checkout");
   await page.getByRole("button", { name: /Livraison à domicile/ }).click();
   await expect(page.getByText("Adresse de livraison")).toBeVisible();
@@ -74,4 +76,60 @@ test("livraison : payer en livraison, suivre la commande, valider le code", asyn
   await expect(page.getByText(/Livrée le/)).toBeVisible();
   const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
   expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test("pied de page → Devenir partenaire de livraison → candidature reçue", async ({ page }, info) => {
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true })));
+  // le pied de page n'existe que sur desktop (mobile : coque de l'app, comme le prototype)
+  if (info.project.name.startsWith("desktop")) {
+    await page.goto("/");
+    await page.locator("footer").getByRole("link", { name: "Devenir partenaire de livraison" }).click();
+  } else await page.goto("/partenaires/livraison");
+  await expect(page).toHaveURL(/\/partenaires\/livraison$/);
+  await expect(page.getByRole("heading", { level: 1, name: "Devenir partenaire de livraison" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Comment ça marche" })).toBeVisible();
+  await page.getByRole("button", { name: "Déposer ma candidature" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "Indiquez votre véhicule." })).toBeVisible();
+  await page.getByLabel("Nom et prénom").fill("Wilfrid Augustin");
+  await page.getByLabel("Téléphone").fill("3712 3456");
+  await page.getByLabel("Date de naissance").fill("1998-04-12");
+  await page.getByLabel("Véhicule").selectOption("moto");
+  await page.getByRole("button", { name: /Ajouter ma pièce d'identité/ }).click();
+  await page.getByRole("button", { name: "Déposer ma candidature" }).click();
+  await expect(page.getByText("Candidature reçue")).toBeVisible();
+  await expect(page.getByText(/PL-\d{4}/)).toBeVisible();
+  const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+  expect(overflow).toBeLessThanOrEqual(0);
+});
+
+test("coupons : le vendeur crée un coupon, l'acheteur le garde puis l'applique au paiement", async ({ page }, info) => {
+  test.setTimeout(120_000);
+  const mob = info.project.name.startsWith("mobile") || info.project.name.startsWith("tablet");
+  await page.goto("/");
+  await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ introDone: true, kyc: "ok" })));
+  await page.goto("/seller/marketing/coupons");
+  await page.getByLabel("Code (vide = généré)").fill("ROBE15");
+  await page.getByLabel("Réduction (%)").fill("15");
+  await page.getByRole("button", { name: "Publier le coupon" }).click();
+  await expect(page.getByRole("cell", { name: "ROBE15" })).toBeVisible();
+  // l'acheteur voit le coupon dans l'onglet Promos du store et le garde
+  await page.goto("/store/boutik-lakay/promos");
+  const card = page.locator(".cpn", { hasText: "ROBE15" });
+  await card.getByRole("button", { name: "Garder" }).click();
+  await expect(card.getByText("Gardé")).toBeVisible();
+  await page.goto("/p/mode-0");
+  const add = mob ? page.locator("#mbuy .btn-s") : page.locator(".buy .btn-o");
+  await add.click();
+  await expect(add).toContainText("Ajouté");
+  await page.goto("/checkout");
+  await page.getByLabel("Code promo").fill("FAUX00");
+  await page.getByRole("button", { name: "Appliquer" }).click();
+  await expect(page.getByRole("alert").filter({ hasText: "Code inconnu." })).toBeVisible();
+  await page.getByLabel("Code promo").fill("ROBE15");
+  await page.getByRole("button", { name: "Appliquer" }).click();
+  await expect(page.getByText("Coupon ROBE15 appliqué")).toBeVisible();
+  if (!mob) await expect(page.locator("aside.sum")).toContainText("Coupon ROBE15");
+  await (mob ? page.locator("#mbar").getByRole("button", { name: "Payer" }) : page.locator("aside.sum").getByRole("button", { name: /^Payer/ })).click();
+  await expect(page).toHaveURL(/\/done\//, { timeout: 30_000 });
 });

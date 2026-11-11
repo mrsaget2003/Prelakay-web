@@ -14,6 +14,7 @@ import { unread } from "@/lib/demo/actions";
 import { formatHTG as htg, formatDistance as km } from "@/lib/format";
 import type { FeatureKey } from "@/lib/config/release";
 import { ComingSoon } from "@/components/ui/ComingSoon";
+import { isAvailable } from "@/lib/config/release";
 import { SoonBadge } from "@/components/ui/Tag";
 import { useToast } from "@/components/ui/Toast";
 import { DisputeForm, ReviewForm } from "./forms";
@@ -46,12 +47,12 @@ export function AccLayout({ k, title, children }: { k: string; title: string; ch
             <h4>Compte</h4>
             {ACC.map((a, i) => {
               if (a[0] === "-") return <hr key={i} />;
-              const [key, icon] = a as [string, string, string, string];
+              const [key, icon, , , feat] = a as [string, string, string, string, FeatureKey?];
               let [, , label, href] = a as [string, string, string, string];
               if (key === "sell" && s.kyc === "ok") [label, href] = ["Espace vendeur", "/seller"];
-              if (href.startsWith("soon:"))
+              if (feat && !isAvailable(feat))
                 return (
-                  <ComingSoon key={key} feature={href.slice(5) as FeatureKey}>
+                  <ComingSoon key={key} feature={feat}>
                     <a href="#">
                       <DataIcon cls={icon} />
                       {label}
@@ -60,7 +61,7 @@ export function AccLayout({ k, title, children }: { k: string; title: string; ch
                   </ComingSoon>
                 );
               return (
-                <Link key={key} href={href} className={key === k ? "on" : ""}>
+                <Link key={key} href={href} prefetch={feat ? false : undefined} className={key === k ? "on" : ""}>
                   <DataIcon cls={icon} />
                   {label}
                   {key === "notifications" && n ? <span className="n">{n}</span> : null}

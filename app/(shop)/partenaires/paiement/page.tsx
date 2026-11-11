@@ -1,8 +1,8 @@
 "use client";
 
 // Devenir un partenaire de paiement (pied de page, colonne Vendre).
-import { PaymentPartner } from "@/components/proto/legal";
+import { PartnerPage } from "@/components/proto/partners";
 
 export default function PaymentPartnerPage() {
-  return <PaymentPartner />;
+  return <PartnerPage kind="payment" />;
 }

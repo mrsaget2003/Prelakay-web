@@ -54,7 +54,7 @@ const TITLES: Record<string, string> = {
   wishlist: "Wishlist", sell: "Enregistrer son commerce", help: "Centre d'aide", shared: "Panier partagé", login: "Connexion", signup: "Créer un compte",
   account: "Compte", categories: "Catégories", notifications: "Centre de messages", settings: "Paramètres", viewed: "Vus récemment",
   disputes: "Retours et litiges", myreviews: "Mes avis", map: "Carte des stores", discover: "Produits",
-  legal: "Légal", credits: "Crédits", partenaires: "Partenaire de paiement",
+  legal: "Légal", credits: "Crédits", partenaires: "Partenaires",
 };
 const SETTINGS_TITLES: Record<string, string> = {
   profile: "Informations personnelles", secu: "Sécurité du compte", notifs: "Notifications", lang: "Langue et devise", ville: "Ville de retrait", privacy: "Confidentialité",
@@ -286,11 +286,10 @@ function HeaderInner({ r }: { r: ProtoRoute }) {
                 {L("/wallet", <Fi s="wallet" />, "Wallet")}
                 {L("/wishlist", <Fi s="heart" />, "Wishlist")}
                 <ComingSoon feature="coupons">
-                  <button className="mi">
+                  <Link className="mi" href={s.logged ? "/account/coupons" : "/login"}>
                     <Fi s="tag" />
                     Mes coupons
-                    <SoonBadge />
-                  </button>
+                  </Link>
                 </ComingSoon>
                 <hr />
                 <Link className="sm" href={s.logged ? "/settings" : "/login"}>Paramètres</Link>
@@ -564,6 +563,7 @@ function Footer() {
             <Link href="/sell">Enregistrer son commerce</Link>
             <Link href="/help">Devenir store de confiance</Link>
             <Link href="/partenaires/paiement">Devenir un partenaire de paiement</Link>
+            <Link href="/partenaires/livraison">Devenir partenaire de livraison</Link>
             <ComingSoon feature="ambassadors">
               <button>Ambassadeurs étudiants</button>
             </ComingSoon>

@@ -9,6 +9,7 @@ import { useSyncExternalStore } from "react";
 import { prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, setStoreOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
 import type { Banner } from "@/lib/data/mock/content";
 import type { PartnerApp, PartnerStatus } from "@/lib/domain/partners";
+import type { Coupon } from "@/lib/domain/coupons";
 
 export type CartLine = { p: string; v: string; q: number; on: boolean };
 export type OrderStatus = "received" | "prep" | "ready" | "done" | "expired" | "cancelled" | "handed" | "enroute" | "delivered";
@@ -19,6 +20,8 @@ export type Order = {
   /** Livraison (10 nov. 2026) : mode, adresse, frais, livreur, progression simulée 0-100. */
   mode?: "pickup" | "delivery"; addr?: { zone: string; mark: string; phone: string }; fee?: number;
   driver?: { n: string; tel: string }; track?: number;
+  /** Coupon appliqué à cette commande et remise en HTG. */
+  coupon?: string; off?: number;
 };
 export type Notif = { i: string; t: string; p: string; to: string; un: boolean };
 export type Selection = { o: Choice; q: number };
@@ -100,6 +103,8 @@ export type DemoState = {
   admin: AdminState;
   /** Candidatures envoyées depuis les pages partenaires (10 nov. 2026). */
   partners: PartnerApp[];
+  /** Coupons (10 nov. 2026) : créés par les vendeurs, gardés par l'acheteur, utilisations, suspensions. */
+  coupons: { list: Coupon[]; mine: string[]; used: Record<string, number>; off: Record<string, boolean> };
 };
 
 const DEMO_ORDERS: Omit<Order, "total">[] = [
@@ -130,6 +135,7 @@ export function initialState(): DemoState {
     ],
     paid: {},
     partners: [],
+    coupons: { list: [], mine: ["BYENVI"], used: {}, off: {} },
     seller: {
       store: "boutik-lakay", policy: null, payMethod: null, payouts: [], stockO: {}, replies: {}, answers: {}, convs: {},
       sorders: {}, dsp: {}, products: [], pstatus: {}, extra: {}, notif: [], seq: 1, form: null,

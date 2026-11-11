@@ -11,7 +11,7 @@ import { BUSINESS } from "@/lib/config/business";
 import { deliveryFee, type DeliveryAddr, type FulfillMode } from "@/lib/domain/delivery";
 import { productImage } from "@/lib/data/mock/images";
 import { useDemo } from "@/lib/demo/store";
-import { MSG_NO_ADDR, cartTotals, groups, payCart, simulateDelivery, simulateStoreProgress } from "@/lib/demo/actions";
+import { MSG_NO_ADDR, cartTotals, groups, payCart, pickCoupon, simulateDelivery, simulateStoreProgress, type CouponPick } from "@/lib/demo/actions";
 import { formatHTG as htg, formatDistance as km } from "@/lib/format";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { useToast } from "@/components/ui/Toast";
@@ -25,6 +25,9 @@ export default function CheckoutPage() {
   const [modes, setModes] = useState<Record<string, FulfillMode>>({});
   const [addr, setAddr] = useState<DeliveryAddr>({ zone: ZONES[0][0], mark: "", phone: "" });
   const [addrErr, setAddrErr] = useState<string | null>(null);
+  const [promo, setPromo] = useState("");
+  const [cp, setCp] = useState<CouponPick | null>(null);
+  const [cpErr, setCpErr] = useState<string | null>(null);
   if (!s.logged) return <NeedLogin what="Le paiement" next="/checkout" />;
   const T = cartTotals(s);
   if (!T.n)
@@ -44,15 +47,33 @@ export default function CheckoutPage() {
   const modeOf = (sid: string): FulfillMode => modes[sid] ?? "pickup";
   const nDel = sids.filter((sid) => modeOf(sid) === "delivery").length;
   const fee = nDel ? deliveryFee(addr.zone) : 0;
-  const due = T.sub + fee * nDel;
+  const off = cp?.off ?? 0;
+  const due = T.sub + fee * nDel - off;
+  const applyPromo = () => {
+    const r = pickCoupon(s, promo);
+    if (r.ok) {
+      setCp(r);
+      setCpErr(null);
+    } else {
+      setCp(null);
+      setCpErr(r.error);
+    }
+  };
   const allDel = nDel === sids.length;
   const setAll = (m: FulfillMode) => setModes(Object.fromEntries(sids.map((sid) => [sid, m])));
   const enough = s.wallet >= due;
   // clé d'idempotence = panier payé + nombre de commandes : un double clic ne paie qu'une fois (Review Focus n° 5)
   const payKey = `pay-${s.orders.length}-${JSON.stringify(T.on.map((l) => [l.c.p, l.c.v, l.c.q]))}`;
   const pay = () => {
-    const r = payCart(payKey, { modes, addr });
-    if (!r.ok) return r.error === MSG_NO_ADDR ? setAddrErr(r.error) : toast.show(r.error, "error");
+    const r = payCart(payKey, { modes, addr, coupon: cp?.code });
+    if (!r.ok) {
+      if (r.error === MSG_NO_ADDR) return setAddrErr(r.error);
+      if (cp && /coupon|Code inconnu|Montant minimum/.test(r.error)) {
+        setCp(null);
+        return setCpErr(r.error);
+      }
+      return toast.show(r.error, "error");
+    }
     simulateStoreProgress(r.ids, (id) => toast.show(`Commande ${id} prête pour retrait`, "success"));
     simulateDelivery(r.ids, (id) => toast.show(`Commande ${id} en route : préparez votre code de livraison`, "info"));
     router.push(`/done/${r.ids.join(",")}`);
@@ -196,11 +217,48 @@ export default function CheckoutPage() {
                 Code promo
               </label>
               <div style={{ display: "flex", gap: 8 }}>
-                <input className="field" id="promo" placeholder="Code à 6 chiffres" inputMode="numeric" />
+                <input
+                  className="field"
+                  id="promo"
+                  placeholder="Code à 6 caractères"
+                  autoCapitalize="characters"
+                  value={promo}
+                  aria-invalid={cpErr ? true : undefined}
+                  onChange={(e) => {
+                    setPromo(e.target.value.toUpperCase());
+                    setCpErr(null);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") applyPromo();
+                  }}
+                />
                 <ComingSoon feature="coupons">
-                  <button className="btn btn-s">Appliquer</button>
+                  <button className="btn btn-s" onClick={applyPromo} disabled={!promo.trim()}>
+                    Appliquer
+                  </button>
                 </ComingSoon>
               </div>
+              <FieldErr msg={cpErr} />
+              {cp ? (
+                <p className="cp-ok">
+                  <span>
+                    <Fi s="circle-check" /> Coupon {cp.code} appliqué
+                  </span>
+                  <button className="lk" onClick={() => setCp(null)}>
+                    Retirer
+                  </button>
+                </p>
+              ) : null}
+              {s.coupons.mine.length && !cp ? (
+                <p className="cap" style={{ marginTop: 6 }}>
+                  Vos coupons :{" "}
+                  {s.coupons.mine.map((c) => (
+                    <button key={c} className="lk" style={{ marginRight: 8 }} onClick={() => setPromo(c)}>
+                      {c}
+                    </button>
+                  ))}
+                </p>
+              ) : null}
             </div>
           </div>
         </div>
@@ -220,6 +278,12 @@ export default function CheckoutPage() {
             <div className="ln">
               <span>Livraison{nDel > 1 ? ` (${nDel} stores)` : ""}</span>
               <span className="tnum">{htg(fee * nDel)}</span>
+            </div>
+          ) : null}
+          {cp ? (
+            <div className="ln">
+              <span>Coupon {cp.code}</span>
+              <span className="tnum">−{htg(cp.off)}</span>
             </div>
           ) : null}
           <div className="ln">

@@ -7,8 +7,9 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
-import { CATS, STORES, P, TINTS, prodBy } from "@/lib/data/mock/seed";
-import { bannerImage } from "@/lib/data/mock/images";
+import { CATS, STORES, P, TINTS, prodBy, storeBy } from "@/lib/data/mock/seed";
+import { bannerImage, productImage } from "@/lib/data/mock/images";
+import { formatHTG as htg, formatDistance as km } from "@/lib/format";
 import { bannersOf } from "@/lib/demo/admin";
 import { useDemo } from "@/lib/demo/store";
 import { useIsDesk } from "@/lib/proto/useIsDesk";
@@ -89,11 +90,11 @@ export default function HomePage() {
   const flash = s.marketing.flash.filter((f) => f.st === "live");
   const [more, setMore] = useState(0);
   const near = STORES.filter((x) => x.type === "physique").sort((a, b) => a.km - b.km);
-  const nw = P.filter((p) => p.isNew).slice(0, 10);
-  const rd = P.filter((p) => p.ready).slice(0, 10);
-  const fy = P.slice(0)
-    .sort((a, b) => ((a.id.length * 7 + a.price) % 13) - ((b.id.length * 7 + b.price) % 13))
-    .slice(0, desk ? 20 : 12);
+  // la photo d'abord : un produit photographié passe devant un produit sans photo, à ordre égal
+  const withPhoto = (list: typeof P) => list.slice().sort((a, b) => Number(!!productImage(b.id)) - Number(!!productImage(a.id)));
+  const nw = withPhoto(P.filter((p) => p.isNew)).slice(0, 10);
+  const rd = withPhoto(P.filter((p) => p.ready)).slice(0, 10);
+  const fy = withPhoto(P.slice(0).sort((a, b) => ((a.id.length * 7 + a.price) % 13) - ((b.id.length * 7 + b.price) % 13))).slice(0, desk ? 20 : 12);
   const extra: typeof P = [];
   for (let m = 1; m <= more; m++) extra.push(...P.slice().sort((x, y) => ((x.price * (m + 3)) % 17) - ((y.price * (m + 3)) % 17)).slice(0, 10));
 
@@ -131,12 +132,36 @@ export default function HomePage() {
           <div className="fl-cd">
             Se termine dans <Countdown ends={flash[0].ends} />
           </div>
-          <div className="rail">
-            {flash.map((f) => {
-              const fp = prodBy(f.product);
-              return fp ? <ProductCard key={f.id} p={fp} badge="Flash" /> : null;
-            })}
-          </div>
+          {/* moins de 3 offres : une carte large par offre, sinon la rangée de cartes */}
+          {flash.length >= 3 ? (
+            <div className="rail">
+              {flash.map((f) => {
+                const fp = prodBy(f.product);
+                return fp ? <ProductCard key={f.id} p={fp} badge="Flash" /> : null;
+              })}
+            </div>
+          ) : null}
+          {flash.length >= 3 ? null : flash.map((f) => {
+            const fp = prodBy(f.product);
+            const fst = fp ? storeBy(fp.store) : null;
+            return fp && fst ? (
+              <Link key={`w-${f.id}`} className="fl-one" href={`/p/${fp.id}`}>
+                <Ph icon={fp.icon} tint={fp.tint} img={productImage(fp.id, 240)} alt={fp.n} />
+                <div className="bd">
+                  <span className="tag tag-err">Flash</span>
+                  <div className="nm">{fp.n}</div>
+                  <div className="price">
+                    <b className="tnum">{htg(fp.price)}</b>
+                    {fp.was ? <s className="tnum">{htg(fp.was)}</s> : null}
+                  </div>
+                  <div className="st">
+                    <Fi s="store" />
+                    {fst.n} · {km(fst.km)}
+                  </div>
+                </div>
+              </Link>
+            ) : null;
+          })}
         </section>
       ) : null}
       <section className="sec">

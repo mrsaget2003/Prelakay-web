@@ -61,7 +61,7 @@ test("commande : préparer, marquer prête, valider le retrait avec le code", as
   await page.getByRole("button", { name: "Valider", exact: true }).click();
   await expect(page.getByText("Code invalide ou commande déjà retirée")).toBeVisible();
   const row = page.locator(".s-orow", { hasText: "PK-980" });
-  await row.getByRole("button", { name: "Prototype : code" }).click();
+  await row.getByRole("button", { name: "Remplir le code" }).click();
   await page.getByRole("button", { name: "Valider", exact: true }).click();
   await expect(page.getByText("Retrait validé · PK-980")).toBeVisible();
   await page.goto("/seller/orders/PK-980");

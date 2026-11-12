@@ -34,6 +34,11 @@ const nextConfig = {
   // "connectivité Haïti" documentée dans 04-trd.md.
   images: {
     formats: ["image/avif", "image/webp"],
+    // Photos de démonstration Unsplash : passées par l'optimiseur pour être servies depuis
+    // notre origine, redimensionnées et mises en cache (contrainte « connectivité Haïti »,
+    // 04-trd.md). 55 images externes sur l'accueil, c'est ce qui le rendait vide à charger.
+    remotePatterns: [{ protocol: "https", hostname: "images.unsplash.com" }],
+    minimumCacheTTL: 60 * 60 * 24 * 30,
   },
 };
 

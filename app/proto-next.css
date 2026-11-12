@@ -368,3 +368,140 @@ body.scrolled .frail { display: flex; }
   .pt-cards,.pt-cards-3,.pt-steps,.pt-prof,.pt-stats{grid-template-columns:1fr}
   .pt-photo-side{max-height:260px;object-fit:cover}
 }
+
+/* =====================================================================
+   Coque mobile : respiration (11 nov. 2026). Structure AliExpress mobile,
+   identité design-prelakay.md. Direction : « chaque produit vous dit à
+   combien de mètres il vous attend ». Tout est scopé sous 1024 px, sauf
+   les tuiles de remplacement (Ph), à plat partout.
+   ===================================================================== */
+
+/* Tuiles sans photo : un fond plat et une icône discrète, plus de dégradé gris. */
+.ph.g0{background:#eef0f0}
+.ph.g1{background:#dbf8fb}
+.ph.g2{background:#f3f4f4}
+.ph.g3{background:#dfe2e2;color:var(--color-neutral-700)}
+.ph.g5{background:#e6f6f7}
+.ph > .fa-ic{font-size:30px;opacity:.45}
+.pc .ph > .fa-ic,.cp-g .ph > .fa-ic,.storec .thumbs .ph > .fa-ic{font-size:26px}
+.qcats .ph > .fa-ic,.cur-o .ph > .fa-ic{font-size:20px;opacity:.9}
+
+@media (max-width:1023px){
+  :root{--margin:16px;--gut:12px}
+
+  /* recherche : cible tactile 44 px, un seul contour */
+  .msb{padding:10px var(--margin)}
+  .msb-i,.msb-go{height:44px}
+  .msb-i{padding:0 8px 0 16px}
+  .mcats{height:42px;gap:22px}
+  .mcats a.on::after{bottom:5px}
+
+  /* bannière : moins haute, coins de carte, texte posé */
+  .home-top{margin-top:4px}
+  .hero{border-radius:16px}
+  .slide{aspect-ratio:16/8.5;padding:0 20px}
+  .slide .tx{max-width:66%}
+  .slide small{font-size:11px;letter-spacing:.5px;margin-bottom:6px}
+  .slide h2{font-size:21px;line-height:1.18;margin-bottom:14px}
+  .slide .btn{height:40px;padding:0 16px;font-size:13px}
+  .slide .art{opacity:.14;right:6%}
+  .dots{bottom:12px}
+
+  /* catégories rapides : une rangée qui défile, tuiles plates lagon, sans cadre blanc */
+  .qcats{display:flex;overflow-x:auto;scroll-snap-type:x proximity;scrollbar-width:none;gap:0;margin:16px calc(-1*var(--margin)) 0;padding:0 var(--margin);background:none;border-radius:0}
+  .qcats::-webkit-scrollbar{display:none}
+  .qcats a{flex:0 0 72px;scroll-snap-align:start;gap:8px;font-size:12px;line-height:15px;color:var(--color-neutral-700)}
+  .qcats .ph{width:56px;height:56px;border-radius:18px;background:var(--color-lagon-100);color:var(--color-lagon-700)}
+
+  /* réassurance : une ligne, pas une grille */
+  .trust{display:flex;overflow-x:auto;scrollbar-width:none;gap:4px;margin-top:16px;padding:0 4px;border-radius:12px}
+  .trust::-webkit-scrollbar{display:none}
+  .trust div{flex:0 0 auto;justify-content:flex-start;padding:12px 10px;font-size:13px;font-weight:500;color:var(--color-neutral-700);white-space:nowrap}
+  .trust i{font-size:15px}
+
+  /* sections : un titre, un lien, rien d'autre */
+  .sec{margin-top:28px}
+  .sec-h{align-items:center;margin-bottom:12px}
+  .sec-h h2{font-size:20px;line-height:28px;gap:0}
+  .sec-h h2 > .fa-ic,.sec-h h2 > i{display:none}
+  .sec-h p{display:none}
+  .sec-h .all{font-size:13px;color:var(--color-lagon-700)}
+
+  /* offre flash : la carte large */
+  .fl-cd{margin:-2px 0 12px}
+  .fl-one{align-items:center;gap:14px;background:var(--color-white);border-radius:16px;padding:12px;color:inherit}
+  .fl-one .ph{width:108px;height:108px;border-radius:12px;flex:none}
+  .fl-one .bd{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+  .fl-one .nm{font-size:14px;line-height:19px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .fl-one .price{align-items:baseline}
+  .fl-one .price b{font-size:20px;line-height:26px;color:var(--color-error)}
+  .fl-one .st{font-size:12px;color:var(--color-lagon-700);display:flex;align-items:center;gap:5px}
+  .fl-one .tag{align-self:flex-start}
+
+  /* stores près de vous : une carte à la fois, et de l'air */
+  .rail:has(> .storec){grid-auto-columns:min(78%,320px)}
+  .storec{border-radius:14px;padding:14px;gap:12px}
+
+  /* cartes produit : le nom, puis l'avis, puis le prix, puis le store et sa distance */
+  .pc{border-radius:14px}
+  .pc .bd{padding:10px 12px 14px;gap:3px}
+  .pc .nm{order:1;font-size:14px;line-height:19px;min-height:38px}
+  .pc .meta{order:2;font-size:12px}
+  .pc .price{order:3;margin-top:2px}
+  .pc .price b{font-size:18px;line-height:24px}
+  .pc .price s{font-size:12px}
+  .pc .st{order:4;margin-top:4px;padding-top:0;font-size:12px;color:var(--color-lagon-700)}
+  .pc .wish{opacity:1;width:32px;height:32px}
+  .pc .qa{width:36px;height:36px}
+  .tag{font-size:11px;padding:2px 7px}
+  .more-btn{margin-top:20px}
+  .more-btn .btn{height:44px;width:100%}
+
+  /* compte : les quatre raccourcis sur une ligne de même hauteur ; le solde ne se coupe pas */
+  .ashort a,.ashort button{padding:14px 2px;font-size:12px;line-height:15px;min-height:84px;justify-content:flex-start}
+  .ashort b{font-size:18px;line-height:22px}
+  .panel{border-radius:14px}
+
+  /* catégories : tuiles plates, coins de carte */
+  .cp-g{gap:14px 10px}
+  .cp-g .ph{border-radius:14px}
+
+  /* barre d'onglets : libellés plus petits, icônes plus présentes */
+  .tabbar a{font-size:11px;gap:3px}
+  .tabbar .ti{font-size:20px}
+}
+@media (max-width:767px){
+  :root{--margin:16px;--gut:12px;--cols:2}
+}
+@media (max-width:1023px){
+  /* .m-only pose display:revert !important : la carte flash doit rester en flex */
+  /* solde du wallet sur une ligne, taille qui suit la largeur */
+  .sh-tx .amt{white-space:nowrap;font-size:clamp(22px,7.2vw,30px)}
+  /* zones tactiles : 44 px pour la pastille active, au moins 32 px pour les liens texte */
+  /* pastilles : le visuel reste 8 px, la zone tactile monte à 28 px par un pseudo-élément */
+  .dots button{position:relative}
+  .dots button::before{content:"";position:absolute;left:-4px;right:-4px;top:-10px;bottom:-10px}
+  a.all,.lk,.oc-d,.oc-st,.pinfo .nw,.rv-act button{min-height:32px;display:inline-flex;align-items:center}
+  .qty button{width:36px;height:36px}
+}
+
+@media (max-width:767px){
+  /* carte wallet : le solde sur sa ligne, « Recharger » pleine largeur sous le pouce */
+  .stathero{flex-wrap:wrap;gap:12px 14px}
+  .stathero .sh-tx .amt{white-space:nowrap;font-size:clamp(24px,7.4vw,30px);line-height:1.15}
+  .stathero .btn{flex:1 1 100%;height:44px;justify-content:center}
+  .acts button{min-height:32px;padding:4px 8px}
+}
+
+/* carte flash large, toutes largeurs (moins de 3 offres) ; sur bureau, elle ne s'étire pas */
+.fl-one{display:flex;align-items:center;gap:16px;background:var(--color-white);border-radius:14px;padding:14px;color:inherit;max-width:560px;transition:box-shadow var(--dur)}
+.fl-one:hover{box-shadow:var(--shadow-card)}
+.fl-one .ph{width:120px;height:120px;border-radius:12px;flex:none}
+.fl-one .bd{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px}
+.fl-one .nm{font-size:15px;line-height:20px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.fl-one .price{align-items:baseline}
+.fl-one .price b{font-size:22px;line-height:28px;color:var(--color-error)}
+.fl-one .st{font-size:12px;color:var(--color-lagon-700);display:flex;align-items:center;gap:5px}
+.fl-one .tag{align-self:flex-start}
+.fl-one + .fl-one{margin-top:12px}
+@media (max-width:1023px){.fl-one{max-width:none;padding:12px}.fl-one .ph{width:108px;height:108px}.fl-one .nm{font-size:14px;line-height:19px}.fl-one .price b{font-size:20px;line-height:26px}}

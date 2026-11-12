@@ -116,9 +116,9 @@ test("carte des ventes : % et montant par commune du Sud, bascule ventes / comma
   await page.goto("/admin/stats", NAV);
   const card = page.locator("section.vz", { hasText: "Ventes par commune du Sud" });
   await expect(card).toBeVisible();
-  await expect(card.locator(".sm-map svg path").first()).toBeVisible({ timeout: 15_000 });
-  expect(await card.locator(".sm-map svg path").count()).toBeGreaterThanOrEqual(18);
-  await expect(card.locator(".sm-lead")).toHaveText(/Les Cayes · \d+ % · [\d\s  ]+ HTG/);
+  await expect(card.locator(".smap-map svg path").first()).toBeVisible({ timeout: 15_000 });
+  expect(await card.locator(".smap-map svg path").count()).toBeGreaterThanOrEqual(18);
+  await expect(card.locator(".smap-lead")).toHaveText(/Les Cayes · \d+ % · [\d\s  ]+ HTG/);
   await card.getByRole("button", { name: "Commandes", exact: true }).click();
   await expect(card.getByRole("button", { name: "Commandes", exact: true })).toHaveAttribute("aria-pressed", "true");
   await expect(card.locator(".vz-h .cap")).toContainText("des commandes");

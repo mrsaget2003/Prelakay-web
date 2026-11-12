@@ -148,7 +148,7 @@ test("Prélakay+ : s'abonner depuis le compte, badge or ; parrainage : lien et C
   await expect(page.locator(".bdg", { hasText: "Prélakay+" }).first()).toBeVisible();
   await page.goto("/invite");
   await expect(page.getByLabel("Lien de parrainage")).toHaveValue("https://prelakay.com/r/marckarlin");
-  await page.getByRole("button", { name: "Prototype : 1re commande" }).click();
+  await page.getByRole("button", { name: "Simuler la 1re commande" }).click();
   await expect(page.getByText("+500 Coins").last()).toBeVisible();
 });
 

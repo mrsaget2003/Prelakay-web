@@ -3,6 +3,7 @@
 // Briques du prototype (fonctions ph, stars, emptyBox, secHead, qr) en composants.
 // Même balisage, mêmes classes : le CSS du prototype (app/proto.css) s'applique tel quel.
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import { Icon, type IconName } from "@/components/ui/Icon";
@@ -22,15 +23,19 @@ export function DataIcon({ cls, className }: { cls: string; className?: string }
 
 /** Tuile du prototype (ph) : dégradé + icône Font Awesome ; une photo hébergée la recouvre
  *  si elle existe et se charge, sinon l'icône reste le placeholder. */
-export function Ph({ icon, tint = "g0", cls = "", img, alt = "" }: { icon: string | ReactNode; tint?: string; cls?: string; img?: string; alt?: string }) {
+export function Ph({ icon, tint = "g0", cls = "", img, alt = "", sizes = "(max-width: 767px) 50vw, (max-width: 1023px) 33vw, 240px" }: {
+  icon: string | ReactNode; tint?: string; cls?: string; img?: string; alt?: string;
+  /** Largeur affichée, pour que l'optimiseur serve la bonne taille (attribut `sizes`). */
+  sizes?: string;
+}) {
   const [failed, setFailed] = useState(false);
   return (
     <div className={`ph ${tint} ${cls}`.trim()}>
       {typeof icon === "string" ? <DataIcon cls={icon} /> : icon}
       {img && !failed ? (
-        // Photo Unsplash déjà dimensionnée par son CDN (paramètres w/h/q) : pas d'optimisation Next.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img className="ph-img" src={img} alt={alt} loading="lazy" decoding="async" onError={() => setFailed(true)} />
+        // Servie par l'optimiseur Next (next.config `remotePatterns`) : une seule origine,
+        // WebP/AVIF à la bonne taille, cache 30 jours. Le placeholder reste dessous.
+        <Image className="ph-img" src={img} alt={alt} fill sizes={sizes} onError={() => setFailed(true)} />
       ) : null}
     </div>
   );

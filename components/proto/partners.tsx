@@ -185,12 +185,11 @@ export function PartnerPage({ kind }: { kind: PartnerKind }) {
         </div>
         <Image
           className="pt-photo"
-          src={photoUrl(c.heroPhoto, 760, 560)}
+          src={photoUrl(c.heroPhoto, 640, 480)}
           alt={c.heroPhoto.alt}
           width={380}
           height={280}
-          unoptimized
-          priority
+          loading="eager"
         />
       </section>
       <ul className="pt-stats" aria-label="Chiffres de la plateforme">
@@ -232,11 +231,11 @@ export function PartnerPage({ kind }: { kind: PartnerKind }) {
         </div>
         <Image
           className="pt-photo pt-photo-side"
-          src={photoUrl(c.sidePhoto, 720, 900)}
+          src={photoUrl(c.sidePhoto, 600, 750)}
           alt={c.sidePhoto.alt}
           width={360}
           height={450}
-          unoptimized
+          loading="lazy"
         />
       </section>
       <section className="pt-sec">

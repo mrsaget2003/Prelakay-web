@@ -200,7 +200,7 @@ export default function Ambassadors() {
             <li><Fi s="check" />Ouvert aux étudiants et jeunes diplômés</li>
           </ul>
         </div>
-        <Image className="pt-photo" src={photoUrl(PARTNER_PHOTOS.ambassadorHero, 760, 560)} alt={PARTNER_PHOTOS.ambassadorHero.alt} width={380} height={280} unoptimized priority />
+        <Image className="pt-photo" src={photoUrl(PARTNER_PHOTOS.ambassadorHero, 640, 480)} alt={PARTNER_PHOTOS.ambassadorHero.alt} width={380} height={280} loading="eager" />
       </section>
 
       <ul className="pt-stats" aria-label="Le programme en bref">
@@ -247,7 +247,7 @@ export default function Ambassadors() {
             {NO_EXPECT.map((x) => <li key={x}><Fi s="xmark" />{x}</li>)}
           </ul>
         </div>
-        <Image className="pt-photo pt-photo-side" src={photoUrl(PARTNER_PHOTOS.ambassadorCampus, 720, 900)} alt={PARTNER_PHOTOS.ambassadorCampus.alt} width={360} height={450} unoptimized />
+        <Image className="pt-photo pt-photo-side" src={photoUrl(PARTNER_PHOTOS.ambassadorCampus, 600, 750)} alt={PARTNER_PHOTOS.ambassadorCampus.alt} width={360} height={450} loading="lazy" />
       </section>
 
       <section className="pt-sec">

@@ -55,14 +55,24 @@ test("store suspendu par un admin : sa page dit qu'il est indisponible", async (
 
 // Carte des stores (11 nov. 2026) : MapLibre sur fond MapTiler quand la clé est
 // configurée, plan de repérage sinon. Les parcours tournent sans clé.
-test("carte des stores : sans clé MapTiler, le plan de repérage reste utilisable", async ({ page }) => {
+test("carte des stores : repères cliquables, avec la vraie carte (clé MapTiler) ou le plan de repérage", async ({ page }) => {
   await demo(page, {});
   await page.goto("/map");
-  const pins = page.locator(".map button.pin:not(.me)");
-  await expect(pins.first()).toBeVisible();
-  await pins.first().click();
+  // pas de networkidle : avec la vraie carte, les tuiles arrivent en continu
+  await expect(page.locator(".mlmap, .map").first()).toBeVisible();
+  const real = page.locator(".mlmap");
+  if (await real.count()) {
+    // clé configurée : MapLibre, un bouton par store
+    const pin = page.locator(".mlmap .mk-pin").first();
+    await expect(pin).toBeVisible({ timeout: 15_000 });
+    await pin.click({ force: true });
+  } else {
+    const pin = page.locator(".map button.pin:not(.me)").first();
+    await expect(pin).toBeVisible();
+    await pin.click();
+    await expect(page.locator(".map .note")).toContainText("NEXT_PUBLIC_MAPTILER_KEY");
+  }
   await expect(page.locator(".srow.on")).toHaveCount(1);
-  await expect(page.locator(".map .note")).toContainText("NEXT_PUBLIC_MAPTILER_KEY");
 });
 
 // Le prix de l'offre flash doit être le même au rendu serveur et après hydratation :

@@ -54,6 +54,17 @@ Si une information ne se trouve dans **aucun** de ces fichiers, elle n'existe pa
   Claude ne peut pas les regarder. À valider d'un coup d'œil ; un seul fichier à changer,
   `lib/data/mock/partnerImages.ts`. Les photos « Unsplash+ » (payantes) sont exclues.
 
+- ✅ **Coque mobile « qui respire »** (structure AliExpress mobile, identité inchangée) :
+  marges 16 px, gouttières 12 px, catégories sur une rangée défilante, réassurance sur une
+  ligne, titres de section sans sous-titre ni icône sur mobile, carte produit nom → avis →
+  prix → **store · distance** (la signature), offre flash en carte large quand il y a moins
+  de 3 offres, carte wallet avec « Recharger » pleine largeur. Tuiles sans photo à plat.
+- ✅ **Photos par l'optimiseur Next** (`remotePatterns` images.unsplash.com, cache 30 j) :
+  une seule origine, WebP/AVIF à la bonne taille — 55 images externes sur l'accueil
+  rendaient la page vide à charger. Les produits photographiés passent devant les autres.
+- ✅ **Clé MapTiler** fournie par Marc-Karlin, dans `.env.local` (ignoré par git), jamais
+  dans le code. La vraie carte est active en local.
+
 ## Décisions récentes (11 nov 2026 — livrables et domaines)
 
 - ✅ **4 livrables, 4 branches, 4 domaines** (confirme les domaines *[À CONFIRMER]* du plan §1.0) :

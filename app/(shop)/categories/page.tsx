@@ -36,7 +36,7 @@ export default function CategoriesPage() {
         <div className="cp-g">
           {c.sub.map((s, i) => (
             <Link key={s} href={`/discover?cat=${c.id}&sub=${encodeURIComponent(s)}`}>
-              <Ph icon={PICONS[c.id][i] || c.i} tint={TINTS[i % 5]} />
+              <Ph icon={PICONS[c.id][i] || c.i} tint={TINTS[i % 5]} img={inCat.filter((p) => p.sub === s).map((p) => productImage(p.id, 240)).find(Boolean)} alt={s} sizes="(max-width: 767px) 30vw, 120px" />
               <span>{s}</span>
             </Link>
           ))}

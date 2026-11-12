@@ -160,7 +160,7 @@ Le mark est un panier de course posé sur une paire de jambes en mouvement — "
 
 ## 8. Autres décisions de marque
 
-- ✅ Dark mode : reporté à v1.1, pas dans le v1
+- ✅ Dark mode : **retiré** (12 nov. 2026, Marc-Karlin) — ni en v1 ni en v1.1
 - ✅ OG image : un OG par défaut (1200×630, asset statique) pour tout le site ; OG par fiche produit généré dynamiquement via template, jamais de fichiers statiques par produit
 - ✅ Logo : finalisé, 6 combinaisons documentées ci-dessus (voir §7)
 

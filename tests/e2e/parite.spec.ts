@@ -111,3 +111,23 @@ test("ambassadeurs : le questionnaire refuse un profil incomplet puis accepte la
   await expect(page.getByText("Candidature reçue")).toBeVisible();
   await expect(page.getByText("Faculté des Sciences · Université d'État d'Haïti · 3e année · Les Cayes")).toBeVisible();
 });
+
+// Filtres de Discovery (12 nov. 2026) : sur mobile, la feuille « Filtres » et la colonne
+// cachée partageaient les mêmes noms de groupe radio — le clic dans la feuille était annulé.
+test("filtres : sur mobile, choisir une catégorie dans la feuille la coche et filtre", async ({ page }, info) => {
+  test.skip(info.project.name.startsWith("desktop"), "la feuille « Filtres » est la vue mobile");
+  await demo(page, {});
+  await page.goto("/discover");
+  await page.waitForLoadState("networkidle");
+  await page.locator(".fbtn").first().click();
+  const mode = page.locator(".modal .ck").filter({ hasText: /^Mode$/ });
+  await mode.click();
+  await expect(mode.locator("input")).toBeChecked();
+  for (const [g, t] of [["Distance", "Moins de 1 km"], ["Note", "et plus"]] as const) {
+    const opt = page.locator(".modal .ck").filter({ hasText: t }).first();
+    if (await opt.count()) {
+      await opt.click();
+      await expect(opt.locator("input"), g).toBeChecked();
+    }
+  }
+});

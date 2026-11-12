@@ -2,20 +2,20 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { screen, fireEvent, act } from "@testing-library/react";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { SoonFromQuery } from "@/components/ui/SoonFromQuery";
-import { useToast } from "@/components/ui/Toast";
+import { TOAST_MS, useToast } from "@/components/ui/Toast";
 import { renderWithToast } from "./utils";
 
-// CHANGELOG règles 2-3 : action d'une version future → toast « À venir » 3 s,
+// CHANGELOG règles 2-3 : action d'une version future → toast « À venir » (TOAST_MS, 1,8 s),
 // aucune navigation ; option d'un choix → grisée + toast.
 afterEach(() => vi.useRealTimers());
 
 describe("ComingSoon", () => {
-  it("affiche « À venir » 3 s dans une région live", () => {
+  it("affiche « À venir » pendant TOAST_MS dans une région live", () => {
     vi.useFakeTimers();
     renderWithToast(<ComingSoon feature="native_app"><a href="/app">{"Télécharger l'app"}</a></ComingSoon>);
     fireEvent.click(screen.getByText("Télécharger l'app"));
     expect(screen.getByRole("status")).toHaveTextContent("À venir");
-    act(() => vi.advanceTimersByTime(2999));
+    act(() => vi.advanceTimersByTime(TOAST_MS - 1));
     expect(screen.getByRole("status")).toHaveTextContent("À venir");
     act(() => vi.advanceTimersByTime(1));
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
@@ -67,13 +67,13 @@ describe("useToast", () => {
     expect(screen.getByRole("status")).toHaveAttribute("data-kind", "error");
   });
 
-  it("le remplacement relance les 3 s", () => {
+  it("le remplacement relance le délai", () => {
     vi.useFakeTimers();
     renderWithToast(<Demo />);
     fireEvent.click(screen.getByText("ok"));
-    act(() => vi.advanceTimersByTime(2000));
+    act(() => vi.advanceTimersByTime(TOAST_MS - 400));
     fireEvent.click(screen.getByText("ko"));
-    act(() => vi.advanceTimersByTime(2000));
+    act(() => vi.advanceTimersByTime(TOAST_MS - 400));
     expect(screen.getByRole("status")).toBeInTheDocument();
   });
 });
@@ -99,5 +99,11 @@ describe("SoonFromQuery", () => {
   it("ne fait rien sans paramètre", () => {
     renderWithToast(<SoonFromQuery search="" />);
     expect(screen.queryByRole("status")).not.toBeInTheDocument();
+  });
+});
+
+describe("durée", () => {
+  it("un toast disparaît en moins de 2 s (12 nov. 2026 : « trop long »)", () => {
+    expect(TOAST_MS).toBeLessThanOrEqual(2000);
   });
 });

@@ -23,6 +23,20 @@ Si une information ne se trouve dans **aucun** de ces fichiers, elle n'existe pa
 8. **Avant un gros travail (nouveau build, réécriture, fonctionnalité majeure) : poser au maximum 3 questions ciblées plutôt que deviner puis livrer un résultat hors cible.** Trois bonnes questions coûtent minutes ; un livrable hors cible coûte une session entière à refaire.
 9. **Versions et toast « À venir »** : tout l'écran est construit dès la V1 (comme le prototype), mais seules les fonctionnalités de la version en cours marchent. Une fonctionnalité d'une version suivante reste visible et affiche le toast « À venir » ; l'API la refuse. Voir `CHANGELOG.md`.
 
+## Décisions récentes (12 nov 2026)
+
+- ✅ **Mode sombre retiré complètement** (feuille, interrupteur, script de démarrage, clé
+  `dark_mode`). `03-design.md` et le CHANGELOG sont alignés. Remplace la ligne V1.1 du CHANGELOG.
+- ✅ **Toasts : 1,8 s** au lieu de 3 s (`TOAST_MS`).
+- ✅ **Paiement : le wallet n'est plus le seul moyen** — MonCash, NatCash, Visa et Mastercard
+  au paiement. L'argent reste **protégé de la même façon** (escrow jusqu'au retrait ou à la
+  livraison) quel que soit le moyen : Marc-Karlin n'a pas retenu le paiement au retrait.
+- ✅ **Quota de pages pour les visiteurs** : après N fiches produit sans compte, une invitation
+  bloquante à créer un compte. **N = 5 est une valeur de démo [À CONFIRMER]** (`BUSINESS`).
+- ✅ **Invitation d'un employé** : par SMS, ou par lien (copier, WhatsApp, Facebook, e-mail).
+- ✅ **Inscription** : confirmation du mot de passe obligatoire.
+- ✅ **Images de partage (OG)** générées pour chaque fiche produit et chaque store.
+
 ## Décisions récentes (11 nov 2026 — nettoyage du prototype)
 
 - ✅ **Bandeau « Prototype Prélakay · données fictives » retiré.** Remplace la règle du

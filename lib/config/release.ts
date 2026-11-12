@@ -16,14 +16,14 @@ export const CURRENT_RELEASE: Release = releaseFor(process.env.NEXT_PUBLIC_PRELA
 
 export const FEATURES = {
   // V1 · Pilote Les Cayes
-  auth: "1", intro: "1", profile: "1", wishlist: "1", help: "1", kyc_seller: "1",
+  auth: "1", profile: "1", wishlist: "1", help: "1", kyc_seller: "1",
   home: "1", discover: "1", search: "1", map: "1", product: "1", store: "1", share_links: "1",
   cart: "1", click_collect: "1", wallet_topup: "1", wallet_pay: "1", pay_for_relative: "1", escrow: "1",
   orders: "1", pickup_code: "1", receipt: "1", reviews: "1", qa: "1", report: "1", dispute_open: "1", coins: "1",
   // V1.x · Au fil du pilote
   coupons: "1.x", flash_offers: "1.x", events: "1.x", badges: "1.x", referral: "1.x", ambassadors: "1.x", dispute_center: "1.x",
   // V1.1 · Sourcing international et confort
-  sourcing: "1.1", dark_mode: "1.1",
+  sourcing: "1.1",
   // V2 · Phase 2
   delivery: "2", prelakay_plus: "2", creole: "2", phone_otp: "2", staff_accounts: "2",
   voice_search: "2", photo_search: "2", barcode: "2", boost: "2", platform_finance: "2",

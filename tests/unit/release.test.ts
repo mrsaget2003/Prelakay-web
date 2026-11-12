@@ -28,7 +28,7 @@ describe("release", () => {
   });
 
   it("V1 : les versions suivantes sont « À venir »", () => {
-    for (const k of ["coupons", "flash_offers", "events", "badges", "referral", "ambassadors", "dispute_center", "sourcing", "dark_mode", "delivery", "prelakay_plus", "creole", "phone_otp", "staff_accounts", "voice_search", "photo_search", "barcode", "boost", "platform_finance", "native_app"] as const)
+    for (const k of ["coupons", "flash_offers", "events", "badges", "referral", "ambassadors", "dispute_center", "sourcing", "delivery", "prelakay_plus", "creole", "phone_otp", "staff_accounts", "voice_search", "photo_search", "barcode", "boost", "platform_finance", "native_app"] as const)
       expect(isAvailable(k, "1"), k).toBe(false);
   });
 
@@ -41,7 +41,10 @@ describe("release", () => {
   });
 
   it("couvre exactement les clés du CHANGELOG", () => {
-    expect(Object.keys(FEATURES)).toHaveLength(47);
+    // 47 au 10 nov. ; le 12 nov., `dark_mode` et `intro` (onboarding) sont retirés
+    expect(Object.keys(FEATURES)).toHaveLength(45);
+    expect(Object.keys(FEATURES)).not.toContain("dark_mode");
+    expect(Object.keys(FEATURES)).not.toContain("intro");
   });
 
   it("répond 403 feature_not_released", async () => {

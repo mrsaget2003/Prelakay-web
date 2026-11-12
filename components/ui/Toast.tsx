@@ -18,7 +18,9 @@ type ToastApi = {
   soon(): void;
 };
 
-export const TOAST_MS = 3000;
+/** 1,8 s (12 nov. 2026, Marc-Karlin : « les toasts prennent trop de temps à disparaître »).
+ *  Un toast ne porte qu'une phrase courte : 1,8 s suffit à la lire, l'animation de sortie s'ajoute. */
+export const TOAST_MS = 1800;
 export const SOON_LABEL = "À venir";
 /** Fond des toasts : --color-black de design-prelakay (Sileo dessine en SVG : couleur littérale). */
 const FILL = "#0b0c10";

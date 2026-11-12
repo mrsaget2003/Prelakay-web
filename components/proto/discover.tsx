@@ -5,7 +5,7 @@
 // catégories ou de sous-catégories, barre de tri, grille.
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { CATS, STORES, allProducts, catBy } from "@/lib/data/mock/seed";
 import { filterProducts } from "@/lib/proto/sort";
 import { withSponsored } from "@/lib/domain/marketing";
@@ -22,6 +22,10 @@ const OPEN0: Record<string, boolean> = { cat: true, price: true, dist: true, rat
 export function FiltersPanel() {
   const DF = useFilters();
   const [open, setOpen] = useState(OPEN0);
+  // La colonne (bureau, cachée sur mobile) et la feuille « Filtres » coexistent dans la page :
+  // des radios au même `name` formeraient un seul groupe, et le clic dans la feuille était
+  // annulé. Chaque panneau a donc ses propres noms de groupe.
+  const uid = useId();
   const g = (k: string, t: string, inner: React.ReactNode) => (
     <div className={`fg${open[k] ? " open" : ""}`}>
       <button className="fg-h" onClick={() => setOpen((o) => ({ ...o, [k]: !o[k] }))}>
@@ -33,7 +37,7 @@ export function FiltersPanel() {
   );
   const radio = (name: string, checked: boolean, on: () => void, label: React.ReactNode, key: string) => (
     <label className="ck" key={key}>
-      <input type="radio" name={name} checked={checked} onChange={on} />
+      <input type="radio" name={`${name}-${uid}`} checked={checked} onChange={on} />
       {label}
     </label>
   );

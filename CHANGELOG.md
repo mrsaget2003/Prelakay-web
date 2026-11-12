@@ -45,7 +45,7 @@ Décision de Marc-Karlin (10 nov. 2026, `CLAUDE.md`) : dans le prototype de dém
 - Pages **partenaire de paiement / de livraison** + file Admin → Partenaires.
 - Graphiques **Nivo** ; **carte des ventes** du Sud et des Cayes (% et montant).
 - Toasts **Sileo**, triés (pas de toast quand le résultat se voit à l'écran).
-- Coupons, offres flash 24 h, events, produits boostés, badges, parrainage *(anti-abus ⚠️ non implémenté)*, ambassadeurs, Prélakay+, téléphone + SMS, comptes employés, recherches vocale / photo / code-barres, Dispute Center, finances plateforme *(commission ⚠️ non calculée)*, mode sombre — actifs en démo.
+- Coupons, offres flash 24 h, events, produits boostés, badges, parrainage *(anti-abus ⚠️ non implémenté)*, ambassadeurs, Prélakay+, téléphone + SMS, comptes employés, recherches vocale / photo / code-barres, Dispute Center, finances plateforme *(commission ⚠️ non calculée)* — actifs en démo. Mode sombre **retiré** le 12 nov. 2026.
 - Mouvement : maintenir pour confirmer, carrousel Embla, apparition progressive, montants NumberFlow.
 - Dépendances validées : `@nivo/*`, `sileo`, `motion`, `@number-flow/react`, `vaul`, `embla-carousel-react`.
 
@@ -124,7 +124,7 @@ Décision de Marc-Karlin (10 nov. 2026, `CLAUDE.md`) : dans le prototype de dém
 | Inviter des amis / parrainage *(500 Coins, anti-abus ⚠️)* | V1.x | Toast « À venir » |
 | Programme ambassadeurs étudiants | V1.x | Toast « À venir » |
 | « Produits du monde » (sourcing Shein / Amazon / Temu) | V1.1 🟡 | Toast « À venir » |
-| Mode sombre | V1.1 | Toast « À venir » |
+| ~~Mode sombre~~ | retiré (12 nov. 2026) | — |
 | Option « Livraison » au paiement, suivi de livreur | V2 | Option grisée, toast « À venir » |
 | Prelakay+ (abonnement) | V2 | Toast « À venir » |
 | Créole (langue) | V2 | Option grisée, toast « À venir » |
@@ -162,7 +162,7 @@ Décision de Marc-Karlin (10 nov. 2026, `CLAUDE.md`) : dans le prototype de dém
 ## V1.1 · Sourcing international et confort · *à venir*
 
 - 🟡 **Sourcing international** (Shein, Amazon, Temu) : produit acheté par Prélakay pour le client, prix tout compris (produit + taxes + livraison vers Haïti), visible dans l'historique comme une commande normale. **Ne pas coder avant que soient tranchés** : mécanisme d'achat, délai affiché, taxes et douane, marge, risque de rupture, impact sur l'escrow, table `sourcing_orders`.
-- **Mode sombre** (tokens déjà compatibles, `design-prelakay.md` §7).
+- ~~Mode sombre~~ — **retiré** le 12 nov. 2026 à la demande de Marc-Karlin.
 
 ## V2 · Phase 2 · *à venir*
 
@@ -183,12 +183,12 @@ Décision de Marc-Karlin (10 nov. 2026, `CLAUDE.md`) : dans le prototype de dém
 
 | Clé | Version |
 | --- | --- |
-| `auth`, `intro`, `profile`, `wishlist`, `help`, `kyc_seller` | 1 |
+| `auth`, `profile`, `wishlist`, `help`, `kyc_seller` | 1 |
 | `home`, `discover`, `search`, `map`, `product`, `store`, `share_links` | 1 |
 | `cart`, `click_collect`, `wallet_topup`, `wallet_pay`, `pay_for_relative`, `escrow` | 1 |
 | `orders`, `pickup_code`, `receipt`, `reviews`, `qa`, `report`, `dispute_open`, `coins` | 1 |
 | `coupons`, `flash_offers`, `events`, `badges`, `referral`, `ambassadors`, `dispute_center` | 1.x |
-| `sourcing`, `dark_mode` | 1.1 |
+| `sourcing` | 1.1 |
 | `delivery`, `prelakay_plus`, `creole`, `phone_otp`, `staff_accounts`, `voice_search`, `photo_search`, `barcode`, `boost`, `platform_finance` | 2 |
 | `native_app` | 3 |
 

@@ -12,7 +12,6 @@ import { formatDistance as km } from "@/lib/format";
 import { ComingSoon } from "@/components/ui/ComingSoon";
 import { photoSearchCategory } from "@/lib/ui/photoSearch";
 import { NO_VOICE, startDictation } from "@/lib/ui/speech";
-import { SoonBadge } from "@/components/ui/Tag";
 import { useToast } from "@/components/ui/Toast";
 import { Fi, Ph } from "./ui";
 

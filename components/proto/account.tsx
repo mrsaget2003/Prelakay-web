@@ -24,7 +24,6 @@ import { DataIcon, Fi, Ph, Qr } from "./ui";
 export function AccLayout({ k, title, children }: { k: string; title: string; children: ReactNode }) {
   const s = useDemo();
   const router = useRouter();
-  const toast = useToast();
   const n = unread(s);
   return (
     <div className="wrap">
@@ -74,7 +73,6 @@ export function AccLayout({ k, title, children }: { k: string; title: string; ch
               onClick={(e) => {
                 e.preventDefault();
                 demo.update((d) => { d.logged = false; });
-                toast.show("Vous êtes déconnecté", "success");
                 router.push("/");
               }}
             >

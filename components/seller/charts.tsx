@@ -20,9 +20,9 @@ export function SellerHomeCharts() {
   return (
     <>
       <VzTiles>
-        <VzTile label="Ventes · 7 jours" value={htg(D.tot)} delta={dPct(D.tot, D.totPrev)} spark={D.sales} />
-        <VzTile label="Commandes" value={nfr(D.nOrd)} delta={(h % 17) - 4} spark={D.orders} />
-        <VzTile label="Visites du store" value={nfr(D.nVis)} delta={(h % 23) - 6} spark={D.visits} />
+        <VzTile label="Ventes · 7 jours" value={htg(D.tot)} delta={dPct(D.tot, D.totPrev)} />
+        <VzTile label="Commandes" value={nfr(D.nOrd)} delta={(h % 17) - 4} />
+        <VzTile label="Visites du store" value={nfr(D.nVis)} delta={(h % 23) - 6} />
         <VzTile label="Produits dans des paniers" value={`${D.cart} %`} delta={null} />
       </VzTiles>
       <VzCard

@@ -56,24 +56,32 @@ export function HoldToConfirm({ label, onConfirm, ms = 1200, className = "btn bt
 }
 
 /** Apparition progressive des cartes d'une grille (décalage 40 ms, 8 au plus) ; contenu visible sans JS. */
-export function Reveal({ children }: { children: ReactNode }) {
+/** Entrée des cartes ajoutées (« Voir plus ») : fondu et montée de 8 px, 30 ms d'écart,
+ *  seulement pour les 6 premières (13 nov. 2026). Ce qui est déjà là au premier affichage
+ *  (`still` premiers éléments) ne joue aucune entrée : le mouvement est pour ce qu'on déclenche. */
+export function Reveal({ children, still = 0 }: { children: ReactNode; still?: number }) {
   const reduce = useReducedMotion();
   const items = Children.toArray(children);
   if (reduce) return <>{items}</>;
   return (
     <>
-      {items.map((c, i) => (
-        <motion.div
-          key={i}
-          className="rv"
-          initial={{ opacity: 0.001, y: 8 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "0px 0px -40px 0px" }}
-          transition={{ duration: 0.28, ease: [0.2, 0.8, 0.2, 1], delay: Math.min(i, 8) * 0.04 }}
-        >
-          {c}
-        </motion.div>
-      ))}
+      {items.map((c, i) =>
+        i < still ? (
+          <div key={i} className="rvl">
+            {c}
+          </div>
+        ) : (
+          <motion.div
+            key={i}
+            className="rvl"
+            initial={{ opacity: 0, transform: "translateY(8px)" }}
+            animate={{ opacity: 1, transform: "translateY(0px)" }}
+            transition={{ duration: 0.3, ease: [0.23, 1, 0.32, 1], delay: Math.min(i - still, 5) * 0.03 }}
+          >
+            {c}
+          </motion.div>
+        ),
+      )}
     </>
   );
 }

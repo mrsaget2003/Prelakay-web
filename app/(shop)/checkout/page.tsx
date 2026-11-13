@@ -4,6 +4,7 @@
 // (CLAUDE.md 10 nov. 2026), choix par store, adresse si livraison, wallet, argent protégé, total, Payer.
 
 import Link from "next/link";
+import { SCENE_PHOTOS } from "@/lib/data/mock/sceneImages";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { ZONES } from "@/lib/charts/adminData";
@@ -42,7 +43,7 @@ export default function CheckoutPage() {
     return (
       <div className="wrap">
         <div style={{ marginTop: 16 }}>
-          <EmptyBox icon={<Fi s="cart-shopping" />} t="Rien à payer" p="Sélectionnez au moins un article dans votre panier.">
+          <EmptyBox photo={SCENE_PHOTOS.emptyCart} t="Rien à payer" p="Sélectionnez au moins un article dans votre panier.">
             <Link className="btn btn-p" href="/cart">
               Retour au panier
             </Link>

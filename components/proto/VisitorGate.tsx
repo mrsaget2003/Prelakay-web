@@ -7,7 +7,7 @@
 import Link from "next/link";
 import type { Product } from "@/lib/data/mock/seed";
 import { productImage } from "@/lib/data/mock/images";
-import { Fi, Ph } from "./ui";
+import { Ph } from "./ui";
 
 export function VisitorGate({ p, quota }: { p: Product; quota: number }) {
   const next = encodeURIComponent(`/p/${p.id}`);
@@ -18,8 +18,7 @@ export function VisitorGate({ p, quota }: { p: Product; quota: number }) {
           <Ph icon={p.icon} tint={p.tint} img={productImage(p.id, 480)} alt="" sizes="(max-width: 767px) 100vw, 360px" />
         </div>
         <div className="vgate-tx">
-          <span className="vgate-n">{p.n}</span>
-          <h1 id="vgate-t">Créez un compte pour voir ce produit</h1>
+          <h1 id="vgate-t">Créez un compte pour voir « {p.n} »</h1>
           <p className="muted">
             Vous avez consulté {quota} fiches sans compte. L&apos;inscription est gratuite et prend une minute : vous voyez ensuite tous
             les produits, leurs prix et les stores proches.
@@ -29,10 +28,6 @@ export function VisitorGate({ p, quota }: { p: Product; quota: number }) {
           </Link>
           <Link className="btn btn-o btn-block" href={`/login?next=${next}`}>
             J&apos;ai déjà un compte
-          </Link>
-          <Link className="vgate-back" href="/">
-            <Fi s="arrow-left" />
-            Retour à l&apos;accueil
           </Link>
         </div>
       </section>

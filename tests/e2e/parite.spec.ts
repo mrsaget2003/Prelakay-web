@@ -19,13 +19,12 @@ async function addToCart(page: Page, id: string) {
   await expect(add).toContainText("Ajouté");
 }
 
-test("panier → wishlist : l'article déplacé est annoncé (prototype : « Déplacé dans la wishlist »)", async ({ page }) => {
+test("panier → wishlist : l'article quitte le panier et rejoint la wishlist (sans toast, 13 nov. 2026)", async ({ page }) => {
   await demo(page, {});
   await addToCart(page, "tech-1");
   await page.goto("/cart");
   await page.getByRole("button", { name: "Déplacer dans la wishlist" }).first().click();
-  // les toasts Sileo sont doublés par une zone « role=status » masquée visuellement
-  await expect(page.getByRole("status")).toContainText("Déplacé dans la wishlist");
+  await expect(page.getByRole("heading", { name: "Votre panier est vide" })).toBeVisible();
   await page.goto("/wishlist");
   await expect(page.locator(".pc").first()).toBeVisible();
 });
@@ -179,7 +178,7 @@ test("visiteur : après 5 fiches, la suivante demande un compte ; les fiches vue
     await expect.poll(() => page.evaluate((x) => (JSON.parse(localStorage.getItem("pk-demo-v1")!).visitorViews ?? []).includes(x), id)).toBe(true);
   }
   await page.goto("/p/beaute-0");
-  await expect(page.getByRole("heading", { name: "Créez un compte pour voir ce produit" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: /Créez un compte pour voir/ })).toBeVisible();
   await expect(page.getByRole("link", { name: "Créer un compte" })).toHaveAttribute("href", "/signup?next=%2Fp%2Fbeaute-0");
   await page.goto("/p/mode-0");
   await expect(page.locator(".vgate")).toHaveCount(0);

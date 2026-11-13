@@ -3,9 +3,12 @@
 // Enregistrer son commerce — pageSell du prototype (02-app-flow §2.2) : formulaire KYC,
 // puis suivi Reçu → En vérification → Approuvé / Rejeté (motif), checklist « Prêt à vendre ».
 
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { KYC_TIMELINE, READY_TO_SELL } from "@/lib/data/mock/content";
+import { photoUrl } from "@/lib/data/mock/partnerImages";
+import { SCENE_PHOTOS } from "@/lib/data/mock/sceneImages";
 import { validateKyc } from "@/lib/domain/kyc";
 import { ageOn } from "@/lib/domain/kyc";
 import { demo, useDemo } from "@/lib/demo/store";
@@ -34,9 +37,10 @@ function KycForm() {
     <IdPhoto label={label} on={files[k]} onPick={(on) => setFiles((x) => ({ ...x, [k]: on }))} />
   );
   return (
-    <div className="panel">
+    <div className="panel kyc-p">
+      <Image className="kyc-ph" src={`${photoUrl(SCENE_PHOTOS.sell, 1400, 560)}&crop=faces`} alt={SCENE_PHOTOS.sell.alt} width={1400} height={560} sizes="(max-width: 1023px) 100vw, 900px" priority />
       <h3>Vendez sur Prélakay</h3>
-      <p className="muted" style={{ marginBottom: 14 }}>Vos informations servent seulement à vérifier votre identité. Elles ne sont jamais publiées.</p>
+      <p className="muted" style={{ marginBottom: 16 }}>Vos informations servent seulement à vérifier votre identité. Elles ne sont jamais publiées.</p>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0 12px" }}>
         <div className="fl">
           <label className="lbl" htmlFor="k1">Prénom</label>
@@ -64,7 +68,7 @@ function KycForm() {
       </div>
       <div className="fl">
         <label className="lbl">Pièce d&apos;identité (recto et verso)</label>
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+        <div className="kyc-files">
           {file("recto", "Recto")}
           {file("verso", "Verso")}
         </div>

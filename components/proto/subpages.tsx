@@ -20,6 +20,8 @@ import { DisputeForm, ReviewForm } from "./forms";
 import { useModal } from "./modal";
 import { SupportForm } from "./shell";
 import { DataIcon, EmptyBox, Fi, NeedLogin, Page404, Ph, Stars } from "./ui";
+import { DynamicButton } from "./dynamicButton";
+import { useFlash } from "@/components/ui/Feedback";
 
 export function Notifications() {
   const s = useDemo();
@@ -56,9 +58,14 @@ export function Notifications() {
   );
 }
 
-function useSaved() {
-  const toast = useToast();
-  return () => toast.show("Modifications enregistrées", "success");
+/** Enregistrer sans toast (13 nov. 2026, Marc-Karlin) : le bouton dit « Enregistré » sur place. */
+function SaveButton({ children }: { children: string }) {
+  const [done, flash] = useFlash();
+  return (
+    <DynamicButton className="btn btn-p" stateKey={done ? "done" : "idle"} icon={done ? <Fi s="check" /> : undefined} onClick={flash}>
+      {done ? "Enregistré" : children}
+    </DynamicButton>
+  );
 }
 
 export function Settings({ sec }: { sec?: string }) {
@@ -66,7 +73,6 @@ export function Settings({ sec }: { sec?: string }) {
   const router = useRouter();
   const modal = useModal();
   const toast = useToast();
-  const saved = useSaved();
   const [prefs, setPrefs] = useState(NOTIF_PREFS.map((_, i) => i < 4));
   const [lang, setLang] = useState("Français");
   if (!s.logged) return <NeedLogin what="Vos paramètres" next="/settings" />;
@@ -91,7 +97,6 @@ export function Settings({ sec }: { sec?: string }) {
             className="lrow"
             onClick={() => {
               logout();
-              toast.show("Vous êtes déconnecté", "success");
               router.push("/");
             }}
           >
@@ -121,7 +126,7 @@ export function Settings({ sec }: { sec?: string }) {
           <label className="lbl" htmlFor="s3">E-mail</label>
           <input className="field" id="s3" type="email" defaultValue="marc@exemple.ht" />
         </div>
-        <button className="btn btn-p" onClick={saved}>Enregistrer</button>
+        <SaveButton>Enregistrer</SaveButton>
       </>
     );
   else if (sec === "secu")
@@ -135,7 +140,7 @@ export function Settings({ sec }: { sec?: string }) {
           <label className="lbl" htmlFor="p2">Nouveau mot de passe</label>
           <input className="field" id="p2" type="password" autoComplete="new-password" />
         </div>
-        <button className="btn btn-p" onClick={saved}>Changer le mot de passe</button>
+        <SaveButton>Changer le mot de passe</SaveButton>
         <div className="hr" />
         <div className="lrow st">
           <Fi s="google" />
@@ -190,12 +195,12 @@ export function Settings({ sec }: { sec?: string }) {
             <option>HTG (gourde)</option>
           </select>
         </div>
-        <button className="btn btn-p" onClick={saved}>Enregistrer</button>
+        <SaveButton>Enregistrer</SaveButton>
       </>
     );
   else if (sec === "ville")
     b = CITIES.map((c, i) => (
-      <button key={c} className="lrow" onClick={() => (i ? toast.show("Prélakay n'est pas encore disponible dans cette ville.") : saved())}>
+      <button key={c} className="lrow" onClick={() => (i ? toast.show("Prélakay n'est pas encore disponible dans cette ville.") : undefined)}>
         <Fi s="location-dot" />
         {c}
         {i ? <span className="soon-t">Bientôt</span> : <Fi s="check" className="ok" />}

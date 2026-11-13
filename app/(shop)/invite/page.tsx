@@ -10,6 +10,7 @@ import { useFlash } from "@/components/ui/Feedback";
 import { AccLayout } from "@/components/proto/account";
 import { StatHero } from "@/components/proto/blocks";
 import { Fi, NeedLogin } from "@/components/proto/ui";
+import { DynamicButton } from "@/components/proto/dynamicButton";
 
 export default function Invite() {
   const s = useDemo();
@@ -27,9 +28,9 @@ export default function Invite() {
         </p>
         <div className="cp">
           <input className="field" value={url} readOnly aria-label="Lien de parrainage" />
-          <button
-            className="btn btn-p btn-sm"
-            aria-live="polite"
+          <DynamicButton
+            stateKey={copied ? "copied" : "copy"}
+            icon={copied ? <Fi s="check" /> : <Fi s="copy" />}
             onClick={() => {
               try {
                 void navigator.clipboard.writeText(url);
@@ -40,7 +41,7 @@ export default function Invite() {
             }}
           >
             {copied ? "Copié" : "Copier"}
-          </button>
+          </DynamicButton>
         </div>
         <a className="btn btn-s btn-block" style={{ marginTop: 10 }} href={waLink(url, "Rejoins-moi sur Prélakay, le marché des Cayes en ligne :")} target="_blank" rel="noopener noreferrer">
           <Fi s="whatsapp" />

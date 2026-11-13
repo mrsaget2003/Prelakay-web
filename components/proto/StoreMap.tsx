@@ -5,7 +5,7 @@
 // seuls les stores Prélakay portent un repère. Sans clé MapTiler, la page garde le plan
 // schématique : rien ne casse, et aucune clé n'est écrite en dur.
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Map as MlMap, Marker as MlMarker } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { STORES, type Store } from "@/lib/data/mock/seed";
@@ -21,12 +21,22 @@ export function StoreMap({ mapKey, stores = STORES, sel, onSelect, zoom = MAP_ZO
   const box = useRef<HTMLDivElement>(null);
   const map = useRef<MlMap | null>(null);
   const marks = useRef<Record<string, MlMarker>>({});
+  // réseau coupé ou MapTiler injoignable (connexion fragile en Haïti) : on le dit, au lieu
+  // d'une carte vide ; écouter « error » évite aussi que MapLibre remplisse la console
+  const [failed, setFailed] = useState(false);
   // `onSelect` change à chaque rendu du parent : on le lit par référence pour ne pas
   // reconstruire la carte. La référence est mise à jour dans un effet, jamais au rendu.
   const pick = useRef(onSelect);
   useEffect(() => {
     pick.current = onSelect;
   }, [onSelect]);
+  // la carte dépend de la liste des stores, pas de l'identité du tableau : `[store]` écrit
+  // dans le rendu d'une page ne doit pas reconstruire la carte à chaque rendu
+  const ids = stores.map((x) => x.id).join(",");
+  const list = useRef(stores);
+  useEffect(() => {
+    list.current = stores;
+  }, [stores]);
 
   useEffect(() => {
     const el = box.current;
@@ -35,6 +45,7 @@ export function StoreMap({ mapKey, stores = STORES, sel, onSelect, zoom = MAP_ZO
     let m: MlMap | null = null;
 
     (async () => {
+      const stores = list.current;
       const maplibre = await import("maplibre-gl");
       if (!alive || !box.current) return;
       // worker servi par nous (public/maplibre/, copié par scripts/copy-maplibre-worker.mjs) :
@@ -51,6 +62,10 @@ export function StoreMap({ mapKey, stores = STORES, sel, onSelect, zoom = MAP_ZO
       m = made;
       map.current = made;
       made.addControl(new maplibre.NavigationControl({ showCompass: false }), "top-right");
+      made.on("error", (e) => {
+        // seul l'échec du style rend la carte inutilisable ; une tuile manquée se rattrape
+        if (!made.isStyleLoaded() && /style|Failed to fetch/i.test(String(e?.error?.message ?? ""))) setFailed(true);
+      });
 
       made.on("load", () => {
         // on enlève les points d'intérêt du fond : la carte ne montre que nos stores
@@ -88,7 +103,7 @@ export function StoreMap({ mapKey, stores = STORES, sel, onSelect, zoom = MAP_ZO
       m?.remove();
       map.current = null;
     };
-  }, [mapKey, stores, zoom]);
+  }, [mapKey, ids, zoom]);
 
   // store sélectionné : le repère passe en avant et la carte s'y recentre
   useEffect(() => {
@@ -100,7 +115,11 @@ export function StoreMap({ mapKey, stores = STORES, sel, onSelect, zoom = MAP_ZO
     }
   }, [sel]);
 
-  return <div className="mlmap" ref={box} role="application" aria-label="Carte des stores Prélakay" />;
+  return (
+    <div className="mlmap" ref={box} role="application" aria-label="Carte des stores Prélakay">
+      {failed ? <div className="mlmap-fail">Carte indisponible pour le moment</div> : null}
+    </div>
+  );
 }
 
 export default StoreMap;

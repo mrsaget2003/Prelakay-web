@@ -2,22 +2,28 @@
 
 // Accueil vendeur — sHome du prototype : checklist « Prêt à vendre », À faire, solde,
 // performances (graphiques : SellerHomeCharts), dernières commandes, actualités Prélakay.
+// 13 nov. 2026 (unslop) : l'en-tête est le store lui-même (photo, nom, statut) avec le solde
+// à côté, au lieu d'une salutation ; « À faire » en liste plutôt qu'en tuiles teintées ;
+// chiffres sans courbes décoratives ; une photo par actualité.
 
+import Image from "next/image";
 import Link from "next/link";
 import { prodBy } from "@/lib/data/mock/seed";
-import { productImage } from "@/lib/data/mock/images";
+import { productImage, storeImage } from "@/lib/data/mock/images";
+import { photoUrl, type Photo } from "@/lib/data/mock/partnerImages";
+import { SCENE_PHOTOS } from "@/lib/data/mock/sceneImages";
 import { useDemo } from "@/lib/demo/store";
 import { myProducts, myStore, sellerFin, sellerOrders, todo } from "@/lib/demo/sellerActions";
 import { formatHTG as htg } from "@/lib/format";
-import { SHead, BUYER_URL } from "@/components/seller/shell";
+import { BUYER_URL } from "@/components/seller/shell";
 import { OTag } from "@/components/proto/tags";
 import { SellerHomeCharts } from "@/components/seller/charts";
 import { Fi, Ph } from "@/components/proto/ui";
 
-const NEWS: [string, string, string][] = [
-  ["Pilote Les Cayes", "Les 30 premiers stores sont mis en avant dans « Nouveaux sur Prélakay ».", "6 nov."],
-  ["Retrait en magasin", "Pensez à valider chaque retrait avec le code ou le QR de l'acheteur.", "4 nov."],
-  ["Bientôt", "Coupons vendeurs et offres flash arrivent après le lancement.", "1 nov."],
+const NEWS: [string, string, string, Photo][] = [
+  ["Pilote Les Cayes", "Les 30 premiers stores sont mis en avant dans « Nouveaux sur Prélakay ».", "6 nov.", SCENE_PHOTOS.newsPilot],
+  ["Retrait en magasin", "Pensez à valider chaque retrait avec le code ou le QR de l'acheteur.", "4 nov.", SCENE_PHOTOS.newsPickup],
+  ["Bientôt", "Coupons vendeurs et offres flash arrivent après le lancement.", "1 nov.", SCENE_PHOTOS.newsOffers],
 ];
 
 export default function SellerHome() {
@@ -26,6 +32,7 @@ export default function SellerHome() {
   const T = todo(s);
   const F = sellerFin(s);
   const O = sellerOrders(s);
+  const cover = storeImage(st.id, 1200);
   const ready: [boolean, string, string][] = [
     [myProducts(s).length > 0, "Ajouter votre premier produit", "/seller/products/new"],
     [!!s.seller.policy, "Définir votre politique de retour", "/seller/policy"],
@@ -42,43 +49,49 @@ export default function SellerHome() {
   ];
   return (
     <>
-      <SHead title={`Bonjour, ${s.name.split("-")[0]}`} />
-      <p className="sc-sub">
-        {st.n} ·{" "}
-        {st.trust ? (
-          <span className="tag tag-new">
-            <Fi s="circle-check" />
-            Store de confiance
-          </span>
-        ) : (
-          <Link href="/seller/trust" className="lk">
-            Devenir store de confiance
-          </Link>
-        )}{" "}
-        ·{" "}
-        <a className="lk" href={`${BUYER_URL}/store/${st.id}`}>
-          Voir mon store
-        </a>
-      </p>
-      {nDone < 3 ? (
-        <div className="panel s-ready">
-          <div className="ph-h">
-            <h2>Prêt à vendre</h2>
-            <span className="cap">{nDone} sur 3</span>
-          </div>
-          <div className="prog">
-            <i style={{ width: `${Math.round((nDone / 3) * 100)}%` }} />
-          </div>
-          {ready.map(([done, label, href]) => (
-            <Link key={label} className="lrow" href={href}>
-              {done ? <Fi s="circle-check" className="ok-c" /> : <Fi r="circle" />}
-              <span className={done ? "done-t" : undefined}>{label}</span>
-              <Fi s="chevron-right" />
-            </Link>
-          ))}
+      <section className="sh-hero" aria-label="Votre store">
+        <div className="sh-cover">
+          {cover ? <Image src={cover} alt={`Le store ${st.n}`} fill priority sizes="(max-width: 1023px) 100vw, 980px" /> : null}
         </div>
-      ) : null}
-      <div className="s-grid2">
+        <div className="sh-id">
+          <div className="sh-name">
+            <h1>{st.n}</h1>
+            <p className="sh-meta">
+              {st.trust ? (
+                <span className="sh-trust">
+                  <Fi s="circle-check" />
+                  Store de confiance
+                </span>
+              ) : (
+                <Link href="/seller/trust" className="lk">
+                  Devenir store de confiance
+                </Link>
+              )}
+              <span>{st.addr}</span>
+              <a className="lk" href={`${BUYER_URL}/store/${st.id}`}>
+                Voir mon store <Fi s="chevron-right" />
+              </a>
+            </p>
+          </div>
+          <div className="sh-bal">
+            <span className="cap">Disponible</span>
+            <b className="tnum">{htg(F.avail)}</b>
+            <span className="cap">
+              <span className="tnum">{htg(F.pending)}</span> en escrow, libérés {st.trust ? "24 h" : "3 jours"} après retrait
+            </span>
+            <div className="sh-bal-a">
+              <Link className="btn btn-p btn-sm" href="/seller/payouts">
+                Retirer
+              </Link>
+              <Link className="btn btn-o btn-sm" href="/seller/finance">
+                Détails
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div className={nDone < 3 ? "s-grid2" : undefined}>
         <div className="panel">
           <div className="ph-h">
             <h2>À faire</h2>
@@ -86,37 +99,35 @@ export default function SellerHome() {
               Toutes les commandes <Fi s="chevron-right" />
             </Link>
           </div>
-          <div className="tasks">
+          <div className="sh-tasks">
             {tasks.map(([label, n, href, icon]) => (
-              <Link key={label} className={`task${n ? " hot" : ""}`} href={href}>
+              <Link key={label} className={`sh-task${n ? " hot" : ""}`} href={href}>
                 {icon}
-                <b>{n}</b>
                 <span>{label}</span>
+                <b className="tnum">{n}</b>
               </Link>
             ))}
           </div>
         </div>
-        <div className="panel s-bal">
-          <div className="ph-h">
-            <h2>Solde</h2>
-            <Link href="/seller/finance">
-              Détails <Fi s="chevron-right" />
-            </Link>
+        {nDone < 3 ? (
+          <div className="panel s-ready">
+            <div className="ph-h">
+              <h2>Prêt à vendre</h2>
+              <span className="cap">{nDone} sur 3</span>
+            </div>
+            {ready.map(([done, label, href]) => (
+              <Link key={label} className="lrow" href={href}>
+                {done ? <Fi s="circle-check" className="ok-c" /> : <Fi r="circle" />}
+                <span className={done ? "done-t" : undefined}>{label}</span>
+                <Fi s="chevron-right" />
+              </Link>
+            ))}
           </div>
-          <small>Disponible</small>
-          <b className="tnum">{htg(F.avail)}</b>
-          <div className="s-bal-r">
-            <span>
-              En escrow <b className="tnum">{htg(F.pending)}</b>
-            </span>
-            <span>Libération {st.trust ? "24 h" : "3 jours"} après retrait</span>
-          </div>
-          <Link className="btn btn-p btn-sm" href="/seller/payouts">
-            Retirer
-          </Link>
-        </div>
+        ) : null}
       </div>
+
       <SellerHomeCharts />
+
       <div className="s-grid2">
         <div className="panel">
           <div className="ph-h">
@@ -150,12 +161,15 @@ export default function SellerHome() {
           <div className="ph-h">
             <h2>Actualités Prélakay</h2>
           </div>
-          {NEWS.map(([b, p, d]) => (
-            <div className="news" key={b}>
-              <b>{b}</b>
-              <p>{p}</p>
-              <span className="cap">{d}</span>
-            </div>
+          {NEWS.map(([b, p, d, ph]) => (
+            <article className="sh-news" key={b}>
+              <Image src={photoUrl(ph, 240, 240)} alt="" width={72} height={72} sizes="72px" />
+              <div>
+                <b>{b}</b>
+                <p>{p}</p>
+                <span className="cap">{d}</span>
+              </div>
+            </article>
           ))}
         </div>
       </div>

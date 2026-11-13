@@ -5,19 +5,22 @@
 // - erreurs sous chaque champ, bouton « afficher » dans le champ mot de passe ;
 // - connexion : « Mot de passe oublié ? » ;
 // - Google et téléphone en seconds choix, côte à côte ;
-// - mobile : la page est le formulaire ; bureau : à côté, les stores proches et leur distance.
+// - 13 nov. 2026 (unslop) : le formulaire est posé sur une photo de comptoir (bureau) ou
+//   sous elle (mobile) ; les stores proches et leur distance remplissent le vide.
 // L'intro de première visite a été retirée le 11 nov. 2026.
 
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, type ReactNode } from "react";
 import { STORES } from "@/lib/data/mock/seed";
 import { storeImage } from "@/lib/data/mock/images";
+import { photoUrl } from "@/lib/data/mock/partnerImages";
+import { SCENE_PHOTOS } from "@/lib/data/mock/sceneImages";
 import { formatDistance as km } from "@/lib/format";
 import { PASSWORD_MIN, normalizeUsername, validateLogin, validateSignup } from "@/lib/domain/auth";
 import { demo } from "@/lib/demo/store";
 import { ComingSoon } from "@/components/ui/ComingSoon";
-import { useToast } from "@/components/ui/Toast";
 import { PhoneAuth } from "./phone";
 import { useModal } from "./modal";
 import { useProtoRoute } from "./shell";
@@ -77,7 +80,6 @@ type Form = { email: string; username: string; password: string; confirm: string
 export function AuthPage({ sign }: { sign: boolean }) {
   const router = useRouter();
   const modal = useModal();
-  const toast = useToast();
   const r = useProtoRoute();
   // retour à la page de départ après connexion (02-app-flow §1) ; uniquement un chemin interne
   const next = r.params.next && r.params.next.startsWith("/") && !r.params.next.startsWith("//") ? r.params.next : "/";
@@ -97,7 +99,7 @@ export function AuthPage({ sign }: { sign: boolean }) {
       d.logged = true;
       if (user) d.user = user;
     });
-    toast.show(sign ? "Bienvenue sur Prélakay" : "Content de vous revoir", "success");
+    // pas de toast (13 nov. 2026, Marc-Karlin) : on arrive sur la page demandée, connecté
     router.push(next);
   };
   const submit = (e: React.FormEvent) => {
@@ -112,10 +114,12 @@ export function AuthPage({ sign }: { sign: boolean }) {
     enter(sign ? normalizeUsername(f.username) : undefined);
   };
   const near = STORES.filter((x) => x.type === "physique").sort((a, b) => a.km - b.km).slice(0, 3);
+  const photo = sign ? SCENE_PHOTOS.signup : SCENE_PHOTOS.login;
 
   return (
     <div className="wrap">
       <div className="auth2">
+        <Image className="auth2-bg" src={photoUrl(photo, 1600, 1000)} alt={photo.alt} fill priority sizes="(max-width: 767px) 100vw, 1240px" />
         <form className="auth2-f" noValidate onSubmit={submit}>
           <h1>{sign ? "Créer un compte" : "Se connecter"}</h1>
           <Field id="au-email" label="E-mail" err={errs.email}>
@@ -203,7 +207,7 @@ export function AuthPage({ sign }: { sign: boolean }) {
           </p>
         </form>
 
-        {/* bureau : ce qui attend l'acheteur — des stores réels et leur distance (la signature) */}
+        {/* ce qui attend l'acheteur — des stores réels et leur distance (la signature) */}
         <aside className="auth2-near" aria-label="Stores près de chez vous">
           <b>Près de chez vous</b>
           {near.map((st) => (

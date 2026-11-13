@@ -10,7 +10,6 @@ import { GatewayLogos } from "@/components/proto/PayLogos";
 import { useDemo } from "@/lib/demo/store";
 import { topUp } from "@/lib/demo/actions";
 import { formatHTG as htg } from "@/lib/format";
-import { useToast } from "@/components/ui/Toast";
 import { useProtoRoute } from "@/components/proto/shell";
 import { AccLayout } from "@/components/proto/account";
 import { PageTabs, StatHero } from "@/components/proto/blocks";
@@ -21,7 +20,6 @@ export default function WalletPage() {
   const s = useDemo();
   const r = useProtoRoute();
   const router = useRouter();
-  const toast = useToast();
   const [tab, setTab] = useState(r.params.topup ? "topup" : r.params.tab || "topup");
   const [gw, setGw] = useState("moncash");
   const [amt, setAmt] = useState(100000);
@@ -55,7 +53,7 @@ export default function WalletPage() {
               </button>
             ))}
           </div>
-          <button className="btn btn-p btn-block" onClick={() => toast.show(topUp(amt, GATEWAYS.find((g) => g[0] === gw)![1]), "success")}>
+          <button className="btn btn-p btn-block" onClick={() => topUp(amt, GATEWAYS.find((g) => g[0] === gw)![1])}>
             Recharger {htg(amt)}
           </button>
         </div>

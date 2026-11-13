@@ -8,7 +8,7 @@
 import Link from "next/link";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { P, STORES, storeBy, catBy, followersOf, isSuspended, type Product, type Store } from "@/lib/data/mock/seed";
+import { P, storeBy, catBy, followersOf, isSuspended, type Product, type Store } from "@/lib/data/mock/seed";
 import { useFollowStore } from "@/lib/hooks/useFollowStore";
 import { sortList } from "@/lib/proto/sort";
 import { storeImage } from "@/lib/data/mock/images";
@@ -21,6 +21,7 @@ import { ComingSoon } from "@/components/ui/ComingSoon";
 import { useDemo } from "@/lib/demo/store";
 import { useToast } from "@/components/ui/Toast";
 import { ProductCard } from "@/components/proto/cards";
+import { StoreMapBox } from "@/components/proto/StoreMapBox";
 import { ReportForm } from "@/components/proto/forms";
 import { useModal } from "@/components/proto/modal";
 import { Reviews } from "@/components/proto/reviews";
@@ -186,11 +187,7 @@ export default function StorePage() {
       <div className="about">
         <div className="panel">
           <h3>Adresse et retrait</h3>
-          <div className="mini-map">
-            {STORES.map((x) => (
-              <span key={x.id} className={`mp${x.id === id ? " on" : ""}`} style={{ left: `${x.x}%`, top: `${x.y}%` }} />
-            ))}
-          </div>
+          <StoreMapBox stores={[s]} sel={s.id} zoom={15} className="mlbox-mini" />
           <p style={{ marginTop: 10 }}>
             <b>{s.addr}</b>
             <br />
@@ -336,15 +333,11 @@ export default function StorePage() {
 /** D.1 — « Suivre » : primaire avec icône ; suivi = variante claire « Abonné ✓ », « Ne plus suivre » au survol. */
 function FollowButton({ s }: { s: Store }) {
   const { following, toggle } = useFollowStore(s.id);
-  const toast = useToast();
   return (
     <button
       className={`btn btn-sm btn-follow ${following ? "btn-s on" : "btn-p"}`}
       aria-pressed={following}
-      onClick={() => {
-        const on = toggle();
-        toast.show(on ? `Vous suivez ${s.n} : vous serez informé des nouveautés et promos.` : `Vous ne suivez plus ${s.n}.`, "success");
-      }}
+      onClick={() => toggle()}
     >
       {following ? (
         <>

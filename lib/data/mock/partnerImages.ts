@@ -17,9 +17,11 @@ const U = (id: string, w: number, h: number) =>
 export const photoUrl = (p: Photo, w: number, h: number) => U(p.id, w, h);
 
 export const PARTNER_PHOTOS = {
-  /** Livraison : quelqu'un qui livre à vélo. */
-  deliveryHero: { id: "1682773083899-0948e4e7d8d3", alt: "Un livreur à vélo, son porte-bagages chargé" },
-  deliveryWork: { id: "1601979107569-731e84cee3e8", alt: "Un livreur à vélo en chemin" },
+  /** Livraison : à moto. */
+  // 13 nov. 2026 : remplacées après contrôle visuel (l'une montrait un enfant à vélo, l'autre
+  // un homme poussant un chargement) — les livreurs ont 18 ans au moins.
+  deliveryHero: { id: "1542990725-319ce3f87c0c", alt: "Un homme sur sa moto, prêt à partir" },
+  deliveryWork: { id: "1551357141-9223c3be5d2e", alt: "Une moto chargée longe un marché" },
   /** Paiement : un commerce qui encaisse au téléphone. */
   paymentHero: { id: "1687422809654-579d81c29d32", alt: "Une commerçante à son étal, téléphone à la main" },
   paymentShop: { id: "1761370980657-22586ea44093", alt: "Une commerçante souriante derrière son étal de fruits" },

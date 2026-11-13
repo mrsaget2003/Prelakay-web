@@ -34,7 +34,6 @@ export function useWish() {
 export function useQuickAdd() {
   const s = useDemo();
   const router = useRouter();
-  const toast = useToast();
   const modal = useModal();
   return (id: string) => (e: MouseEvent) => {
     e.preventDefault();
@@ -55,7 +54,9 @@ export function ProductCard({ p, showStore = true, badge }: { p: Product; showSt
   const qadd = useQuickAdd();
   return (
     <Link className="pc" href={`/p/${p.id}`}>
-      {badge ? <span className={`tag ctl ${badge === "Flash" ? "tag-err" : "tag-neu"}`}>{badge}</span> : p.isNew ? <span className="tag tag-new ctl">Nouveau</span> : null}
+      {/* 13 nov. 2026 : plus de pastille « Nouveau » sur chaque carte — la section « Nouveaux sur
+          Prélakay » le dit déjà, et la ligne de ventes affiche « Nouveau sur Prélakay ». */}
+      {badge ? <span className={`tag ctl ${badge === "Flash" ? "tag-err" : "tag-neu"}`}>{badge}</span> : null}
       <button className={`wish ${s.wish[p.id] ? "on" : ""}`} onClick={wish(p.id)} aria-label="Wishlist">
         <HeartPop on={!!s.wish[p.id]}>{s.wish[p.id] ? <Fi s="heart" /> : <Fi r="heart" />}</HeartPop>
       </button>

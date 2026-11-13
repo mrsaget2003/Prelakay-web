@@ -13,7 +13,6 @@ import { boostedIds } from "@/lib/demo/marketing";
 import { useDemo } from "@/lib/demo/store";
 import { discover, useFilters } from "@/lib/proto/discoverStore";
 import { ProductCard } from "./cards";
-import { Reveal } from "./motion";
 import { useModal } from "./modal";
 import { EmptyBox, Fi, Stars } from "./ui";
 
@@ -195,11 +194,9 @@ export function DiscoverView({ q, params }: { q: string; params: Record<string, 
           </div>
           {list.length ? (
             <div className="grid">
-              <Reveal>
-                {list.map((p) => (
-                  <ProductCard key={p.id} p={p} badge={sp.sponsored.has(p.id) ? "Sponsorisé" : live.has(p.id) ? "Flash" : undefined} />
-                ))}
-              </Reveal>
+              {list.map((p) => (
+                <ProductCard key={p.id} p={p} badge={sp.sponsored.has(p.id) ? "Sponsorisé" : live.has(p.id) ? "Flash" : undefined} />
+              ))}
             </div>
           ) : (
             <EmptyBox icon={<Fi s="magnifying-glass" />} t="Aucun produit ne correspond" p="Élargissez la distance ou retirez un filtre.">

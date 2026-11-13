@@ -11,7 +11,7 @@ import { ORG_TYPES, submitPartner } from "@/lib/demo/partners";
 import type { PartnerInput, PartnerKind } from "@/lib/domain/partners";
 import { photoUrl } from "@/lib/data/mock/partnerImages";
 import { Crumb } from "./legal";
-import { DataIcon, FieldErr, Fi, IdPhoto } from "./ui";
+import { FieldErr, Fi, IdPhoto } from "./ui";
 
 function empty(kind: PartnerKind): PartnerInput {
   return kind === "delivery"
@@ -167,146 +167,115 @@ export function PartnerPage({ kind }: { kind: PartnerKind }) {
   return (
     <div className="wrap pt">
       <Crumb items={[[c.crumb]]} />
-      <section className="pt-hero pt-hero-img">
-        <div>
+      {/* 13 nov. 2026 (unslop) : la photo est le bandeau, le texte posé dessus ; plus de cartes
+          « icône + titre + phrase » — des listes, une frise pour les étapes. Contenu inchangé. */}
+      <section className="ptn-hero">
+        <Image className="ptn-bg" src={photoUrl(c.heroPhoto, 1600, 900)} alt={c.heroPhoto.alt} fill priority sizes="(max-width: 1023px) 100vw, 1240px" />
+        <div className="ptn-panel">
           <h1>{c.title}</h1>
           <p>{c.promise}</p>
           <a className="btn btn-p" href="#candidature">
             Déposer une candidature
           </a>
-          <ul className="pt-hero-pts">
+          <ul className="ptn-pts">
             {c.heroPoints.map((x) => (
-              <li key={x}>
-                <Fi s="check" />
-                {x}
-              </li>
+              <li key={x}>{x}</li>
             ))}
           </ul>
         </div>
-        <Image
-          className="pt-photo"
-          src={photoUrl(c.heroPhoto, 640, 480)}
-          alt={c.heroPhoto.alt}
-          width={380}
-          height={280}
-          loading="eager"
-        />
       </section>
-      <ul className="pt-stats" aria-label="Chiffres de la plateforme">
+      <dl className="ptn-facts" aria-label="La plateforme en bref">
         {c.stats.map(([v, l]) => (
-          <li key={l}>
-            <b>{v}</b>
-            <span>{l}</span>
-          </li>
+          <div key={l}>
+            <dt>{v}</dt>
+            <dd>{l}</dd>
+          </div>
         ))}
-      </ul>
-      <section className="pt-sec">
+      </dl>
+      <section className="ptn-sec">
         <h2>Pourquoi Prélakay</h2>
-        <div className="pt-cards">
-          {c.benefits.map(([i, t, p]) => (
-            <div className="panel pt-card" key={t}>
-              <span className="pt-ic">
-                <DataIcon cls={i} />
-              </span>
-              <h3>{t}</h3>
-              <p>{p}</p>
+        <dl className="ptn-dl">
+          {c.benefits.map(([, t, p]) => (
+            <div key={t}>
+              <dt>{t}</dt>
+              <dd>{p}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </section>
-      <section className="pt-sec pt-split">
+      <section className="ptn-sec ptn-split">
         <div>
           <h2>Ce que vous y gagnez</h2>
-          <ul className="pt-gains">
+          <dl className="ptn-dl ptn-one">
             {c.gains.map((g) => (
-              <li key={g.t} className={g.open ? "is-open" : undefined}>
-                <Fi s={g.open ? "circle-info" : "check"} />
-                <div>
-                  <b>{g.t}</b>
-                  <p>{g.p}</p>
-                </div>
-              </li>
+              <div key={g.t}>
+                <dt>
+                  {g.t}
+                  {g.open ? <span className="ptn-open">Encore ouvert</span> : null}
+                </dt>
+                <dd>{g.p}</dd>
+              </div>
             ))}
-          </ul>
+          </dl>
         </div>
-        <Image
-          className="pt-photo pt-photo-side"
-          src={photoUrl(c.sidePhoto, 600, 750)}
-          alt={c.sidePhoto.alt}
-          width={360}
-          height={450}
-          loading="lazy"
-        />
+        <Image className="ptn-side" src={photoUrl(c.sidePhoto, 600, 750)} alt={c.sidePhoto.alt} width={360} height={450} loading="lazy" />
       </section>
-      <section className="pt-sec">
+      <section className="ptn-sec">
         <h2>Comment ça marche</h2>
-        <ol className="pt-steps">
+        <ol className="ptn-steps">
           {c.steps.map(([t, p, d], i) => (
             <li key={t}>
-              <span className="pt-n">{i + 1}</span>
+              <span className="ptn-n tnum" aria-hidden="true">
+                {i + 1}
+              </span>
               <b>{t}</b>
               <p>{p}</p>
-              <span className="pt-dur">
-                <Fi r="clock" />
-                {d}
-              </span>
+              <span className="cap">{d}</span>
             </li>
           ))}
         </ol>
       </section>
-      <section className="pt-sec pt-two">
+      <section className="ptn-sec ptn-two">
         <div>
           <h2>Profils recherchés</h2>
-          <div className="pt-prof">
+          <div className="ptn-prof">
             {c.profiles.map((p) => (
-              <div className="panel" key={p.t}>
-                <span className="pt-ic">
-                  <DataIcon cls={p.i} />
-                </span>
+              <div key={p.t}>
                 <b>{p.t}</b>
-                {p.items.map((x) => (
-                  <span className="cap" key={x}>
-                    {x}
-                  </span>
-                ))}
+                <ul>
+                  {p.items.map((x) => (
+                    <li key={x}>{x}</li>
+                  ))}
+                </ul>
               </div>
             ))}
           </div>
         </div>
         <div>
           <h2>Ce qu&apos;il faut fournir</h2>
-          <ul className="pt-needs">
+          <ul className="ptn-list">
             {c.needs.map((n) => (
-              <li key={n}>
-                <Fi s="check" />
-                {n}
-              </li>
+              <li key={n}>{n}</li>
             ))}
           </ul>
-          <h3 className="pt-sub">Ce que nous ne demandons pas</h3>
-          <ul className="pt-needs pt-no">
+          <h3 className="ptn-sub">Ce que nous ne demandons pas</h3>
+          <ul className="ptn-list ptn-no">
             {c.noNeed.map((n) => (
-              <li key={n}>
-                <Fi s="xmark" />
-                {n}
-              </li>
+              <li key={n}>{n}</li>
             ))}
           </ul>
         </div>
       </section>
-      <section className="pt-sec">
+      <section className="ptn-sec">
         <h2>Nos engagements</h2>
-        <div className="pt-cards pt-cards-3">
+        <dl className="ptn-dl ptn-three">
           {c.promises.map(([t, p]) => (
-            <div className="panel pt-card" key={t}>
-              <span className="pt-ic">
-                <Fi s="shield-halved" />
-              </span>
-              <h3>{t}</h3>
-              <p>{p}</p>
+            <div key={t}>
+              <dt>{t}</dt>
+              <dd>{p}</dd>
             </div>
           ))}
-        </div>
+        </dl>
       </section>
       <section className="pt-sec">
         <h2>Questions fréquentes</h2>

@@ -189,7 +189,7 @@ export default function ProductPage() {
                     </>
                   ) : null}
                 </div>
-                <div className="ex">Prix fixé par le store · payé avec votre wallet</div>
+                <div className="ex">Prix fixé par le store. Argent protégé jusqu&apos;au retrait.</div>
               </div>
               <SkuOptions p={p} o={sel.o} onPick={(kk, v) => setChoice(p.id, kk, v)} />
               <div className="var-h">Quantité</div>

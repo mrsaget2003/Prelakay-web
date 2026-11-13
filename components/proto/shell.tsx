@@ -55,6 +55,7 @@ const TITLES: Record<string, string> = {
   account: "Compte", categories: "Catégories", notifications: "Centre de messages", settings: "Paramètres", viewed: "Vus récemment",
   disputes: "Retours et litiges", myreviews: "Mes avis", map: "Carte des stores", discover: "Produits",
   legal: "Légal", credits: "Crédits", partenaires: "Partenaires",
+  plus: "Prélakay+", invite: "Inviter des amis", ambassadeurs: "Ambassadeurs étudiants", events: "Events", search: "Recherche",
 };
 const SETTINGS_TITLES: Record<string, string> = {
   profile: "Informations personnelles", secu: "Sécurité du compte", notifs: "Notifications", lang: "Langue et devise", ville: "Ville de retrait", privacy: "Confidentialité",
@@ -229,8 +230,8 @@ function HeaderInner({ r }: { r: ProtoRoute }) {
                   onClick={() => {
                     if (lang === "creole") return toast.soon();
                     if (city !== "Les Cayes") return toast.show("Prélakay n'est pas encore disponible dans cette ville.");
+                    // pas de toast (13 nov. 2026) : le menu se ferme sur le choix enregistré
                     menu.close("loc");
-                    toast.show("Préférences enregistrées", "success");
                   }}
                 >
                   Enregistrer
@@ -306,7 +307,6 @@ function HeaderInner({ r }: { r: ProtoRoute }) {
                     onClick={() => {
                       demo.update((d) => { d.logged = false; });
                       menu.close();
-                      toast.show("Vous êtes déconnecté", "success");
                       router.push("/");
                     }}
                   >

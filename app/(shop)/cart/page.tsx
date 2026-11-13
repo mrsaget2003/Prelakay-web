@@ -4,14 +4,16 @@
 // par article), groupes par store, puce de caractéristiques modifiable, quantité,
 // récapitulatif collant, blocs de confiance, « Plus à découvrir » ; barre mobile.
 
+import Image from "next/image";
 import Link from "next/link";
+import { photoUrl } from "@/lib/data/mock/partnerImages";
+import { SCENE_PHOTOS } from "@/lib/data/mock/sceneImages";
 import { P, hasOpts } from "@/lib/data/mock/seed";
 import { productImage } from "@/lib/data/mock/images";
 import { demo, useDemo } from "@/lib/demo/store";
 import { cartTotals, groups } from "@/lib/demo/actions";
 import { formatHTG as htg, formatDistance as km } from "@/lib/format";
 import { ComingSoon } from "@/components/ui/ComingSoon";
-import { useToast } from "@/components/ui/Toast";
 import { ProductCard, openCartVariant } from "@/components/proto/cards";
 import { useModal } from "@/components/proto/modal";
 import { ShareModal } from "@/components/proto/share";
@@ -31,7 +33,6 @@ function Rc({ checked, onChange, label, children }: { checked: boolean; onChange
 
 export default function CartPage() {
   const s = useDemo();
-  const toast = useToast();
   const modal = useModal();
   if (!s.logged) return <NeedLogin what="Votre panier" next="/cart" />;
   const T = cartTotals(s);
@@ -54,9 +55,9 @@ export default function CartPage() {
           <span>Panier</span>
         </nav>
         <div className="panel cart-empty">
-          <Fi s="cart-shopping" />
+          <Image className="empty-ph" src={photoUrl(SCENE_PHOTOS.emptyCart, 480, 320)} alt={SCENE_PHOTOS.emptyCart.alt} width={240} height={160} />
           <h2>Votre panier est vide</h2>
-          <p className="muted">Les stores de Prélakay ont de quoi vous plaire.</p>
+          <p className="muted">Ajoutez des articles depuis les stores près de chez vous.</p>
           <Link className="btn btn-p" href="/discover">
             Commencer vos achats
           </Link>
@@ -128,8 +129,6 @@ export default function CartPage() {
                                 d.wish[l.c.p] = true;
                                 d.cart.splice(l.i, 1);
                               });
-                              // l'article quitte le panier pour une autre page : on dit où il va
-                              toast.show("Déplacé dans la wishlist", "success");
                             }}
                           >
                             <Fi r="heart" />
@@ -139,7 +138,6 @@ export default function CartPage() {
                             aria-label="Supprimer"
                             onClick={() => {
                               demo.update((d) => { d.cart.splice(l.i, 1); });
-                              toast.show("Article retiré du panier", "success");
                             }}
                           >
                             <Fi r="trash-can" />

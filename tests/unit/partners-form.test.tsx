@@ -28,7 +28,10 @@ describe("candidature partenaire de livraison : pièce d'identité", () => {
   it("recto et verso déposés : chaque face le dit, et le champ n'est plus en erreur", () => {
     render(<PartnerPage kind="delivery" />);
     for (const i of files()) fireEvent.change(i, { target: { files: [png()] } });
-    expect(screen.getAllByText("Ajoutée ✓")).toHaveLength(2);
+    // dépôt magnétique (13 nov. 2026) : chaque face déposée propose de la remplacer ou de la retirer
+    expect(screen.getAllByRole("button", { name: "Remplacer" })).toHaveLength(2);
+    expect(screen.getByRole("button", { name: "Retirer Recto" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Retirer Verso" })).toBeInTheDocument();
     fireEvent.click(screen.getByRole("button", { name: "Déposer ma candidature" }));
     expect(screen.queryByText("Ajoutez votre pièce d'identité (recto et verso).")).toBeNull();
   });

@@ -3,8 +3,9 @@
 //
 // Quel que soit le moyen, l'argent est protégé de la même façon : il est gardé (escrow) et le
 // store n'est payé qu'après le retrait ou la livraison.
-// ⚠️ Ouvert : le remboursement d'un paiement carte ou mobile money revient-il sur le moyen
-// d'origine ou sur le wallet ? En démo, il est crédité sur le wallet comme les autres.
+// ✅ Remboursement (13 nov. 2026, Marc-Karlin) : toujours crédité sur le wallet, quel que soit
+// le moyen de paiement d'origine (carte, MonCash, NatCash ou wallet).
+// ⚠️ Ouvert : frais du prestataire de paiement et qui les porte.
 
 import { normalizeHtPhone } from "./phone";
 

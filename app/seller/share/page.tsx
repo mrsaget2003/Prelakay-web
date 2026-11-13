@@ -10,6 +10,7 @@ import { useFlash } from "@/components/ui/Feedback";
 import { fbLink, waLink } from "@/lib/proto/shareLinks";
 import { SHead, BUYER_URL } from "@/components/seller/shell";
 import { Fi, Ph, Qr } from "@/components/proto/ui";
+import { DynamicButton } from "@/components/proto/dynamicButton";
 
 export default function Share() {
   const s = useDemo();
@@ -33,9 +34,9 @@ export default function Share() {
           <h2 className="ph-t">Lien du store</h2>
           <div className="cp">
             <input className="field" value={`https://${url}`} readOnly aria-label="Lien du store" />
-            <button className="btn btn-p btn-sm" onClick={copy} aria-live="polite">
+            <DynamicButton stateKey={copied ? "copied" : "copy"} icon={copied ? <Fi s="check" /> : <Fi s="copy" />} onClick={copy}>
               {copied ? "Copié" : "Copier"}
-            </button>
+            </DynamicButton>
           </div>
           <div className="share-g" style={{ marginTop: 18 }}>
             <a href={waLink(`https://${url}`, st.n)} target="_blank" rel="noopener noreferrer">

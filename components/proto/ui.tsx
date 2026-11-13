@@ -8,6 +8,10 @@ import Link from "next/link";
 import { useState, useSyncExternalStore, type ReactNode } from "react";
 import { Icon, type IconName } from "@/components/ui/Icon";
 import { iconFromClass } from "@/lib/icons/fromClass";
+import { MagneticDropZone } from "./dropzone";
+import { Door } from "./door";
+import { SCENE_PHOTOS } from "@/lib/data/mock/sceneImages";
+import { photoUrl, type Photo } from "@/lib/data/mock/partnerImages";
 
 /** Icône fixe : <Fi s="chevron-right" /> (plein) ou <Fi r="heart" /> (contour). */
 export function Fi({ s, r, className, label }: { s?: IconName; r?: IconName; className?: string; label?: string }) {
@@ -52,10 +56,12 @@ export function Stars({ r }: { r: number }) {
   );
 }
 
-export function EmptyBox({ icon, t, p, children }: { icon: ReactNode; t: string; p?: string; children?: ReactNode }) {
+/** État vide. `photo` (13 nov. 2026) : une photo du monde de Prélakay à la place de l'icône,
+ *  pour les écrans vides que l'on voit souvent (panier, paiement). */
+export function EmptyBox({ icon, photo, t, p, children }: { icon?: ReactNode; photo?: Photo; t: string; p?: string; children?: ReactNode }) {
   return (
     <div className="empty">
-      {icon}
+      {photo ? <Image className="empty-ph" src={photoUrl(photo, 480, 320)} alt={photo.alt} width={240} height={160} /> : icon}
       <b>{t}</b>
       {p ? <p className="muted">{p}</p> : null}
       {children}
@@ -85,14 +91,17 @@ export function SecHead({ icon, title, sub, href, label }: { icon?: ReactNode; t
 
 export function Page404() {
   return (
-    <div className="wrap">
-      <div className="empty" style={{ marginTop: 24 }}>
-        <Fi r="map" />
-        <b>Cette page s&apos;est perdue en chemin</b>
-        <p className="muted">Le lien est peut-être ancien.</p>
-        <Link className="btn btn-p" href="/">Retour à l&apos;accueil</Link>
-      </div>
-    </div>
+    <Door
+      photo={SCENE_PHOTOS.lost}
+      title="Cette page s'est perdue en chemin"
+      actions={
+        <Link className="btn btn-p" href="/">
+          Retour à l&apos;accueil
+        </Link>
+      }
+    >
+      <p className="muted">Le lien est peut-être ancien, ou ce produit n&apos;est plus en ligne.</p>
+    </Door>
   );
 }
 
@@ -133,17 +142,24 @@ export const fr1 = (x: number) => x.toFixed(1).replace(".", ",");
 
 /** needLogin du prototype : page réservée aux membres ; retour à la page après connexion (?next=). */
 export function NeedLogin({ what, next }: { what: string; next: string }) {
+  const q = encodeURIComponent(next);
   return (
-    <div className="wrap">
-      <div className="empty" style={{ marginTop: 16 }}>
-        <Fi s="lock" />
-        <b>Connectez-vous pour continuer</b>
-        <p className="muted">{what} est réservé aux membres. C&apos;est gratuit.</p>
-        <Link className="btn btn-p" href={`/login?next=${encodeURIComponent(next)}`}>
-          Se connecter
-        </Link>
-      </div>
-    </div>
+    <Door
+      photo={SCENE_PHOTOS.login}
+      title="Connectez-vous pour continuer"
+      actions={
+        <>
+          <Link className="btn btn-p" href={`/login?next=${q}`}>
+            Se connecter
+          </Link>
+          <Link className="btn btn-o" href={`/signup?next=${q}`}>
+            Créer un compte
+          </Link>
+        </>
+      }
+    >
+      <p className="muted">Pour ouvrir « {what} », connectez-vous. L&apos;inscription est gratuite et prend une minute.</p>
+    </Door>
   );
 }
 
@@ -173,14 +189,7 @@ export function FieldErr({ msg }: { msg: string | null | undefined }) {
  *  prototype (`data-act="kfile"`). Le nom accessible reste « Recto » / « Verso » même
  *  une fois la face ajoutée : seul le texte visible change. En démonstration, le fichier
  *  n'est pas envoyé ; seule sa présence est retenue. */
-export function IdPhoto({ label, on, onPick }: { label: string; on: boolean; onPick: (on: boolean) => void }) {
-  return (
-    <label className={`opt${on ? " ok" : ""}`} style={{ margin: 0, justifyContent: "center" }}>
-      <input type="file" className="sr" accept="image/*" aria-label={label} onChange={(e) => onPick(!!e.target.files?.length)} />
-      <Fi s="upload" className="big" />
-      <span>
-        <b>{on ? "Ajoutée ✓" : label}</b>
-      </span>
-    </label>
-  );
+export function IdPhoto({ label, onPick }: { label: string; on?: boolean; onPick: (on: boolean) => void }) {
+  // 13 nov. 2026 : dépôt magnétique avec aperçu (components/proto/dropzone.tsx)
+  return <MagneticDropZone label={label} onChange={(f) => onPick(!!f)} />;
 }

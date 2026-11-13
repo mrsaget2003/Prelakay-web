@@ -99,7 +99,8 @@ test("pied de page → Devenir partenaire de livraison → candidature reçue", 
   const png = { name: "piece.png", mimeType: "image/png", buffer: Buffer.from([137, 80, 78, 71]) };
   await page.getByLabel("Recto", { exact: true }).setInputFiles(png);
   await page.getByLabel("Verso", { exact: true }).setInputFiles(png);
-  await expect(page.getByText("Ajoutée ✓")).toHaveCount(2);
+  // dépôt magnétique (13 nov. 2026) : chaque face déposée propose « Remplacer »
+  await expect(page.getByRole("button", { name: "Remplacer" })).toHaveCount(2);
   await page.getByRole("button", { name: "Déposer ma candidature" }).click();
   await expect(page.getByText("Candidature reçue")).toBeVisible();
   await expect(page.getByText(/PL-\d{4}/)).toBeVisible();

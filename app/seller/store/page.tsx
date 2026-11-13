@@ -4,13 +4,14 @@
 // comptes (employés : V2, « À venir »).
 
 import Link from "next/link";
-import { CATS, STORES } from "@/lib/data/mock/seed";
+import { CATS } from "@/lib/data/mock/seed";
 import { storeImage } from "@/lib/data/mock/images";
 import { useDemo } from "@/lib/demo/store";
 import { myStore } from "@/lib/demo/sellerActions";
 import { formatDistance } from "@/lib/format";
 import { useToast } from "@/components/ui/Toast";
 import { ComingSoon } from "@/components/ui/ComingSoon";
+import { StoreMapBox } from "@/components/proto/StoreMapBox";
 import { SoonBadge } from "@/components/ui/Tag";
 import { SHead, BUYER_URL } from "@/components/seller/shell";
 import { Fi, Ph } from "@/components/proto/ui";
@@ -87,11 +88,7 @@ export default function StoreProfile() {
               </label>
               <input className="field" id="sa" defaultValue={st.addr} />
             </div>
-            <div className="mini-map" style={{ height: 180 }}>
-              {STORES.map((x) => (
-                <span key={x.id} className={`mp${x.id === st.id ? " on" : ""}`} style={{ left: `${x.x}%`, top: `${x.y}%` }} />
-              ))}
-            </div>
+            <StoreMapBox stores={[st]} sel={st.id} zoom={15} className="mlbox-mini" />
             <p className="cap" style={{ marginTop: 6 }}>
               Déplacez le point en production pour ajuster la position sur la carte.
             </p>

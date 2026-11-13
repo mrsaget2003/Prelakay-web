@@ -52,7 +52,6 @@ function Hero() {
           return (
             <div key={s.id} className={`slide ${s.c}`}>
               <div className="tx">
-                <small>{s.k}</small>
                 <h2>{s.h}</h2>
                 <Link className="btn btn-p" href={s.href}>
                   {s.b}
@@ -128,7 +127,7 @@ export default function HomePage() {
       </div>
       {flash.length ? (
         <section className="sec fl-sec">
-          <SecHead icon={<Fi s="bolt" />} title="Offres flash" sub="24 h seulement, dans des stores de confiance" href="/discover?flash=1" />
+          <SecHead title="Offres flash" href="/discover?flash=1" />
           <div className="fl-cd">
             Se termine dans <Countdown ends={flash[0].ends} />
           </div>
@@ -165,7 +164,7 @@ export default function HomePage() {
         </section>
       ) : null}
       <section className="sec">
-        <SecHead icon={<Fi s="location-dot" />} title="Près de vous" sub={`Stores physiques autour de ${s.city}`} href="/map" label="Voir la carte" />
+        <SecHead title="Près de vous" href="/map" label="Voir la carte" />
         <div className="rail">
           {near.map((st) => (
             <StoreCard key={st.id} s={st} products={P} />
@@ -173,7 +172,7 @@ export default function HomePage() {
         </div>
       </section>
       <section className="sec">
-        <SecHead icon={<Fi s="rocket" />} title="Nouveaux sur Prélakay" sub="Des stores et des produits qui viennent d'arriver" href="/discover?sort=new" />
+        <SecHead title="Nouveaux sur Prélakay" href="/discover?sort=new" />
         <div className="grid">
           {nw.slice(0, desk ? 5 : 4).map((p) => (
             <ProductCard key={p.id} p={p} />
@@ -181,7 +180,7 @@ export default function HomePage() {
         </div>
       </section>
       <section className="sec">
-        <SecHead icon={<Fi r="clock" />} title="Prêts à retirer aujourd'hui" sub="En stock dans un store près de vous" href="/discover?ready=1" />
+        <SecHead title="Prêts à retirer aujourd'hui" href="/discover?ready=1" />
         <div className="rail">
           {rd.map((p) => (
             <ProductCard key={p.id} p={p} />
@@ -189,9 +188,9 @@ export default function HomePage() {
         </div>
       </section>
       <section className="sec">
-        <SecHead icon={<Fi r="heart" />} title="Pour vous" />
+        <SecHead title="Pour vous" />
         <div className="grid" id="fy">
-          <Reveal>
+          <Reveal still={fy.length}>
             {[...fy, ...extra].map((p, i) => (
               <ProductCard key={`${p.id}-${i}`} p={p} />
             ))}

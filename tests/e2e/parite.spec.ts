@@ -131,3 +131,22 @@ test("filtres : sur mobile, choisir une catégorie dans la feuille la coche et f
     }
   }
 });
+
+// Inscription (12 nov. 2026) : confirmation du mot de passe obligatoire, erreurs sous le champ.
+test("inscription : la confirmation du mot de passe doit être identique", async ({ page }) => {
+  await demo(page, { logged: false });
+  await page.goto("/signup");
+  await page.waitForLoadState("networkidle");
+  const form = page.locator("form.auth2-f");
+  await form.getByLabel("E-mail").fill("rose@exemple.ht");
+  await form.getByLabel("@username").fill("rose_pierre");
+  await form.getByLabel("Mot de passe", { exact: true }).fill("lakay2026");
+  await form.getByLabel("Confirmer le mot de passe").fill("lakay2025");
+  await form.getByRole("button", { name: "Créer mon compte" }).click();
+  await expect(page.getByText("Les deux mots de passe ne sont pas identiques.")).toBeVisible();
+  await expect(page).toHaveURL(/\/signup/);
+  await form.getByLabel("Confirmer le mot de passe").fill("lakay2026");
+  await form.getByRole("button", { name: "Créer mon compte" }).click();
+  await expect(page).toHaveURL(/\/$/);
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("pk-demo-v1")!).user)).toBe("rose_pierre");
+});

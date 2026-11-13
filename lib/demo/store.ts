@@ -60,7 +60,8 @@ export type SellerState = {
   seq: number;
   form: ProductForm | null;
   /** Comptes employés (10 nov. 2026). */
-  staff: { n: string; tel: string; role: "prep" | "cash"; st: "invited" | "active" }[];
+  /** Employés : invités par SMS (`tel`) ou par lien (`token`, sans téléphone). */
+  staff: { n: string; tel: string; role: "prep" | "cash"; st: "invited" | "active"; via?: "sms" | "lien"; token?: string }[];
 };
 
 /** Console admin (objet AD du prototype) : décisions qui se répercutent chez l'acheteur et le vendeur. */

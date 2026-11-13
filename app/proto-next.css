@@ -505,3 +505,43 @@ body.scrolled .frail { display: flex; }
 .fl-one .tag{align-self:flex-start}
 .fl-one + .fl-one{margin-top:12px}
 @media (max-width:1023px){.fl-one{max-width:none;padding:12px}.fl-one .ph{width:108px;height:108px}.fl-one .nm{font-size:14px;line-height:19px}.fl-one .price b{font-size:20px;line-height:26px}}
+
+/* ---------- Employés : invitation par lien (12 nov. 2026) ---------- */
+.inv-how{margin-bottom:16px}
+.inv-how button{display:inline-flex;align-items:center;gap:6px}
+.inv-link .cp{display:flex;gap:8px;margin:12px 0 16px}
+.inv-link .cp .field{flex:1;min-width:0;font-size:13px}
+.inv-share{grid-template-columns:repeat(4,1fr)}
+.inv-qr{display:flex;align-items:center;gap:14px;margin-top:16px;padding-top:16px;border-top:var(--line)}
+.inv-qr .qr{width:96px;height:96px;flex:none;padding:6px;border:var(--line);border-radius:8px;background:var(--color-white)}
+
+/* ---------- Connexion / inscription (12 nov. 2026) ---------- */
+.auth2{display:grid;grid-template-columns:minmax(0,420px) 300px;gap:40px;justify-content:center;align-items:start;margin:40px auto 64px}
+.auth2-f{background:var(--color-white);border-radius:var(--radius-lg, 20px);box-shadow:var(--shadow-card);padding:32px}
+.auth2-f h1{font-size:28px;line-height:36px;margin:0 0 20px}
+.auth2-f .field{height:48px}
+.pw{position:relative}
+.pw .field{padding-right:48px}
+.pw-eye{position:absolute;right:2px;top:2px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;color:var(--color-neutral-700)}
+.auth2-forgot{display:block;margin:-4px 0 16px auto;font-size:13px;min-height:32px}
+.auth2-go{height:48px;margin-top:4px}
+.auth2-alt{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.auth2-alt .btn{height:44px;width:100%;gap:8px;font-weight:500}
+.auth2-alt > *{min-width:0}
+.auth2-sw{text-align:center;font-size:14px;margin:20px 0 0;color:var(--color-neutral-700)}
+.auth2-sw a{color:var(--color-lagon-700);font-weight:600}
+.auth2-near{display:flex;flex-direction:column;gap:10px;padding-top:56px}
+.auth2-near > b{font-family:var(--font-heading);font-size:18px;margin-bottom:4px}
+.auth2-st{display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;background:var(--color-white);color:inherit}
+.auth2-st:hover{box-shadow:var(--shadow-card)}
+.auth2-st .av{width:48px;height:48px;border-radius:50%;flex:none}
+.auth2-st b{display:block;font-size:14px}
+.auth2-st .cap{color:var(--color-lagon-700)}
+.auth2-near > .cap{margin-top:4px;line-height:18px}
+@media (max-width:1023px){
+  /* mobile : la page est le formulaire — pas de carte dans une page vide, pas de titre en double */
+  .auth2{grid-template-columns:1fr;gap:0;margin:0 calc(-1*var(--margin));min-height:calc(100vh - 52px)}
+  .auth2-f{border-radius:0;box-shadow:none;padding:24px 16px 32px;min-height:calc(100vh - 52px)}
+  .auth2-f h1{display:none}
+  .auth2-near{display:none}
+}

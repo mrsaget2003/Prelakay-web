@@ -156,7 +156,7 @@ test("connexion par téléphone avec le code de démonstration", async ({ page }
   await page.goto("/");
   await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({ logged: false })));
   await page.goto("/login");
-  await page.getByRole("button", { name: "Avec mon numéro de téléphone" }).click();
+  await page.getByRole("button", { name: "Téléphone", exact: true }).click();
   await page.getByLabel("Numéro de téléphone", { exact: true }).fill("12");
   await page.getByRole("button", { name: "Recevoir le code par SMS" }).click();
   await expect(page.getByRole("alert").filter({ hasText: "Numéro haïtien à 8 chiffres." })).toBeVisible();

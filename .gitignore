@@ -12,6 +12,7 @@
 .env
 .env.local
 .env.*.local
+.env.netlify
 
 # misc
 .DS_Store

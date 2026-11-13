@@ -184,3 +184,17 @@ test("visiteur : après 5 fiches, la suivante demande un compte ; les fiches vue
   await page.goto("/p/mode-0");
   await expect(page.locator(".vgate")).toHaveCount(0);
 });
+
+// Images de partage (12 nov. 2026) : chaque fiche produit et chaque store a son aperçu.
+test("partage : une fiche produit et un store ont leur image Open Graph 1200 × 630", async ({ page, request }, info) => {
+  test.skip(!info.project.name.startsWith("desktop"), "une seule largeur suffit");
+  for (const [u, title] of [["/p/mode-0", "Robe en lin brodée"], ["/store/boutik-lakay", "Boutik Lakay"]] as const) {
+    await page.goto(u);
+    await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", new RegExp(title));
+    await expect(page.locator('meta[property="og:image:width"]')).toHaveAttribute("content", "1200");
+    const img = await page.locator('meta[property="og:image"]').getAttribute("content");
+    const r = await request.get(new URL(img!).pathname + new URL(img!).search);
+    expect(r.status(), u).toBe(200);
+    expect(r.headers()["content-type"], u).toBe("image/png");
+  }
+});

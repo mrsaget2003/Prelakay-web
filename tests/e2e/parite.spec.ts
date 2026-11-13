@@ -168,3 +168,19 @@ test("paiement : MonCash avec un wallet vide, numéro exigé, wallet intact", as
   await expect(page).toHaveURL(/\/done\//, { timeout: 30_000 });
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("pk-demo-v1")!).wallet)).toBe(0);
 });
+
+// Quota visiteur (12 nov. 2026) : 5 fiches sans compte, la 6e invite à créer un compte.
+test("visiteur : après 5 fiches, la suivante demande un compte ; les fiches vues restent ouvertes", async ({ page }) => {
+  test.setTimeout(90_000);
+  await demo(page, { logged: false });
+  for (const id of ["mode-0", "mode-1", "tech-1", "tech-2", "maison-1"]) {
+    await page.goto(`/p/${id}`);
+    await expect(page.locator(".vgate")).toHaveCount(0);
+    await expect.poll(() => page.evaluate((x) => (JSON.parse(localStorage.getItem("pk-demo-v1")!).visitorViews ?? []).includes(x), id)).toBe(true);
+  }
+  await page.goto("/p/beaute-0");
+  await expect(page.getByRole("heading", { name: "Créez un compte pour voir ce produit" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Créer un compte" })).toHaveAttribute("href", "/signup?next=%2Fp%2Fbeaute-0");
+  await page.goto("/p/mode-0");
+  await expect(page.locator(".vgate")).toHaveCount(0);
+});

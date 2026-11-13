@@ -553,3 +553,22 @@ body.scrolled .frail { display: flex; }
 .paym-ic .paym-row{gap:4px}
 .paym-ic .paym{max-width:52px}
 .paym-dark{display:inline-flex;align-items:center;background:var(--color-black);border-radius:6px;padding:3px 6px}
+
+/* ---------- Quota visiteur : invitation à créer un compte (12 nov. 2026) ---------- */
+.vgate{display:grid;grid-template-columns:360px minmax(0,420px);gap:40px;justify-content:center;align-items:center;margin:48px auto 64px}
+.vgate-pv{border-radius:var(--radius-lg, 20px);overflow:hidden}
+.vgate-pv .ph{aspect-ratio:1;filter:blur(14px) saturate(.9);transform:scale(1.08)}
+.vgate-tx{display:flex;flex-direction:column;gap:12px}
+.vgate-n{font-size:13px;color:var(--color-lagon-700);font-weight:600}
+.vgate-tx h1{font-size:28px;line-height:36px;margin:0}
+.vgate-tx .btn{height:48px}
+.vgate-back{display:inline-flex;align-items:center;gap:6px;justify-content:center;min-height:44px;font-size:14px;color:var(--color-neutral-700)}
+@media (max-width:1023px){
+  .vgate{grid-template-columns:1fr;gap:20px;margin:64px 0 32px}
+  .vgate-pv{max-height:220px}
+  .vgate-pv .ph{aspect-ratio:auto;height:220px}
+  .vgate-tx h1{font-size:22px;line-height:30px}
+}
+
+/* barre d'achat fixe sans contenu (fiche bloquée par le quota visiteur) : masquée */
+.mbuy:empty,.mbar:empty{display:none!important}

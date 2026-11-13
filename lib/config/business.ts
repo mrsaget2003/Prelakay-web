@@ -51,4 +51,7 @@ export const BUSINESS = {
   /** Badges (valeurs de démonstration ; seuils de points de confiance ⚠️ ouverts). */
   demoVipOrders: 3,
   demoTopSellerSold: 1000,
+  /** Visiteur sans compte : fiches produit consultables avant l'invitation bloquante à créer
+   *  un compte (12 nov. 2026, modèle app AliExpress). Valeur de démo **[À CONFIRMER]**. */
+  visitorProductQuota: 5,
 } as const;

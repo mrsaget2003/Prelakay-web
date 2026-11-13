@@ -25,6 +25,8 @@ import { ShareModal, shareTitle } from "@/components/proto/share";
 import { MBar } from "@/components/proto/shell";
 import { SkuOptions } from "@/components/proto/Sku";
 import { Fi, Page404, Ph, Stars, fr1 } from "@/components/proto/ui";
+import { VisitorGate } from "@/components/proto/VisitorGate";
+import { noteVisitorView, visitorBlocked } from "@/lib/domain/visitor";
 
 const ANCHORS: [string, string][] = [["rev", "Avis clients"], ["spec", "Caractéristiques"], ["desc", "Description"], ["qa", "Questions"], ["store", "Store"], ["more", "Plus à découvrir"]];
 
@@ -48,9 +50,19 @@ export default function ProductPage() {
   const [galI, setGalI] = useState(0);
   const [anchor, setAnchor] = useState<string | null>(null);
 
+  // quota visiteur (12 nov. 2026) : sans compte, seules les premières fiches ouvertes restent visibles
+  const gated = !!p && !s.logged && visitorBlocked(s.visitorViews, p.id, BUSINESS.visitorProductQuota);
   useEffect(() => {
-    if (p) markViewed(p.id);
-  }, [p]);
+    if (!p || gated) return;
+    markViewed(p.id);
+    const d0 = demo.get();
+    // relu au moment d'écrire : l'état sauvegardé peut arriver après le premier rendu
+    if (!d0.logged && !d0.visitorViews.includes(p.id) && !visitorBlocked(d0.visitorViews, p.id, BUSINESS.visitorProductQuota)) {
+      demo.update((d) => {
+        d.visitorViews = noteVisitorView(d.visitorViews, p.id);
+      });
+    }
+  }, [p, gated]);
   // ancre active et prix collant (onScroll du prototype)
   useEffect(() => {
     const onScroll = () => {
@@ -71,6 +83,7 @@ export default function ProductPage() {
   }, []);
 
   if (!p) return <Page404 />;
+  if (gated) return <VisitorGate p={p} quota={BUSINESS.visitorProductQuota} />;
   const st = storeBy(p.store)!;
   const c = catBy(p.cat)!;
   const sel = selOf(p, s);

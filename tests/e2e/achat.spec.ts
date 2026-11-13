@@ -123,6 +123,7 @@ test("coupons : le vendeur crée un coupon, l'acheteur le garde puis l'applique 
   await card.getByRole("button", { name: "Garder" }).click();
   await expect(card.getByText("Gardé")).toBeVisible();
   await page.goto("/p/mode-0");
+  await page.waitForLoadState("networkidle"); // un clic avant l'hydratation laisserait le panier vide
   const add = mob ? page.locator("#mbuy .btn-s") : page.locator(".buy .btn-o");
   await add.click();
   await expect(add).toContainText("Ajouté");

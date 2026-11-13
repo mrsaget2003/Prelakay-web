@@ -37,6 +37,9 @@ export function StoreMap({ mapKey, stores = STORES, sel, onSelect, zoom = MAP_ZO
     (async () => {
       const maplibre = await import("maplibre-gl");
       if (!alive || !box.current) return;
+      // worker servi par nous (public/maplibre/, copié par scripts/copy-maplibre-worker.mjs) :
+      // une fois empaqueté, MapLibre ne le trouve plus à côté de son module
+      maplibre.setWorkerUrl(`/maplibre/maplibre-gl-worker.mjs?v=${maplibre.getVersion()}`);
       const only = stores.length === 1 ? storeLatLng(stores[0]) : MAP_CENTER;
       const made = new maplibre.Map({
         container: box.current,

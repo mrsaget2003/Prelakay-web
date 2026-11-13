@@ -22,7 +22,10 @@ test("chaque route de l'Acheteur s'affiche, sans débordement, sans erreur, sans
   await page.evaluate(() => localStorage.setItem("pk-demo-v1", JSON.stringify({})));
   for (const r of ROUTES) {
     await page.goto(r);
-    await page.waitForLoadState("networkidle");
+    // /map avec une clé MapTiler : la vraie carte charge des tuiles en continu, le réseau
+    // n'est jamais au repos — on attend la carte (ou le plan de repérage) elle-même.
+    if (r === "/map") await expect(page.locator(".mlmap, .map").first()).toBeVisible();
+    else await page.waitForLoadState("networkidle");
     await expect(page.locator("main#app"), r).toBeVisible();
     await expect(page.getByText("Cette page s'est perdue en chemin"), r).toHaveCount(0);
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);

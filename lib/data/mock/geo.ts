@@ -7,8 +7,9 @@
 export const MAP_CENTER = { lat: 18.1927, lng: -73.7467 };
 export const MAP_ZOOM = 14;
 
-/** Cadre d'environ 3 km sur lequel les positions x / y sont projetées. */
-const BOX = { south: 18.1805, north: 18.2055, west: -73.7595, east: -73.7335 };
+/** Cadre d'environ 2,5 km sur lequel les positions x / y sont projetées. Bord sud remonté le
+ *  12 nov. 2026 : avec 18.1805, le repère le plus au sud (Mache Bon Pri) tombait dans la baie. */
+const BOX = { south: 18.1855, north: 18.2055, west: -73.7595, east: -73.7335 };
 
 export type LatLng = { lat: number; lng: number };
 

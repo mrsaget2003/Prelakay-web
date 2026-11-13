@@ -33,3 +33,6 @@ public/swe-worker*
 # tests
 /test-results/
 /playwright-report/
+
+# worker MapLibre copié par scripts/copy-maplibre-worker.mjs (predev / prebuild)
+public/maplibre/

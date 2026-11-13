@@ -23,6 +23,41 @@ Si une information ne se trouve dans **aucun** de ces fichiers, elle n'existe pa
 8. **Avant un gros travail (nouveau build, réécriture, fonctionnalité majeure) : poser au maximum 3 questions ciblées plutôt que deviner puis livrer un résultat hors cible.** Trois bonnes questions coûtent minutes ; un livrable hors cible coûte une session entière à refaire.
 9. **Versions et toast « À venir »** : tout l'écran est construit dès la V1 (comme le prototype), mais seules les fonctionnalités de la version en cours marchent. Une fonctionnalité d'une version suivante reste visible et affiche le toast « À venir » ; l'API la refuse. Voir `CHANGELOG.md`.
 
+## Décisions récentes (13 nov 2026)
+
+- ✅ **Remboursement : toujours vers le wallet**, quel que soit le moyen de paiement d'origine
+  (carte, MonCash, NatCash). Tranche le point ouvert du 12 nov. ; les frais du prestataire
+  restent ouverts.
+- ✅ **Passe « unslop » (espace acheteur, puis `/seller`)** : photos Unsplash dans les écrans
+  vides (connexion, inscription, Enregistrer son commerce, accueil vendeur), **pas** sur le
+  catalogue produit (`lib/data/mock/sceneImages.ts`). Dégradés décoratifs → aplats de la charte ;
+  surtitre en majuscules du carrousel retiré (le champ `k` des bannières n'est plus affiché) ;
+  titres de section de l'accueil sans icône ni sous-titre ; pastille « Nouveau » retirée des cartes.
+- ✅ **Catégories mobile** sur la structure AliExpress (captures C(1), C(2)) : libellés à gauche,
+  onglets Tout / Offres, grille photo 3 colonnes + « Tout voir », stores, fil de produits.
+- ✅ **Composants fournis par Marc-Karlin, traduits sans nouvelle dépendance** (Font Awesome au
+  lieu de Phosphor, nos styles au lieu de Tailwind) : reçu animé (`/done`), dépôt de fichier
+  magnétique (pièces d'identité), bouton à états (« Copier »), liste à fondu (colonne des
+  catégories), chargeur qui trace le logo.
+- ✅ **Mouvement** : courbes et durées nommées (`--ease-out`, `--t-menu`…), entrées en ease-out,
+  sorties ~20 % plus courtes, appui à 0,97, menus depuis 0,95 et leur coin d'attache, pas de
+  ressort sur les transitions ; minimum sur mobile, plus riche sur desktop. Rien ne s'anime au
+  premier affichage (les cartes « Voir plus » seulement).
+- ✅ **Cartes : MapLibre partout**, plans dessinés en CSS supprimés (adresse du store, Mon store
+  vendeur, plan schématique de `/map`) ; sans clé ou si MapTiler est injoignable : « Carte
+  indisponible pour le moment » (`components/proto/StoreMapBox.tsx`).
+- ✅ **Pages partenaires, Prélakay+, 404, « connectez-vous »** repris (photo en bandeau, listes au
+  lieu de cartes à icône) ; contenu inchangé. Photos du partenaire de livraison remplacées
+  (un enfant à vélo ne convenait pas : 18 ans minimum).
+- ✅ **Toasts retirés** (Marc-Karlin) : connexion / inscription, déconnexion, panier → wishlist,
+  retrait d'un article du panier, suivre / ne plus suivre un store, recharge du wallet,
+  préférences et paramètres (le bouton affiche « Enregistré » sur place).
+- ✅ **`ALL-LINKS.md`** : toutes les pages du projet en `localhost` (chaque produit, store, commande,
+  litige…), généré par `npx tsx scripts/all-links.ts` — à relancer après un ajout de route ou de données.
+- ✅ **Outils de design** : skills installés dans `.claude/skills` (charles-*, emilkowalski,
+  vercel, taste, impeccable) ; hooks impeccable actifs en local (`.claude/settings.local.json`) ;
+  `PRODUCT.md` = résumé pour impeccable, les docs restent la source de vérité.
+
 ## Décisions récentes (12 nov 2026)
 
 - ✅ **Mode sombre retiré complètement** (feuille, interrupteur, script de démarrage, clé
@@ -139,7 +174,7 @@ Plan de référence : `docs/superpowers/plans/2026-11-07-prelakay-prototype-to-l
 - Montant des frais de restockage en cas de non-retrait Click & Collect, et à qui ils reviennent
 - **Livraison (10 nov. 2026)** : frais et zones couvertes, paiement du livreur, déclencheur et délai de libération de l'escrow à la livraison, remboursement en cas d'échec de livraison
 - Seuils des badges et des offres flash (points de confiance) — liés à la formule du Store Health Score
-- **Paiement carte / mobile money (12 nov. 2026)** : remboursement vers le moyen d'origine ou vers le wallet (en démo : wallet), frais du prestataire et qui les porte
+- **Paiement carte / mobile money (12 nov. 2026)** : frais du prestataire et qui les porte (le remboursement va au wallet, décidé le 13 nov.)
 - **Sourcing international (v1.1)** : mécanisme d'achat réel (API fournisseur vs. achat manuel), calcul des taxes/droits de douane, marge appliquée, qui porte le risque en cas de rupture/produit différent, et structure exacte de la table `sourcing_orders`
 
 Un point qui disparaît de cette liste doit d'abord apparaître, daté, dans la section « Décisions récentes » ci-dessus — jamais l'inverse.

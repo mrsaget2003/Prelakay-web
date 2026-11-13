@@ -572,3 +572,8 @@ body.scrolled .frail { display: flex; }
 
 /* barre d'achat fixe sans contenu (fiche bloquée par le quota visiteur) : masquée */
 .mbuy:empty,.mbar:empty{display:none!important}
+@media (max-width:1023px){
+  /* liens courts hors phrase (en-tête de groupe du panier, « Tout voir » d'un panneau, retour) : 32 px de zone */
+  .cg-h a,.ph-h a,a.back-l{min-height:32px;display:inline-flex;align-items:center}
+}
+.auth2-sw a{display:inline-flex;align-items:center;min-height:32px}

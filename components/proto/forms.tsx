@@ -4,6 +4,7 @@
 // avis (reviewModal), litige (disputeModal), reçu (receipt).
 
 import { useState } from "react";
+import { payLabel } from "@/lib/domain/payment";
 import { prodBy, storeBy } from "@/lib/data/mock/seed";
 import { productImage } from "@/lib/data/mock/images";
 import { demo, useDemo, type Order } from "@/lib/demo/store";
@@ -223,7 +224,7 @@ export function Receipt({ order }: { order: Order }) {
       })}
       <div className="hr" />
       <div style={{ display: "flex", justifyContent: "space-between" }}>
-        <b>Total (wallet)</b>
+        <b>Total ({payLabel(order.pay)})</b>
         <b className="tnum">{htg(order.total)}</b>
       </div>
       <button className="btn btn-s btn-block" style={{ marginTop: 14 }} onClick={() => { modal.close(); toast.show("Reçu envoyé par e-mail.", "success"); }}>

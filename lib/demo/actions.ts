@@ -4,6 +4,7 @@
 // sur l'état de démo. Mêmes règles et mêmes messages que le prototype.
 
 import { addrOk, deliveryFee, type DeliveryAddr, type FulfillMode } from "@/lib/domain/delivery";
+import { validatePayment, type PayInput } from "@/lib/domain/payment";
 import { BUSINESS } from "@/lib/config/business";
 import { DEMO_DRIVERS } from "./delivery";
 import { DEMO_TODAY, couponByCode, usedOf } from "./coupons";
@@ -106,7 +107,7 @@ export const MSG_OUT_OF_STOCK = "Cet article n'est plus disponible dans ce choix
 
 /** Paiement du panier (doPay) : une commande par store, wallet débité, lignes payées retirées.
  *  `key` : clé d'idempotence (double clic, réseau coupé) — un même paiement n'est traité qu'une fois. */
-export type PayOpts = { modes?: Record<string, FulfillMode>; addr?: DeliveryAddr; coupon?: string };
+export type PayOpts = { modes?: Record<string, FulfillMode>; addr?: DeliveryAddr; coupon?: string; pay?: PayInput };
 export const MSG_NO_ADDR = "Indiquez l'adresse de livraison.";
 
 export type CouponPick = { ok: true; code: string; sid: string; off: number };
@@ -143,7 +144,12 @@ export function payCart(key: string, opts: PayOpts = {}): PayResult {
     cp = r;
   }
   const off = cp?.off ?? 0;
-  if (s0.wallet < T.sub + fee * delivered.length - off) return { ok: false, error: MSG_NO_FUNDS };
+  // moyen de paiement (12 nov. 2026) : seul le wallet est débité de notre côté ; MonCash, NatCash
+  // et la carte sont validés chez le prestataire. L'argent est protégé de la même façon.
+  const method = opts.pay?.method ?? "wallet";
+  const payErr = validatePayment({ method, phone: opts.pay?.phone });
+  if (payErr) return { ok: false, error: payErr };
+  if (method === "wallet" && s0.wallet < T.sub + fee * delivered.length - off) return { ok: false, error: MSG_NO_FUNDS };
   const ids: string[] = [];
   demo.update((s) => {
     for (const sid of Object.keys(G)) {
@@ -151,13 +157,13 @@ export function payCart(key: string, opts: PayOpts = {}): PayResult {
       const ls = G[sid];
       const del = mode(sid) === "delivery";
       s.orders.push({
-        id, store: sid, items: ls.map((l) => ({ p: l.p.id, v: l.c.v, q: l.c.q })), status: "received", date: "6 nov. 2026", total: ls.reduce((a, l) => a + l.total, 0),
+        id, store: sid, items: ls.map((l) => ({ p: l.p.id, v: l.c.v, q: l.c.q })), status: "received", date: "6 nov. 2026", total: ls.reduce((a, l) => a + l.total, 0), pay: method,
         ...(del ? { mode: "delivery" as const, addr: { ...opts.addr! }, fee } : {}),
         ...(cp && cp.sid === sid ? { coupon: cp.code, off: cp.off } : {}),
       });
       ids.push(id);
     }
-    s.wallet -= T.sub + fee * delivered.length - off;
+    if (method === "wallet") s.wallet -= T.sub + fee * delivered.length - off;
     if (cp) s.coupons.used[cp.code] = (s.coupons.used[cp.code] ?? 0) + 1;
     s.cart = s.cart.filter((c) => !c.on);
     s.notif.unshift({ i: "fa-solid fa-receipt", t: `Commande ${ids.join(", ")} reçue`, p: "Le store prépare votre commande.", to: `/orders/${ids[0]}`, un: true });

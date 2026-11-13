@@ -139,6 +139,7 @@ Plan de référence : `docs/superpowers/plans/2026-11-07-prelakay-prototype-to-l
 - Montant des frais de restockage en cas de non-retrait Click & Collect, et à qui ils reviennent
 - **Livraison (10 nov. 2026)** : frais et zones couvertes, paiement du livreur, déclencheur et délai de libération de l'escrow à la livraison, remboursement en cas d'échec de livraison
 - Seuils des badges et des offres flash (points de confiance) — liés à la formule du Store Health Score
+- **Paiement carte / mobile money (12 nov. 2026)** : remboursement vers le moyen d'origine ou vers le wallet (en démo : wallet), frais du prestataire et qui les porte
 - **Sourcing international (v1.1)** : mécanisme d'achat réel (API fournisseur vs. achat manuel), calcul des taxes/droits de douane, marge appliquée, qui porte le risque en cas de rupture/produit différent, et structure exacte de la table `sourcing_orders`
 
 Un point qui disparaît de cette liste doit d'abord apparaître, daté, dans la section « Décisions récentes » ci-dessus — jamais l'inverse.

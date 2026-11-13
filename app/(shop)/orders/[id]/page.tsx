@@ -5,6 +5,7 @@
 // frise de suivi, articles, point de retrait ; reçu, avis, litige après retrait.
 
 import Link from "next/link";
+import { payLabel } from "@/lib/domain/payment";
 import { useParams } from "next/navigation";
 import { prodBy, storeBy } from "@/lib/data/mock/seed";
 import { productImage, storeImage } from "@/lib/data/mock/images";
@@ -167,7 +168,7 @@ export default function OrderPage() {
           </div>
         ) : null}
         <div style={{ display: "flex", justifyContent: "space-between" }}>
-          <span>Total payé (wallet)</span>
+          <span>Total payé ({payLabel(o.pay)})</span>
           <b className="tnum">{htg(o.total + (o.fee ?? 0))}</b>
         </div>
       </div>

@@ -2,13 +2,14 @@
  *  fournis par Marc-Karlin. Un moyen sans logo garde simplement son libellé.
  *  `w` et `h` sont les proportions du fichier : `next/image` s'en sert pour réserver
  *  la place et servir une image redimensionnée (les PNG d'origine font 400 à 700 Ko). */
-export type PayLogo = { src: string; alt: string; w: number; h: number };
+/** `dark` : fichier fait pour un fond sombre (texte blanc) — affiché sur une pastille noire. */
+export type PayLogo = { src: string; alt: string; w: number; h: number; dark?: boolean };
 
 const DIR = "/images/payment-method/";
 
 export const PAY_LOGOS: Record<string, PayLogo> = {
   moncash: { src: `${DIR}moncash.png`, alt: "MonCash", w: 1529, h: 1029 },
-  natcash: { src: `${DIR}natcash.png`, alt: "NatCash", w: 1791, h: 878 },
+  natcash: { src: `${DIR}natcash.png`, alt: "NatCash", w: 1791, h: 878, dark: true },
   sogebank: { src: `${DIR}sogebank.svg`, alt: "Sogebank", w: 800, h: 800 },
   visa: { src: `${DIR}visa@logotyp.us.svg`, alt: "Visa", w: 560, h: 400 },
   mastercard: { src: `${DIR}mastercard@logotyp.us.svg`, alt: "Mastercard", w: 560, h: 400 },

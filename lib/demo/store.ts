@@ -6,6 +6,7 @@
 // Jamais utilisé en production (lib/config/env.ts).
 
 import { useSyncExternalStore } from "react";
+import type { PayMethod } from "@/lib/domain/payment";
 import type { AmbassadorInput } from "@/lib/domain/ambassador";
 import { basePrice, setPriceOverlay, prodBy, setCatalogOverlay, setOptsOverlay, setStockOverlay, setStoreOverlay, type Choice, type OptAxis, type Product } from "@/lib/data/mock/seed";
 import type { Banner } from "@/lib/data/mock/content";
@@ -19,6 +20,8 @@ export type OrderItem = { p: string; v: string; q: number };
 export type Order = {
   id: string; store: string; items: OrderItem[]; status: OrderStatus; date: string; total: number;
   code?: string; due?: string; reviewed?: boolean; time?: string;
+  /** Moyen de paiement (12 nov. 2026) ; absent = wallet (commandes d'avant). */
+  pay?: PayMethod;
   /** Livraison (10 nov. 2026) : mode, adresse, frais, livreur, progression simulée 0-100. */
   mode?: "pickup" | "delivery"; addr?: { zone: string; mark: string; phone: string }; fee?: number;
   driver?: { n: string; tel: string }; track?: number;

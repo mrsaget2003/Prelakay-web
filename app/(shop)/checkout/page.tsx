@@ -17,6 +17,9 @@ import { ComingSoon } from "@/components/ui/ComingSoon";
 import { useToast } from "@/components/ui/Toast";
 import { MBar } from "@/components/proto/shell";
 import { EmptyBox, FieldErr, Fi, NeedLogin, Ph } from "@/components/proto/ui";
+import { GatewayLogos, PayMark } from "@/components/proto/PayLogos";
+import { PAY_LOGOS } from "@/lib/data/payment";
+import { PAY_METHODS, validatePayment, type PayMethod } from "@/lib/domain/payment";
 import { Money } from "@/components/proto/Money";
 
 export default function CheckoutPage() {
@@ -26,6 +29,10 @@ export default function CheckoutPage() {
   const [modes, setModes] = useState<Record<string, FulfillMode>>({});
   const [addr, setAddr] = useState<DeliveryAddr>({ zone: ZONES[0][0], mark: "", phone: "" });
   const [addrErr, setAddrErr] = useState<string | null>(null);
+  // moyen de paiement (12 nov. 2026) : wallet, MonCash, NatCash ou carte
+  const [method, setMethod] = useState<PayMethod>("wallet");
+  const [payPhone, setPayPhone] = useState("");
+  const [payErr, setPayErr] = useState<string | null>(null);
   const [promo, setPromo] = useState("");
   const [cp, setCp] = useState<CouponPick | null>(null);
   const [cpErr, setCpErr] = useState<string | null>(null);
@@ -63,10 +70,18 @@ export default function CheckoutPage() {
   const allDel = nDel === sids.length;
   const setAll = (m: FulfillMode) => setModes(Object.fromEntries(sids.map((sid) => [sid, m])));
   const enough = s.wallet >= due;
+  // seul le wallet dépend du solde : les autres moyens se valident chez le prestataire
+  const canPay = method !== "wallet" || enough;
   // clé d'idempotence = panier payé + nombre de commandes : un double clic ne paie qu'une fois (Review Focus n° 5)
   const payKey = `pay-${s.orders.length}-${JSON.stringify(T.on.map((l) => [l.c.p, l.c.v, l.c.q]))}`;
   const pay = () => {
-    const r = payCart(payKey, { modes, addr, coupon: cp?.code });
+    const pe = validatePayment({ method, phone: payPhone });
+    if (pe) {
+      setPayErr(pe);
+      document.getElementById("pay-phone")?.focus();
+      return;
+    }
+    const r = payCart(payKey, { modes, addr, coupon: cp?.code, pay: { method, phone: payPhone } });
     if (!r.ok) {
       if (r.error === MSG_NO_ADDR) return setAddrErr(r.error);
       if (cp && /coupon|Code inconnu|Montant minimum/.test(r.error)) {
@@ -186,25 +201,45 @@ export default function CheckoutPage() {
           })}
           <div className="panel">
             <h3>Paiement</h3>
-            <button className="opt on">
-              <Fi s="wallet" className="big" />
-              <span>
-                <b>Wallet Prélakay</b>
-                <small>Solde : {htg(s.wallet)}</small>
-              </span>
-              <span className="rd" />
-            </button>
-            {enough ? (
-              <div className="info-box">
-                <Fi s="shield-halved" />
-                <span>Votre argent est protégé : le store est payé seulement après le retrait. En cas de problème, vous êtes remboursé sur votre wallet.</span>
-              </div>
-            ) : (
+            <div className="paym-opts" role="radiogroup" aria-label="Moyen de paiement">
+              {PAY_METHODS.map((m) => (
+                <button
+                  key={m.k}
+                  type="button"
+                  role="radio"
+                  aria-checked={method === m.k}
+                  className={`opt${method === m.k ? " on" : ""}`}
+                  onClick={() => {
+                    setMethod(m.k);
+                    setPayErr(null);
+                  }}
+                >
+                  <span className="paym-ic">
+                    {m.k === "wallet" ? (
+                      <Fi s="wallet" />
+                    ) : m.k === "card" ? (
+                      <>
+                        <PayMark logo={PAY_LOGOS.visa} height={14} />
+                        <PayMark logo={PAY_LOGOS.mastercard} height={14} />
+                      </>
+                    ) : (
+                      <GatewayLogos gateway={m.k} height={18} />
+                    )}
+                  </span>
+                  <span>
+                    <b>{m.label}</b>
+                    <small>{m.k === "wallet" ? `Solde : ${htg(s.wallet)}` : m.sub}</small>
+                  </span>
+                  <span className="rd" />
+                </button>
+              ))}
+            </div>
+            {method === "wallet" && !enough ? (
               <>
                 <div className="err-box">
                   <Fi s="circle-exclamation" />
                   <span>
-                    Solde insuffisant : il manque <b className="tnum">{htg(due - s.wallet)}</b>. Rechargez votre wallet, puis réessayez.
+                    Solde insuffisant : il manque <b className="tnum">{htg(due - s.wallet)}</b>. Rechargez votre wallet ou choisissez un autre moyen.
                   </span>
                 </div>
                 <Link className="btn btn-s" style={{ marginTop: 10 }} href="/wallet?topup=1">
@@ -212,7 +247,38 @@ export default function CheckoutPage() {
                   Recharger le wallet
                 </Link>
               </>
-            )}
+            ) : null}
+            {method === "moncash" || method === "natcash" ? (
+              <div className="fl" style={{ marginTop: 12 }}>
+                <label className="lbl" htmlFor="pay-phone">
+                  Numéro {method === "moncash" ? "MonCash" : "NatCash"}
+                </label>
+                <input
+                  className="field"
+                  id="pay-phone"
+                  inputMode="tel"
+                  placeholder="3712 3456"
+                  value={payPhone}
+                  aria-invalid={payErr ? true : undefined}
+                  onChange={(e) => {
+                    setPayPhone(e.target.value);
+                    setPayErr(null);
+                  }}
+                />
+                {payErr ? <FieldErr msg={payErr} /> : <span className="cap">Vous recevez une demande de paiement à valider sur ce téléphone.</span>}
+              </div>
+            ) : null}
+            {method === "card" ? (
+              <p className="cap" style={{ marginTop: 10 }}>
+                Vous validez le paiement sur la page sécurisée de votre banque. Prélakay ne voit jamais le numéro de votre carte.
+              </p>
+            ) : null}
+            {canPay ? (
+              <div className="info-box" style={{ marginTop: 12 }}>
+                <Fi s="shield-halved" />
+                <span>Votre argent est protégé : le store est payé seulement après le retrait ou la livraison. En cas de problème, vous êtes remboursé.</span>
+              </div>
+            ) : null}
             <div className="fl" style={{ marginTop: 14 }}>
               <label className="lbl" htmlFor="promo">
                 Code promo
@@ -297,12 +363,12 @@ export default function CheckoutPage() {
               <Money v={due} />
             </b>
           </div>
-          <button className="btn btn-p btn-block" onClick={pay} disabled={!enough}>
+          <button className="btn btn-p btn-block" onClick={pay} disabled={!canPay}>
             Payer {htg(due)}
           </button>
           <p className="note">
             <Fi s="lock" />
-            Paiement par wallet uniquement en v1.
+            Paiement sécurisé · argent protégé jusqu&apos;au retrait ou à la livraison.
           </p>
         </aside>
       </div>
@@ -311,7 +377,7 @@ export default function CheckoutPage() {
           <small>À payer</small>
           <b className="tnum">{htg(due)}</b>
         </div>
-        <button className="btn btn-p" onClick={pay} disabled={!enough}>
+        <button className="btn btn-p" onClick={pay} disabled={!canPay}>
           Payer
         </button>
       </MBar>

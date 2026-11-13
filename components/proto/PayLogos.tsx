@@ -6,7 +6,7 @@ import { ACCEPTED, logosOfGateway, type PayLogo } from "@/lib/data/payment";
 
 /** Un logo, hauteur fixe, largeur déduite des proportions du fichier. */
 export function PayMark({ logo, height = 20 }: { logo: PayLogo; height?: number }) {
-  return (
+  const img = (
     <Image
       className="paym"
       src={logo.src}
@@ -16,6 +16,8 @@ export function PayMark({ logo, height = 20 }: { logo: PayLogo; height?: number 
       style={{ height, width: "auto" }}
     />
   );
+  // fichier prévu pour un fond sombre (NatCash : « nat » en blanc) : pastille noire
+  return logo.dark ? <span className="paym-dark">{img}</span> : img;
 }
 
 /** Logos d'une passerelle de recharge ; rien si nous n'avons pas son logo. */

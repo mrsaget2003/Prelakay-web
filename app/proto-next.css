@@ -545,3 +545,11 @@ body.scrolled .frail { display: flex; }
   .auth2-f h1{display:none}
   .auth2-near{display:none}
 }
+
+/* ---------- Paiement : choix du moyen (12 nov. 2026) ---------- */
+.paym-opts{display:grid;gap:8px}
+.paym-opts .opt{margin:0}
+.paym-ic{width:56px;flex:none;display:flex;align-items:center;justify-content:center;gap:4px;font-size:20px;color:var(--color-neutral-700)}
+.paym-ic .paym-row{gap:4px}
+.paym-ic .paym{max-width:52px}
+.paym-dark{display:inline-flex;align-items:center;background:var(--color-black);border-radius:6px;padding:3px 6px}

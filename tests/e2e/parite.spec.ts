@@ -150,3 +150,21 @@ test("inscription : la confirmation du mot de passe doit être identique", async
   await expect(page).toHaveURL(/\/$/);
   expect(await page.evaluate(() => JSON.parse(localStorage.getItem("pk-demo-v1")!).user)).toBe("rose_pierre");
 });
+
+// Paiement (12 nov. 2026) : le wallet n'est plus le seul moyen.
+test("paiement : MonCash avec un wallet vide, numéro exigé, wallet intact", async ({ page }, info) => {
+  await demo(page, { wallet: 0, cart: [{ p: "tech-1", v: "Noir", q: 1, on: true }] });
+  await page.goto("/checkout");
+  await page.waitForLoadState("networkidle");
+  const mob = !info.project.name.startsWith("desktop");
+  const pay = mob ? page.locator("#mbar .btn-p") : page.locator("aside.sum .btn-p");
+  await expect(pay).toBeDisabled();
+  await page.getByRole("radio", { name: /MonCash/ }).click();
+  await expect(pay).toBeEnabled();
+  await pay.click();
+  await expect(page.getByText("Indiquez le numéro MonCash à 8 chiffres.")).toBeVisible();
+  await page.getByLabel("Numéro MonCash").fill("3712 3456");
+  await pay.click();
+  await expect(page).toHaveURL(/\/done\//, { timeout: 30_000 });
+  expect(await page.evaluate(() => JSON.parse(localStorage.getItem("pk-demo-v1")!).wallet)).toBe(0);
+});

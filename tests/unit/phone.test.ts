@@ -44,7 +44,7 @@ describe("comptes employés", () => {
     expect(inviteStaff({ n: "Rose", tel: "12", role: "prep" })).toBe("Numéro à 8 chiffres.");
     expect(inviteStaff({ n: "Rose", tel: "3712 3456", role: "prep" })).toBeNull();
     expect(inviteStaff({ n: "Rose B.", tel: "+509 37123456", role: "cash" })).toBe("Ce numéro est déjà invité.");
-    expect(demo.get().seller.staff).toEqual([{ n: "Rose", tel: "37123456", role: "prep", st: "invited" }]);
+    expect(demo.get().seller.staff).toEqual([{ n: "Rose", tel: "37123456", role: "prep", st: "invited", via: "sms" }]);
     removeStaff("37123456");
     expect(demo.get().seller.staff).toEqual([]);
   });

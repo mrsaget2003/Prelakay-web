@@ -36,3 +36,9 @@ public/swe-worker*
 
 # worker MapLibre copié par scripts/copy-maplibre-worker.mjs (predev / prebuild)
 public/maplibre/
+
+# outils de design (13 nov. 2026) : réglages et binaires locaux, jamais dans le dépôt
+.claude/settings.local.json
+.claude/skills/impeccable/scripts/bin/
+.impeccable/hook.cache.json
+.impeccable/config.local.json
